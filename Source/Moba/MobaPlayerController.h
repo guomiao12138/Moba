@@ -22,4 +22,8 @@ public:
 	virtual void SetupInputComponent() override;
 
 	void ClickPosition();
+
+	FVector IsMoveCamera();
+	void MoveForward(float value);
+	void MoveRight(float value);
 };

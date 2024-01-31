@@ -11,4 +11,5 @@ AMobaPlayerControllerBase::AMobaPlayerControllerBase()
 
 void AMobaPlayerControllerBase::BeginPlay()
 {
+	Super::BeginPlay();
 }
