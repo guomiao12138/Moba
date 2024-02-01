@@ -5,14 +5,11 @@
 #include "Components/InputComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaCharacterBase.h"
+#include "Slate/SGameLayerManager.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
-	ULocalPlayer* LocPlayer = Cast<ULocalPlayer>(Player);
-	if (LocPlayer && LocPlayer->ViewportClient)
-	{
-		LocPlayer->Origin = FVector2D(0.5, 0.5);
-	}
+
 }
 
 void AMobaPlayerController::BeginPlay()
@@ -68,31 +65,87 @@ void AMobaPlayerController::ClickPosition()
 
 FVector AMobaPlayerController::IsMoveCamera()
 {
-	float x, y;
+	FVector2D mousePosition;
 	int sizeX, sizeY;
-	if (GetMousePosition(x, y))
+	FVector2D ViewportPosition;
+	FVector dir(0, 0, 0);
+
+	if (GetMousePosition(mousePosition.X, mousePosition.Y))
 	{
 		GetViewportSize(sizeX, sizeY);
 
-
-		UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), x, y, sizeX, sizeY);
-		if (x + 3 >= sizeX || x - 3 <= 0 || y - 3 <= 0 || y + 3 >= sizeY)
+		ULocalPlayer* LocPlayer = Cast<ULocalPlayer>(Player);
+		if (LocPlayer && LocPlayer->ViewportClient)
 		{
-			return FVector(x - 0.5 * sizeX, y - 0.5 * sizeY, 0);
+			TSharedPtr<IGameLayerManager> GameLayerManager = LocPlayer->ViewportClient->GetGameLayerManager();
+			if (GameLayerManager.IsValid())
+			{
+				const FGeometry& ViewportGeometry = GameLayerManager->GetViewportWidgetHostGeometry();
+				ViewportPosition = ViewportGeometry.GetLocalPositionAtCoordinates(FVector2D(0.5, 0.5));
+			}
 		}
+
+
+		//dir.X = mousePosition.X <= ViewportPosition.X ? -1 : 1;
+		//dir.Y = mousePosition.Y <= ViewportPosition.Y ? 1 : -1;
+
+		UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), mousePosition.X, mousePosition.Y, sizeX, sizeY);
+
+
+		if (mousePosition.X + interval >= sizeX && mousePosition.Y + interval >= sizeY)
+		{
+			dir.X = 1;
+			dir.Y = -1;
+		}
+		else if (mousePosition.X + interval >= sizeX && mousePosition.Y - interval <= 0)
+		{
+			dir.X = -1;
+			dir.Y = -1;
+		}
+		else if (mousePosition.X - interval <= 0 && mousePosition.Y + interval >= sizeY)
+		{
+			dir.X = 1;
+			dir.Y = 1;
+		}
+		else if (mousePosition.X - interval <= 0 && mousePosition.Y - interval <= 0)
+		{
+			dir.X = -1;
+			dir.Y = 1;
+		}
+		else if (mousePosition.X - interval <= 0 && mousePosition.Y == LastPosition.Y)
+		{
+			dir.Y = 1;
+		}
+		else if (mousePosition.X + interval >= sizeX && mousePosition.Y == LastPosition.Y)
+		{
+			dir.Y = -1;
+		}
+		else if (mousePosition.Y - interval <= 0 && mousePosition.X == LastPosition.X)
+		{
+			dir.X = -1;
+		}
+		else if (mousePosition.Y + interval >= sizeY && mousePosition.X == LastPosition.X)
+		{
+			dir.X = 1;
+		}		
+
+
+		LastPosition = mousePosition;
 	}
 
-	return FVector();
+	return dir;
 }
 
 void AMobaPlayerController::MoveForward(float value)
 {
 	FVector dir = IsMoveCamera();
+	UE_LOG(LogTemp, Display, TEXT("dir : %f , %f"), dir.X, dir.Y);
+
 	if (!dir.IsZero())
 	{
 		if (auto pawn = GetPawn())
 		{
-			pawn->AddMovementInput(dir * 1);
+			pawn->AddMovementInput(dir);
 		}
 	}
 }
@@ -104,7 +157,7 @@ void AMobaPlayerController::MoveRight(float value)
 	{
 		if (auto pawn = GetPawn())
 		{
-			pawn->AddMovementInput(dir * 1);
+			pawn->AddMovementInput(dir);
 		}
 	}
 }

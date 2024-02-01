@@ -13,7 +13,12 @@ UCLASS()
 class MOBA_API AMobaPlayerController : public AMobaPlayerControllerBase
 {
 	GENERATED_BODY()
-	
+
+protected:
+
+	FVector2D LastPosition;
+	int interval = 5;
+
 public:
 	AMobaPlayerController();
 
@@ -26,4 +31,6 @@ public:
 	FVector IsMoveCamera();
 	void MoveForward(float value);
 	void MoveRight(float value);
+
+
 };
