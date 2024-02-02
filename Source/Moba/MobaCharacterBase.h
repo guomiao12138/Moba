@@ -6,14 +6,25 @@
 #include "GameFramework/Character.h"
 #include "MobaCharacterBase.generated.h"
 
+class AMobaPlayerController;
+
 UCLASS()
 class MOBA_API AMobaCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
+
+	TObjectPtr<AMobaPlayerController> MobaPlayerController;
+
+
+
+
+public:
 	// Sets default values for this character's properties
 	AMobaCharacterBase();
+	void InitController(AMobaPlayerController* InController);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,5 +37,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//void MoveTo();
+	void MoveTo(FVector InLocation);
 };

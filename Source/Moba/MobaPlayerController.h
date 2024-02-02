@@ -9,15 +9,26 @@
 /**
  * 
  */
+class AMobaCharacterBase;
+
 UCLASS()
 class MOBA_API AMobaPlayerController : public AMobaPlayerControllerBase
 {
 	GENERATED_BODY()
 
+
+
+private:
+	TObjectPtr<AMobaCharacterBase> Hero;
+
 protected:
 
 	FVector2D LastPosition;
 	int interval = 5;
+
+public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(MoveToDelegate, FVector);
+	MoveToDelegate MoveTo;
 
 public:
 	AMobaPlayerController();
@@ -32,5 +43,6 @@ public:
 	void MoveForward(float value);
 	void MoveRight(float value);
 
+	void CreateDefaultHero();
 
 };

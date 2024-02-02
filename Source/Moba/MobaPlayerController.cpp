@@ -6,10 +6,12 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaCharacterBase.h"
 #include "Slate/SGameLayerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerStart.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
-
+	CreateDefaultHero();
 }
 
 void AMobaPlayerController::BeginPlay()
@@ -59,8 +61,7 @@ void AMobaPlayerController::ClickPosition()
 		player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
 	}
 
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, hit.ImpactPoint);
-
+	MoveTo.Broadcast(hit.ImpactPoint);
 }
 
 FVector AMobaPlayerController::IsMoveCamera()
@@ -160,4 +161,20 @@ void AMobaPlayerController::MoveRight(float value)
 			pawn->AddMovementInput(dir);
 		}
 	}
+}
+
+void AMobaPlayerController::CreateDefaultHero()
+{
+	TArray<AActor*> startlocation;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), startlocation);
+
+	FActorSpawnParameters spawnInfo;
+	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	spawnInfo.ObjectFlags |= RF_Transient;
+
+	Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(AMobaCharacterBase::StaticClass(), startlocation[0]->GetActorTransform(), spawnInfo);
+
+	
+	Hero->MobaPlayerController = this;
+	//Hero->setcontro
 }
