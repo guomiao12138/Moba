@@ -50,6 +50,6 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(MobaPlayerController, InLocation);
 }
 

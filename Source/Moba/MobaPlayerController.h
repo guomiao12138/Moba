@@ -31,6 +31,9 @@ public:
 	MoveToDelegate MoveTo;
 
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMobaCharacterBase> HeroClass;
+
 	AMobaPlayerController();
 
 	virtual void BeginPlay() override;

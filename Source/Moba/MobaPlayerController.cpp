@@ -11,14 +11,18 @@
 
 AMobaPlayerController::AMobaPlayerController()
 {
-	CreateDefaultHero();
 }
 
 void AMobaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateDefaultHero();
 
-
+	if (Hero)
+	{
+		auto location = Hero->GetActorLocation();
+		//UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), location.X, location.Y, location.Z);
+	}
 }
 
 void AMobaPlayerController::SetupInputComponent()
@@ -35,12 +39,13 @@ void AMobaPlayerController::SetupInputComponent()
 #define ADDAXIS(name, function) InputComponent->BindAxis(name, this, &AMobaPlayerController::function);
 
 
-	ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
+	//ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
 	//ADDAXIS(TEXT("MoveForward"), MoveForward);
 	//ADDAXIS(TEXT("MoveRight"), MoveRight);
 
 	InputComponent->BindAxis(TEXT("MoveForward"), this, &AMobaPlayerController::MoveForward);
 	InputComponent->BindAxis(TEXT("MoveRight"), this, &AMobaPlayerController::MoveRight);
+	InputComponent->BindAction(TEXT("ClickPosition"), EInputEvent::IE_Pressed, this, &AMobaPlayerController::ClickPosition);
 }
 
 void AMobaPlayerController::ClickPosition()
@@ -172,9 +177,9 @@ void AMobaPlayerController::CreateDefaultHero()
 	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnInfo.ObjectFlags |= RF_Transient;
 
-	Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(AMobaCharacterBase::StaticClass(), startlocation[0]->GetActorTransform(), spawnInfo);
-
-	
-	Hero->MobaPlayerController = this;
+	if (Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, startlocation[0]->GetActorTransform(), spawnInfo))
+	{
+		Hero->InitController(this);
+	}
 	//Hero->setcontro
 }
