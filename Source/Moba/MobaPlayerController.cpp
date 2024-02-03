@@ -6,17 +6,23 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaCharacterBase.h"
 #include "Slate/SGameLayerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerStart.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
-
 }
 
 void AMobaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateDefaultHero();
 
-
+	if (Hero)
+	{
+		auto location = Hero->GetActorLocation();
+		//UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), location.X, location.Y, location.Z);
+	}
 }
 
 void AMobaPlayerController::SetupInputComponent()
@@ -33,12 +39,13 @@ void AMobaPlayerController::SetupInputComponent()
 #define ADDAXIS(name, function) InputComponent->BindAxis(name, this, &AMobaPlayerController::function);
 
 
-	ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
+	//ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
 	//ADDAXIS(TEXT("MoveForward"), MoveForward);
 	//ADDAXIS(TEXT("MoveRight"), MoveRight);
 
 	InputComponent->BindAxis(TEXT("MoveForward"), this, &AMobaPlayerController::MoveForward);
 	InputComponent->BindAxis(TEXT("MoveRight"), this, &AMobaPlayerController::MoveRight);
+	InputComponent->BindAction(TEXT("ClickPosition"), EInputEvent::IE_Pressed, this, &AMobaPlayerController::ClickPosition);
 }
 
 void AMobaPlayerController::ClickPosition()
@@ -59,8 +66,7 @@ void AMobaPlayerController::ClickPosition()
 		player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
 	}
 
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, hit.ImpactPoint);
-
+	MoveTo.Broadcast(hit.ImpactPoint);
 }
 
 FVector AMobaPlayerController::IsMoveCamera()
@@ -160,4 +166,20 @@ void AMobaPlayerController::MoveRight(float value)
 			pawn->AddMovementInput(dir);
 		}
 	}
+}
+
+void AMobaPlayerController::CreateDefaultHero()
+{
+	TArray<AActor*> startlocation;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), startlocation);
+
+	FActorSpawnParameters spawnInfo;
+	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	spawnInfo.ObjectFlags |= RF_Transient;
+
+	if (Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, startlocation[0]->GetActorTransform(), spawnInfo))
+	{
+		Hero->InitController(this);
+	}
+	//Hero->setcontro
 }
