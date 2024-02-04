@@ -17,6 +17,7 @@ AMobaCharacterBase::AMobaCharacterBase()
 void AMobaCharacterBase::InitController(AMobaPlayerController* InController)
 {
 	MobaPlayerController = InController;
+	SpawnDefaultController();
 	MobaPlayerController->MoveTo.AddUObject(this, &AMobaCharacterBase::MoveTo);
 }
 
@@ -50,6 +51,6 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(MobaPlayerController, InLocation);
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);
 }
 
