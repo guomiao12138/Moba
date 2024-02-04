@@ -63,7 +63,7 @@ void AMobaPlayerController::ClickPosition()
 		DrawDebugDirectionalArrow(GetWorld(), player->GetActorLocation(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10.f);
 		auto rot = vec.Rotation();
 		//player->SetActorRotation(FRotator(0, rot.Yaw, 0));
-		player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
+		//player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
 	}
 
 	MoveTo.Broadcast(hit.ImpactPoint);
