@@ -51,6 +51,8 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
+	FVector dir = InLocation - GetActorLocation();
+	SetActorRelativeRotation(dir.Rotation());
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);
 }
 

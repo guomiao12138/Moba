@@ -17,8 +17,16 @@ class MOBA_API AMobaCameraPawn : public APawn
 
 protected:
 	 
-	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	TObjectPtr<UCameraComponent> CameraComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//TObjectPtr<UCapsuleComponent> CapsuleComponent;
+
+	//UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly)
+	//TObjectPtr<USpringArmComponent> SpringArmComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//TObjectPtr<UCameraComponent> CameraComponent;
+
+	//UPROPERTY(EditAnywhere)
+	//TObjectPtr<UStaticMesh> Mesh;
 
 
 public:

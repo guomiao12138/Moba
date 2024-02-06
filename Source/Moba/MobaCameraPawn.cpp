@@ -8,24 +8,35 @@
 // Sets default values
 AMobaCameraPawn::AMobaCameraPawn()
 {
+	//SetActorRotation(FRotator(0, -90, 0));
+
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	SpringArmComponent->TargetArmLength = 1200;
-	SpringArmComponent->SetRelativeRotation(FRotator(60, 0, 0));
+
+	//Mesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMeshComponent"));
+	//SetRootComponent(Mesh);
+	//Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	//SpringArmComponent->SetupAttachment(Mesh);
+
+	//CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(ACharacter::CapsuleComponentName);
+	//CapsuleComponent->InitCapsuleSize(34.0f, 88.0f);
+	//SetRootComponent(CapsuleComponent);
+	//SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	//SpringArmComponent->TargetArmLength = 1200;
+	////SpringArmComponent->SetRelativeRotation(FRotator(0, 0, 0));
+	//CameraComponent->SetupAttachment(CapsuleComponent);
 
 
-	//SpringArmComponent
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	//CameraComponent->AttachToComponent(SpringArmComponent,FAttachmentTransformRules::SnapToTargetIncludingScale);
-	CameraComponent->SetupAttachment(SpringArmComponent);
+	////SpringArmComponent
+	//CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	////CameraComponent->AttachToComponent(SpringArmComponent,FAttachmentTransformRules::SnapToTargetIncludingScale);
+	//CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
 // Called when the game starts or when spawned
 void AMobaCameraPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
