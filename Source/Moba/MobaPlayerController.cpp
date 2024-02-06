@@ -95,7 +95,7 @@ FVector AMobaPlayerController::IsMoveCamera()
 		//dir.X = mousePosition.X <= ViewportPosition.X ? -1 : 1;
 		//dir.Y = mousePosition.Y <= ViewportPosition.Y ? 1 : -1;
 
-		UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), mousePosition.X, mousePosition.Y, sizeX, sizeY);
+		//UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), mousePosition.X, mousePosition.Y, sizeX, sizeY);
 
 
 		if (mousePosition.X + interval >= sizeX && mousePosition.Y + interval >= sizeY)
@@ -145,7 +145,7 @@ FVector AMobaPlayerController::IsMoveCamera()
 void AMobaPlayerController::MoveForward(float value)
 {
 	FVector dir = IsMoveCamera();
-	UE_LOG(LogTemp, Display, TEXT("dir : %f , %f"), dir.X, dir.Y);
+	//UE_LOG(LogTemp, Display, TEXT("dir : %f , %f"), dir.X, dir.Y);
 
 	if (!dir.IsZero())
 	{
@@ -177,7 +177,7 @@ void AMobaPlayerController::CreateDefaultHero()
 	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnInfo.ObjectFlags |= RF_Transient;
 
-	if (Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, startlocation[0]->GetActorTransform(), spawnInfo))
+	if (Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, GetPawn()->GetActorTransform(), spawnInfo))
 	{
 		Hero->InitController(this);
 	}
