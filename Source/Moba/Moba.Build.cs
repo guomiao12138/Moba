@@ -14,6 +14,8 @@ public class Moba : ModuleRules
 			"Engine", 
 			"InputCore",
             "AIModule",
+            "Ability",
+            "UnrealEd",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
