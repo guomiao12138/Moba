@@ -44,7 +44,8 @@ public class Ability : ModuleRules
 				"UnrealEd",
 				"LevelEditor",
 				"InteractiveToolsFramework",
-				"EditorInteractiveToolsFramework"
+				"EditorInteractiveToolsFramework",
+                "ToolMenus",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
