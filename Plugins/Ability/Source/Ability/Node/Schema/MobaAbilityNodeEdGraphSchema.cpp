@@ -34,6 +34,7 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph
 {
 	if (FromPin)
 	{
+		
 		FMessageDialog::Open(EAppMsgType::Ok, NSLOCTEXT("Editor", "Print Action With Pin", "Hello World with point"));
 	}
 	else
