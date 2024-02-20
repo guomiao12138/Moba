@@ -59,28 +59,6 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 
 	UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
 	EdGraph->AddNode(EdGraphNode);
-	//FTabManager::NewPrimaryArea()
-	//	
-	//	->Split
-	//	(
-	//		FTabManager::NewSplitter()
-	//		->SetOrientation(Orient_Horizontal)
-	//		->SetSizeCoefficient(0.9f)
-	//		->Split
-	//		(
-	//			FTabManager::NewStack()
-	//			->SetSizeCoefficient(0.8f)
-	//			->SetHideTabWell(true)
-	//			->AddTab(FFlipbookEditorTabs::ViewportID, ETabState::OpenedTab)
-	//		)
-	//		->Split
-	//		(
-	//			FTabManager::NewStack()
-	//			->SetSizeCoefficient(0.2f)
-	//			->AddTab(FFlipbookEditorTabs::DetailsID, ETabState::OpenedTab)
-	//		)
-	//	)
-	//	);
 
 	const TSharedRef<FTabManager::FLayout> StandaloneRecoilAssetLayout = FTabManager::NewLayout("StandaloneMobaAbilityLayout_Layout")
 		->AddArea

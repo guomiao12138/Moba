@@ -19,6 +19,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	FName name;
 
-
+	UFUNCTION(BlueprintImplementableEvent)
+	void Start();
 	
+
+
+	TObjectPtr<UEdGraph> EdGraph;
 };
