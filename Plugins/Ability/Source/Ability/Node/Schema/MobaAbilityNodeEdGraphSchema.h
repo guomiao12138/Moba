@@ -26,6 +26,9 @@ public:
 	// 右键一个节点或者引脚出现的函数
 	virtual void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 
+	virtual FLinearColor GetPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::White; }
+
+	//virtual FLinearColor GetSecondaryPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::Red; };
 	/** End UEdGraphSchema Interface */
 
 };
@@ -58,24 +61,30 @@ struct ABILITY_API FMobaAbilityGraphSchemaAction_NewSubNode : public FEdGraphSch
 	TObjectPtr<class UMobaAbilityEdGraphNodeBase> NodeTemplate;
 
 	/** parent node */
-	UPROPERTY()
 	TObjectPtr<class UMobaAbilityEdGraphNodeBase> ParentNode;
 
-	FMobaAbilityGraphSchemaAction_NewSubNode()
-		: FEdGraphSchemaAction()
-		, NodeTemplate(nullptr)
-		, ParentNode(nullptr)
-	{}
+	FMobaAbilityGraphSchemaAction_NewSubNode() :FEdGraphSchemaAction(
+		NSLOCTEXT("Editor", "MobaAbilityCategory", "MobaAbility_NewSubNode"),
+		NSLOCTEXT("Editor", "MobaAbilityNodeName", "name_NewSubNode"),
+		NSLOCTEXT("Editor", "MobaAbilityTooltip", "ToolTip_NewSubNode"),
+		0
+	) {}
 
-	FMobaAbilityGraphSchemaAction_NewSubNode(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
-		: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), InGrouping)
-		, NodeTemplate(nullptr)
-		, ParentNode(nullptr)
-	{}
+	//FMobaAbilityGraphSchemaAction_NewSubNode()
+	//	: FEdGraphSchemaAction()
+	//	, NodeTemplate(nullptr)
+	//	, ParentNode(nullptr)
+	//{}
+
+	//FMobaAbilityGraphSchemaAction_NewSubNode(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
+	//	: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), InGrouping)
+	//	, NodeTemplate(nullptr)
+	//	, ParentNode(nullptr)
+	//{}
 
 	//~ Begin FEdGraphSchemaAction Interface
 	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;
-	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, TArray<UEdGraphPin*>& FromPins, const FVector2D Location, bool bSelectNewNode = true) override;
-	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
+	//virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, TArray<UEdGraphPin*>& FromPins, const FVector2D Location, bool bSelectNewNode = true) override;
+	//virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 	//~ End FEdGraphSchemaAction Interface
 };
