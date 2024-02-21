@@ -23,5 +23,5 @@ public:
 	// TooltipÄÚÈÝ
 	virtual FText GetTooltipText() const override;
 
-	//virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
 };
