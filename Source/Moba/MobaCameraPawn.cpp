@@ -8,7 +8,8 @@
 // Sets default values
 AMobaCameraPawn::AMobaCameraPawn()
 {
-	
+	//SetActorRotation(FRotator(0, -90, 0));
+
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
