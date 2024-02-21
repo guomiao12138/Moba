@@ -1,0 +1,1 @@
+K:/UnrealEngine/Engine/Build/BatchFiles/RunUAT BuildCookRun -project="E:\guomiao\Moba\Moba.uproject" -platform=Win64 -nop4 -utf8output -nocompile -cook -stage -package -compressed -manifests -pak -archive -archivedirectory="E:\guomiao\MobaPackage\0.0.0\BaseRelease" -clientconfig=Development
