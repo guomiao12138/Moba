@@ -83,17 +83,3 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction_NewSubNode::PerformAction(UEdGraph* 
 //}
 //	return nullptr;
 //}
-
-UEdGraphNode* FMobaAbilityGraphSchemaAction_NewSubNode::PerformAction(UEdGraph* ParentGraph, TArray<UEdGraphPin*>& FromPins, const FVector2D Location, bool bSelectNewNode)
-{
-	return nullptr;
-}
-
-void FMobaAbilityGraphSchemaAction_NewSubNode::AddReferencedObjects(FReferenceCollector& Collector)
-{
-	FEdGraphSchemaAction::AddReferencedObjects(Collector);
-
-	// These don't get saved to disk, but we want to make sure the objects don't get GC'd while the action array is around
-	Collector.AddReferencedObject(NodeTemplate);
-	Collector.AddReferencedObject(ParentNode);
-}
