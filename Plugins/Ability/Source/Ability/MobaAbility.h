@@ -23,6 +23,14 @@ public:
 	void Start();
 	
 
+	UFUNCTION()
+	void AAAA();
+
+	UFUNCTION()
+	void CCCC();
+
+	UFUNCTION()
+	void XXXX();
 
 	TObjectPtr<UEdGraph> EdGraph;
 };

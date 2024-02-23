@@ -18,7 +18,8 @@ class ABILITY_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
 	GENERATED_BODY()
 	
 public:
-
+	UPROPERTY()
+	TSubclassOf<UObject> AssetClass;
 	/** Begin UEdGraphSchema Interface */
 
 	// 右键空白处或者拖拽引脚调用函数
@@ -39,14 +40,19 @@ struct FMobaAbilityGraphSchemaAction : public FEdGraphSchemaAction
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-
 	FMobaAbilityGraphSchemaAction() :FEdGraphSchemaAction(
 		NSLOCTEXT("Editor", "MobaAbilityCategory", "MobaAbility"),
 		NSLOCTEXT("Editor", "MobaAbilityNodeName", "name"),
 		NSLOCTEXT("Editor", "MobaAbilityTooltip", "ToolTip"),
 		0
 	) {}
+
+	FMobaAbilityGraphSchemaAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip)
+		: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), 0)
+	{}
+
+
+	FName functionName;
 
 	// 核心函数
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
@@ -77,11 +83,7 @@ struct ABILITY_API FMobaAbilityGraphSchemaAction_NewSubNode : public FEdGraphSch
 	//	, ParentNode(nullptr)
 	//{}
 
-	//FMobaAbilityGraphSchemaAction_NewSubNode(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
-	//	: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), InGrouping)
-	//	, NodeTemplate(nullptr)
-	//	, ParentNode(nullptr)
-	//{}
+
 
 	//~ Begin FEdGraphSchemaAction Interface
 	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;

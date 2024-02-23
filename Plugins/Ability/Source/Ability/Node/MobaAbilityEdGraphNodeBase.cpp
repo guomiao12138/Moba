@@ -3,6 +3,23 @@
 
 #include "MobaAbilityEdGraphNodeBase.h"
 
+FText UMobaAbilityEdGraphNodeBase::GetFunctionContextString() const
+{
+	return FText();
+}
+
+void UMobaAbilityEdGraphNodeBase::SetFromFunction(const UFunction* Function)
+{
+	if (Function != NULL)
+	{
+		//bIsPureFunc = Function->HasAnyFunctionFlags(FUNC_BlueprintPure);
+		//bIsConstFunc = Function->HasAnyFunctionFlags(FUNC_Const);
+		//DetermineWantsEnumToExecExpansion(Function);
+
+		FunctionReference.SetFromField<UFunction>(Function, false);
+	}
+}
+
 void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);

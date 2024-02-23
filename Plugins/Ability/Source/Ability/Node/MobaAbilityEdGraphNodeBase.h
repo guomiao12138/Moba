@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
+#include "Engine/MemberReference.h"
 #include "MobaAbilityEdGraphNodeBase.generated.h"
 
 /**
@@ -14,6 +15,15 @@ class ABILITY_API UMobaAbilityEdGraphNodeBase : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
+protected:
+
+	UPROPERTY()
+	FMemberReference FunctionReference;
+
+	virtual FText GetFunctionContextString() const;
+
+	virtual void SetFromFunction(const UFunction* Function);
+
 public:
 	virtual void AllocateDefaultPins() override;
 	// ½ÚµãµÄTitle

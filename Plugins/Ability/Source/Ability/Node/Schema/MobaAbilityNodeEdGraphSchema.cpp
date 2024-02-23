@@ -4,11 +4,19 @@
 #include "MobaAbilityNodeEdGraphSchema.h"
 #include "Framework/Commands/GenericCommands.h"
 #include "Ability/Node/MobaAbilityEdGraphNodeBase.h"
+#include "Ability/MobaAbility.h"
 
 void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
-	const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction);
-	ContextMenuBuilder.AddAction(Action);
+	TArray<FName> FunctionArray;
+	UMobaAbility::StaticClass()->GenerateFunctionList(FunctionArray);
+
+	for (auto func : FunctionArray)
+	{
+		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("Editor"), FText::FromName(func), FText()));
+		ContextMenuBuilder.AddAction(Action);
+	}
+
 
 	const TSharedPtr<FMobaAbilityGraphSchemaAction_NewSubNode> NewSubNodeAction = MakeShareable(new FMobaAbilityGraphSchemaAction_NewSubNode);
 	ContextMenuBuilder.AddAction(NewSubNodeAction);

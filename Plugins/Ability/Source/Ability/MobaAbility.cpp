@@ -3,3 +3,14 @@
 
 #include "MobaAbility.h"
 
+void UMobaAbility::AAAA()
+{
+}
+
+void UMobaAbility::CCCC()
+{
+}
+
+void UMobaAbility::XXXX()
+{
+}
