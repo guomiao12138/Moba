@@ -20,6 +20,13 @@ void UMobaAbilityEdGraphNodeBase::SetFromFunction(const UFunction* Function)
 	}
 }
 
+
+void UMobaAbilityEdGraphNodeBase::Init(FName fucnname, FName tooltip)
+{
+	FuncName = fucnname;
+	Tooltip = tooltip;
+}
+
 void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
@@ -32,7 +39,7 @@ void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
 
 FText UMobaAbilityEdGraphNodeBase::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return NSLOCTEXT("Editor", "MobaAbility", "Begin");
+	return FText::FromName(FuncName); /*NSLOCTEXT("Editor", "MobaAbility", "Begin");*/
 }
 
 FLinearColor UMobaAbilityEdGraphNodeBase::GetNodeTitleColor() const
@@ -42,7 +49,8 @@ FLinearColor UMobaAbilityEdGraphNodeBase::GetNodeTitleColor() const
 
 FText UMobaAbilityEdGraphNodeBase::GetTooltipText() const
 {
-	return NSLOCTEXT("EditorExtenstion", "MobaAbility Graph Node Tooltip", "Tooltip");
+	return FText::FromName(Tooltip);
+	/*return NSLOCTEXT("EditorExtenstion", "MobaAbility Graph Node Tooltip", "Tooltip");*/
 }
 
 //FSlateIcon UMobaAbilityEdGraphNodeBase::GetIconAndTint(FLinearColor& OutColor) const

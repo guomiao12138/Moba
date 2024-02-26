@@ -17,17 +17,17 @@ class ABILITY_API UMobaAbility : public UObject
 public:
 
 	UPROPERTY(EditAnywhere)
-	FName name;
+	FName AbilityName;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Start();
 	
 
 	UFUNCTION()
-	void AAAA();
+	void AAAA(FName name);
 
 	UFUNCTION()
-	void CCCC();
+	void CCCC(UAnimationAsset* asset);
 
 	UFUNCTION()
 	void XXXX();

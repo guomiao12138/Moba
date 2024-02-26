@@ -22,9 +22,16 @@ protected:
 
 	virtual FText GetFunctionContextString() const;
 
-	virtual void SetFromFunction(const UFunction* Function);
+
+	FName FuncName;
+	FName Tooltip;
 
 public:
+
+
+	void Init(FName fucnname, FName tooltip);
+	virtual void SetFromFunction(const UFunction* Function);
+
 	virtual void AllocateDefaultPins() override;
 	// ½ÚµãµÄTitle
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;

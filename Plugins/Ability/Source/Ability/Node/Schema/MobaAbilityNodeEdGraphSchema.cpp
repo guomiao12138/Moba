@@ -6,14 +6,19 @@
 #include "Ability/Node/MobaAbilityEdGraphNodeBase.h"
 #include "Ability/MobaAbility.h"
 
+UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
+{
+	AssetClass = UMobaAbility::StaticClass();
+}
+
 void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
 	TArray<FName> FunctionArray;
-	UMobaAbility::StaticClass()->GenerateFunctionList(FunctionArray);
+	AssetClass->GenerateFunctionList(FunctionArray);
 
 	for (auto func : FunctionArray)
 	{
-		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("Editor"), FText::FromName(func), FText()));
+		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(func), FText()));
 		ContextMenuBuilder.AddAction(Action);
 	}
 
@@ -28,7 +33,7 @@ void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGrap
 {
 	if (Context->Node && !Context->Pin)
 	{
-		FToolMenuSection& Section = Menu->AddSection(TEXT("AAAA"), NSLOCTEXT("Editor", "Our Node Context Menu Section Name", "Menu Section Name"));
+		FToolMenuSection& Section = Menu->AddSection(TEXT("MobaAbilityEditor"), NSLOCTEXT("MobaAbilityEditor", "Our Node Context Menu Section Name", "Menu Section Name"));
 		Section.AddMenuEntry(FGenericCommands::Get().Copy);
 		Section.AddMenuEntry(FGenericCommands::Get().Cut);
 		Section.AddMenuEntry(FGenericCommands::Get().Paste);
@@ -45,14 +50,35 @@ void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGrap
 
 UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode)
 {
-	if (FromPin)
-	{
-		FMessageDialog::Open(EAppMsgType::Ok, NSLOCTEXT("Editor", "Print Action With Pin", "Hello World with point"));
-	}
-	else
-	{
-		FMessageDialog::Open(EAppMsgType::Ok, NSLOCTEXT("Editor", "Print Action Without Pin", "Hello World"));
-	}
+	UMobaAbilityEdGraphNodeBase* node = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
+	node->Init(functionName, functionName);
+	node->SetFromFunction(UMobaAbility::StaticClass()->FindFunctionByName(functionName));
+	ParentGraph->Modify();
+	node->SetFlags(RF_Transactional);
+
+	node->Rename(nullptr, ParentGraph, REN_NonTransactional);
+	node->CreateNewGuid();
+	node->NodePosX = Location.X;
+	node->NodePosY = Location.Y;
+
+	node->AllocateDefaultPins();
+
+	ParentGraph->AddNode(node);
+
+	//if (FromPin)
+	//{
+	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *functionName.ToString())));
+	//}
+	//else
+	//{
+	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action Without Pin Hello World %s"), *functionName.ToString())));
+	//}
+
+	return node;
+}
+
+UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode()
+{
 	return nullptr;
 }
 

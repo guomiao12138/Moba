@@ -3,11 +3,11 @@
 
 #include "MobaAbility.h"
 
-void UMobaAbility::AAAA()
+void UMobaAbility::AAAA(FName name)
 {
 }
 
-void UMobaAbility::CCCC()
+void UMobaAbility::CCCC(UAnimationAsset* asset)
 {
 }
 

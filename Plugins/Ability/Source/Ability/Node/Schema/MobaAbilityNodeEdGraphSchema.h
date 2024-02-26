@@ -11,13 +11,16 @@
  */
 
 
-
+class UMobaAbilityEdGraphNodeBase;
+class UMobaAbility;
 UCLASS()
 class ABILITY_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
 {
 	GENERATED_BODY()
 	
 public:
+	UMobaAbilityNodeEdGraphSchema();
+
 	UPROPERTY()
 	TSubclassOf<UObject> AssetClass;
 	/** Begin UEdGraphSchema Interface */
@@ -27,11 +30,14 @@ public:
 	// 右键一个节点或者引脚出现的函数
 	virtual void GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 
-	virtual FLinearColor GetPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::White; }
+	virtual FLinearColor GetPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::White; };
 
 	//virtual FLinearColor GetSecondaryPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::Red; };
 
 	/** End UEdGraphSchema Interface */
+
+	FName FuncName;
+
 
 };
 
@@ -49,13 +55,17 @@ struct FMobaAbilityGraphSchemaAction : public FEdGraphSchemaAction
 
 	FMobaAbilityGraphSchemaAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip)
 		: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), 0)
-	{}
+	{
+		functionName = *InMenuDesc.ToString();
+	}
 
 
 	FName functionName;
 
 	// 核心函数
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
+
+	UMobaAbilityEdGraphNodeBase* CreateNode();
 };
 
 USTRUCT()
