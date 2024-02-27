@@ -48,11 +48,32 @@ void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGrap
 	Super::GetContextMenuActions(Menu, Context);
 }
 
+//UEdGraphPin* UMobaAbilityNodeEdGraphSchema::DropPinOnNode(UEdGraphNode* InTargetNode, const FName& InSourcePinName, const FEdGraphPinType& InSourcePinType, EEdGraphPinDirection InSourcePinDirection) const
+//{
+//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"))));
+//	return nullptr;
+//}
+
 UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode)
+{
+	//if (FromPin)
+	//{
+	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *functionName.ToString())));
+	//}
+	//else
+	//{
+	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action Without Pin Hello World %s"), *functionName.ToString())));
+	//}
+
+	return CreateNode(ParentGraph, Location);
+}
+
+UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph* ParentGraph, const FVector2D Location)
 {
 	UMobaAbilityEdGraphNodeBase* node = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
 	node->Init(functionName, functionName);
-	node->SetFromFunction(UMobaAbility::StaticClass()->FindFunctionByName(functionName));
+	UFunction* Function = UMobaAbility::StaticClass()->FindFunctionByName(functionName);
+	//node->SetFromFunction(Function);
 	ParentGraph->Modify();
 	node->SetFlags(RF_Transactional);
 
@@ -65,21 +86,23 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph
 
 	ParentGraph->AddNode(node);
 
-	//if (FromPin)
-	//{
-	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *functionName.ToString())));
-	//}
-	//else
-	//{
-	//	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action Without Pin Hello World %s"), *functionName.ToString())));
-	//}
+	for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
+	{
+		FProperty* Param = *PropIt;
+
+		const bool bIsFunctionInput = !Param->HasAnyPropertyFlags(CPF_ReturnParm) && (!Param->HasAnyPropertyFlags(CPF_OutParm) || Param->HasAnyPropertyFlags(CPF_ReferenceParm));
+		const bool bIsRefParam = Param->HasAnyPropertyFlags(CPF_ReferenceParm) && bIsFunctionInput;
+
+		const EEdGraphPinDirection Direction = bIsFunctionInput ? EGPD_Input : EGPD_Output;
+
+		UEdGraphNode::FCreatePinParams PinParams;
+		PinParams.bIsReference = bIsRefParam;
+
+		node->CreatePin(Direction, NAME_None, Param->GetFName(), PinParams);
+		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
+	}
 
 	return node;
-}
-
-UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode()
-{
-	return nullptr;
 }
 
 UEdGraphNode* FMobaAbilityGraphSchemaAction_NewSubNode::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode)

@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
 #include "Engine/MemberReference.h"
+#include "Editor/BlueprintGraph/Classes/K2Node.h"
 #include "MobaAbilityEdGraphNodeBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ABILITY_API UMobaAbilityEdGraphNodeBase : public UEdGraphNode
+class ABILITY_API UMobaAbilityEdGraphNodeBase : public UK2Node
 {
 	GENERATED_BODY()
 	
@@ -30,7 +31,7 @@ public:
 
 
 	void Init(FName fucnname, FName tooltip);
-	virtual void SetFromFunction(const UFunction* Function);
+	//virtual void SetFromFunction(const UFunction* Function);
 
 	virtual void AllocateDefaultPins() override;
 	// 节点的Title
@@ -39,6 +40,9 @@ public:
 	virtual FLinearColor GetNodeTitleColor() const override;
 	// Tooltip内容
 	virtual FText GetTooltipText() const override;
-
+	virtual void ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph) override;
 	//virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
+
+
+
 };

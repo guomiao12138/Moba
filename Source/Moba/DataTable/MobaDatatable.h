@@ -14,8 +14,11 @@ struct FCharacterResource : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UObject> Asset;
 
-
+	UPROPERTY(EditAnywhere)
+	int num;
 };
 
 class MOBA_API MobaDatatable

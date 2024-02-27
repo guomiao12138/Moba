@@ -15,6 +15,7 @@ class ABILITY_API UMobaAbility : public UObject
 	GENERATED_BODY()
 
 public:
+	void Activate();
 
 	UPROPERTY(EditAnywhere)
 	FName AbilityName;
@@ -24,7 +25,7 @@ public:
 	
 
 	UFUNCTION()
-	void AAAA(FName name);
+	void AAAA(FName name, int& num);
 
 	UFUNCTION()
 	void CCCC(UAnimationAsset* asset);

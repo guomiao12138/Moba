@@ -7,6 +7,7 @@
 #include "Slate/SGameLayerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
+#include "Ability/MobaAbility.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
@@ -54,6 +55,8 @@ void AMobaPlayerController::SetupInputComponent()
 
 void AMobaPlayerController::ClickPosition()
 {
+	Abilitys[0]->Activate();
+
 	FVector2D screenlocation;
 	GetMousePosition(screenlocation.X, screenlocation.Y);
 	FHitResult hit;
@@ -159,7 +162,7 @@ void AMobaPlayerController::MoveForward(float value)
 		if (auto pawn = GetPawn())
 		{
 			pawn->AddMovementInput(dir);
-			UE_LOG(LogTemp, Display, TEXT("dir : %f , %， %f"), dir.X, dir.Y, dir.Z);
+			//UE_LOG(LogTemp, Display, TEXT("dir : %f , %， %f"), dir.X, dir.Y, dir.Z);
 		}
 	}
 }
