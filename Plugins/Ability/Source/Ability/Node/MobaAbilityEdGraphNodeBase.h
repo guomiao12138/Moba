@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UMobaAbilityEdGraphNodeBase : public UK2Node
+class ABILITY_API UMobaAbilityEdGraphNodeBase : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
@@ -40,9 +40,10 @@ public:
 	virtual FLinearColor GetNodeTitleColor() const override;
 	// TooltipÄÚÈÝ
 	virtual FText GetTooltipText() const override;
-	virtual void ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph) override;
-	//virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
 
+	virtual UObject* GetJumpTargetForDoubleClick() const override;
 
+	virtual bool CanJumpToDefinition() const override;
 
+	virtual void JumpToDefinition() const override;
 };

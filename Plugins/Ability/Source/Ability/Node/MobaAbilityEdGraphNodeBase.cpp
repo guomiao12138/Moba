@@ -57,28 +57,46 @@ FText UMobaAbilityEdGraphNodeBase::GetTooltipText() const
 	/*return NSLOCTEXT("EditorExtenstion", "MobaAbility Graph Node Tooltip", "Tooltip");*/
 }
 
-void UMobaAbilityEdGraphNodeBase::ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
+UObject* UMobaAbilityEdGraphNodeBase::GetJumpTargetForDoubleClick() const
 {
-	Super::ExpandNode(CompilerContext, SourceGraph);
-
-	UEdGraphPin* ExecPin = GetExecPin();
-	UEdGraphPin* ThenPin = GetThenPin();
-	if (ExecPin && ThenPin) {
-
-		// create a CallFunction node
-		//FName MyFunctionName = GET_FUNCTION_NAME_CHECKED(UMobaAbility, FuncName);
-
-		UK2Node_CallFunction* CallFuncNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
-		CallFuncNode->FunctionReference.SetExternalMember(FuncName, UMobaAbility::StaticClass());
-		CallFuncNode->AllocateDefaultPins();
-
-		// move pins
-		CompilerContext.MovePinLinksToIntermediate(*ExecPin, *(CallFuncNode->GetExecPin()));
-		CompilerContext.MovePinLinksToIntermediate(*ThenPin, *(CallFuncNode->GetThenPin()));
-	}
-
-	BreakAllNodeLinks();
+	return nullptr;
 }
+
+bool UMobaAbilityEdGraphNodeBase::CanJumpToDefinition() const
+{
+	if (FuncName.IsNone())
+	{
+		return false;
+	}
+	return true;
+}
+
+void UMobaAbilityEdGraphNodeBase::JumpToDefinition() const
+{
+}
+
+//void UMobaAbilityEdGraphNodeBase::ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
+//{
+//	Super::ExpandNode(CompilerContext, SourceGraph);
+//
+//	UEdGraphPin* ExecPin = GetExecPin();
+//	UEdGraphPin* ThenPin = GetThenPin();
+//	if (ExecPin && ThenPin) {
+//
+//		// create a CallFunction node
+//		//FName MyFunctionName = GET_FUNCTION_NAME_CHECKED(UMobaAbility, FuncName);
+//
+//		UK2Node_CallFunction* CallFuncNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
+//		CallFuncNode->FunctionReference.SetExternalMember(FuncName, UMobaAbility::StaticClass());
+//		CallFuncNode->AllocateDefaultPins();
+//
+//		// move pins
+//		CompilerContext.MovePinLinksToIntermediate(*ExecPin, *(CallFuncNode->GetExecPin()));
+//		CompilerContext.MovePinLinksToIntermediate(*ThenPin, *(CallFuncNode->GetThenPin()));
+//	}
+//
+//	BreakAllNodeLinks();
+//}
 
 //FSlateIcon UMobaAbilityEdGraphNodeBase::GetIconAndTint(FLinearColor& OutColor) const
 //{

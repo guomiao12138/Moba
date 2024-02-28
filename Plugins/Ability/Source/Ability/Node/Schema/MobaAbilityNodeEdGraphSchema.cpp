@@ -29,6 +29,18 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 	Super::GetGraphContextActions(ContextMenuBuilder);
 }
 
+//bool UMobaAbilityNodeEdGraphSchema::CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const
+//{
+//	PinA->Modify();
+//	PinB->Modify();
+//
+//	PinA->MakeLinkTo(PinB);
+//
+//	//UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(PinA->GetOwningNode());
+//
+//	return true;
+//}
+
 void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {
 	if (Context->Node && !Context->Pin)
@@ -140,3 +152,4 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction_NewSubNode::PerformAction(UEdGraph* 
 //}
 //	return nullptr;
 //}
+

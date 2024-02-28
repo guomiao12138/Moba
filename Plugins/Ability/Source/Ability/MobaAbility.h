@@ -15,6 +15,8 @@ class ABILITY_API UMobaAbility : public UObject
 	GENERATED_BODY()
 
 public:
+	//virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
+
 	void Activate();
 
 	UPROPERTY(EditAnywhere)

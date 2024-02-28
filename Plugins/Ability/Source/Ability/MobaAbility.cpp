@@ -5,6 +5,7 @@
 
 void UMobaAbility::Activate()
 {
+	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
 	Start();
 }
 
