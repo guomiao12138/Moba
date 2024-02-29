@@ -26,7 +26,7 @@ public:
 	void Start();
 	
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AAAA(FName name, int& num);
 
 	UFUNCTION()
