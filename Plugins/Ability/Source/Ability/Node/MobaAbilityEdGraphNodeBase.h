@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
+#include "Engine/MemberReference.h"
+#include "Editor/BlueprintGraph/Classes/K2Node.h"
 #include "MobaAbilityEdGraphNodeBase.generated.h"
 
 /**
@@ -14,7 +16,23 @@ class ABILITY_API UMobaAbilityEdGraphNodeBase : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
+protected:
+
+	UPROPERTY()
+	FMemberReference FunctionReference;
+
+	virtual FText GetFunctionContextString() const;
+
+
+	FName FuncName;
+	FName Tooltip;
+
 public:
+
+
+	void Init(FName fucnname, FName tooltip);
+	//virtual void SetFromFunction(const UFunction* Function);
+
 	virtual void AllocateDefaultPins() override;
 	// 节点的Title
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
@@ -23,5 +41,9 @@ public:
 	// Tooltip内容
 	virtual FText GetTooltipText() const override;
 
-	//virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
+	virtual UObject* GetJumpTargetForDoubleClick() const override;
+
+	virtual bool CanJumpToDefinition() const override;
+
+	virtual void JumpToDefinition() const override;
 };

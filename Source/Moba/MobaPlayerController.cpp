@@ -3,19 +3,24 @@
 
 #include "MobaPlayerController.h"
 #include "Components/InputComponent.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaCharacterBase.h"
 #include "Slate/SGameLayerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
+#include "Ability/MobaAbility.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
+
 }
 
 void AMobaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	FInputModeGameAndUI gameinputmode;
+	gameinputmode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+	SetInputMode(gameinputmode);
+	
 	CreateDefaultHero();
 
 	if (Hero)
@@ -50,6 +55,8 @@ void AMobaPlayerController::SetupInputComponent()
 
 void AMobaPlayerController::ClickPosition()
 {
+	Abilitys[0]->Activate();
+
 	FVector2D screenlocation;
 	GetMousePosition(screenlocation.X, screenlocation.Y);
 	FHitResult hit;
@@ -73,9 +80,14 @@ FVector AMobaPlayerController::IsMoveCamera()
 {
 	FVector2D mousePosition;
 	int sizeX, sizeY;
-	FVector2D ViewportPosition;
 	FVector dir(0, 0, 0);
-
+	FVector2D ViewportPosition;
+	static int dirstep = 1;
+	static int forwardstep = dirstep;
+	static int backstep = -dirstep;
+	static int rightstep = dirstep;
+	static int leftstep = -dirstep;
+	
 	if (GetMousePosition(mousePosition.X, mousePosition.Y))
 	{
 		GetViewportSize(sizeX, sizeY);
@@ -100,39 +112,39 @@ FVector AMobaPlayerController::IsMoveCamera()
 
 		if (mousePosition.X + interval >= sizeX && mousePosition.Y + interval >= sizeY)
 		{
-			dir.X = 1;
-			dir.Y = -1;
+			dir.X = rightstep;
+			dir.Y = backstep;
 		}
 		else if (mousePosition.X + interval >= sizeX && mousePosition.Y - interval <= 0)
 		{
-			dir.X = -1;
-			dir.Y = -1;
+			dir.X = rightstep;
+			dir.Y = forwardstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y + interval >= sizeY)
 		{
-			dir.X = 1;
-			dir.Y = 1;
+			dir.X = leftstep;
+			dir.Y = backstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y - interval <= 0)
 		{
-			dir.X = -1;
-			dir.Y = 1;
+			dir.X = leftstep;
+			dir.Y = forwardstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y == LastPosition.Y)
 		{
-			dir.Y = 1;
+			dir.Y = leftstep;
 		}
 		else if (mousePosition.X + interval >= sizeX && mousePosition.Y == LastPosition.Y)
 		{
-			dir.Y = -1;
+			dir.Y = rightstep;
 		}
 		else if (mousePosition.Y - interval <= 0 && mousePosition.X == LastPosition.X)
 		{
-			dir.X = -1;
+			dir.X = forwardstep;
 		}
 		else if (mousePosition.Y + interval >= sizeY && mousePosition.X == LastPosition.X)
 		{
-			dir.X = 1;
+			dir.X = backstep;
 		}		
 
 
@@ -145,13 +157,12 @@ FVector AMobaPlayerController::IsMoveCamera()
 void AMobaPlayerController::MoveForward(float value)
 {
 	FVector dir = IsMoveCamera();
-	//UE_LOG(LogTemp, Display, TEXT("dir : %f , %f"), dir.X, dir.Y);
-
 	if (!dir.IsZero())
 	{
 		if (auto pawn = GetPawn())
 		{
 			pawn->AddMovementInput(dir);
+			//UE_LOG(LogTemp, Display, TEXT("dir : %f , %， %f"), dir.X, dir.Y, dir.Z);
 		}
 	}
 }
@@ -170,16 +181,13 @@ void AMobaPlayerController::MoveRight(float value)
 
 void AMobaPlayerController::CreateDefaultHero()
 {
-	TArray<AActor*> startlocation;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), startlocation);
-
 	FActorSpawnParameters spawnInfo;
 	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnInfo.ObjectFlags |= RF_Transient;
 
-	if (Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, GetPawn()->GetActorTransform(), spawnInfo))
+	Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, GetPawn()->GetActorTransform(), spawnInfo);
+	if(Hero)
 	{
 		Hero->InitController(this);
 	}
-	//Hero->setcontro
 }
