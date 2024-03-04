@@ -21,29 +21,32 @@ protected:
 	UPROPERTY()
 	FMemberReference FunctionReference;
 
-	virtual FText GetFunctionContextString() const;
-
+	TSharedPtr<class FDocumentTracker> DocumentManager;
 
 	FName FuncName;
 	FName Tooltip;
 
 public:
 
-
-	void Init(FName fucnname, FName tooltip);
-	//virtual void SetFromFunction(const UFunction* Function);
+	UMobaAbilityEdGraphNodeBase();
+	//void Init(FName fucnname, FName tooltip);
 
 	virtual void AllocateDefaultPins() override;
-	// 节点的Title
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-	// 节点Title的颜色
 	virtual FLinearColor GetNodeTitleColor() const override;
-	// Tooltip内容
 	virtual FText GetTooltipText() const override;
-
 	virtual UObject* GetJumpTargetForDoubleClick() const override;
-
 	virtual bool CanJumpToDefinition() const override;
-
 	virtual void JumpToDefinition() const override;
+
+
+	virtual FText GetFunctionContextString() const;
+	virtual void SetFromFunction(const UFunction* Function);
+	void SetDoubleClickEvent(FSingleNodeEvent InSingleNodeEvent);
+
+
+	//UFUNCTION()
+	//void aaa();
+	//TSharedPtr<SGraphEditor> OpenGraphAndBringToFront(UEdGraph* Graph, bool bSetFocus = true);
+	static FSingleNodeEvent SingleNodeEvent;
 };

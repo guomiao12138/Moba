@@ -45,6 +45,8 @@ public class Ability : ModuleRules
 				"LevelEditor",
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework",
+
+                "GraphEditor",
                 "ToolMenus",
                 "BlueprintGraph",
                 "KismetCompiler",

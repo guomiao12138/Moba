@@ -14,6 +14,9 @@ class ABILITY_API UMobaAbility : public UObject
 {
 	GENERATED_BODY()
 
+private:
+	class UMobaAbilityEdGraph* Graph;
+
 public:
 	//virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
 
@@ -35,5 +38,5 @@ public:
 	UFUNCTION()
 	void XXXX();
 
-	TObjectPtr<UEdGraph> EdGraph;
+	UMobaAbilityEdGraph* SetGraph(UMobaAbilityEdGraph* InGraph) { return Graph = InGraph; }
 };

@@ -41,6 +41,8 @@ void FAbilityAssetTypeAction::OpenAssetEditor(const TArray<UObject*>& InObjects,
 		if (UMobaAbility* OurAsset = Cast<UMobaAbility>(*ObjectIterator))
 		{
 			const TSharedRef<FMobaAbilityEditorToolKit> RecoilAssetEditorToolKit = MakeShareable(new FMobaAbilityEditorToolKit());
+			//OurAsset->SetGraph(NewObject<UMobaAbilityEdGraph>(OurAsset));
+
 			RecoilAssetEditorToolKit->InitializeAssetEditor(ToolKitModeType, EditWithinLevelEditor, OurAsset);
 		}
 	}

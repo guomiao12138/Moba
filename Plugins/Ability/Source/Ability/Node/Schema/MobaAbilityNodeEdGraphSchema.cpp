@@ -5,6 +5,7 @@
 #include "Framework/Commands/GenericCommands.h"
 #include "Ability/Node/MobaAbilityEdGraphNodeBase.h"
 #include "Ability/MobaAbility.h"
+#include "SGraphNode.h"
 
 UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
 {
@@ -82,20 +83,32 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph
 
 UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph* ParentGraph, const FVector2D Location)
 {
-	UMobaAbilityEdGraphNodeBase* node = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
-	node->Init(functionName, functionName);
-	UFunction* Function = UMobaAbility::StaticClass()->FindFunctionByName(functionName);
+	//UMobaAbilityEdGraphNodeBase* node = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
+	//node->Init(functionName, functionName);
+	UFunction* Function = UMobaAbility::StaticClass()->FindFunctionByName(FunctionName);
 	//node->SetFromFunction(Function);
 	ParentGraph->Modify();
-	node->SetFlags(RF_Transactional);
+	//node->SetFlags(RF_Transactional);
 
-	node->Rename(nullptr, ParentGraph, REN_NonTransactional);
-	node->CreateNewGuid();
+	//node->Rename(nullptr, ParentGraph, REN_NonTransactional);
+	//node->CreateNewGuid();
+	//node->NodePosX = Location.X;
+	//node->NodePosY = Location.Y;
+
+	//node->AllocateDefaultPins();
+
+	FGraphNodeCreator<UMobaAbilityEdGraphNodeBase> NodeCreator(*ParentGraph);
+	UMobaAbilityEdGraphNodeBase* node = NodeCreator.CreateNode(false);
+	node->SetFromFunction(Function);
+	node->SetFlags(RF_Transactional);
 	node->NodePosX = Location.X;
 	node->NodePosY = Location.Y;
-
 	node->AllocateDefaultPins();
+	NodeCreator.Finalize();
 
+	FSingleNodeEvent SingleNodeEvent;
+	//SingleNodeEvent.CreateUObject(this, &);
+	//node->CreateVisualWidget().Get()->SetDoubleClickEvent();
 	ParentGraph->AddNode(node);
 
 	for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
