@@ -7,28 +7,44 @@
 #include "Editor/KismetCompiler/Public/KismetCompiler.h"
 #include "Ability/MobaAbility.h"
 
+#include "SGraphNode.h"
+#include "WorkflowOrientedApp/WorkflowTabManager.h"
+#include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
+
 FText UMobaAbilityEdGraphNodeBase::GetFunctionContextString() const
 {
 	return FText();
 }
 
-//void UMobaAbilityEdGraphNodeBase::SetFromFunction(const UFunction* Function)
+void UMobaAbilityEdGraphNodeBase::SetFromFunction(const UFunction* Function)
+{
+	if (Function != NULL)
+	{
+		//bIsPureFunc = Function->HasAnyFunctionFlags(FUNC_BlueprintPure);
+		//bIsConstFunc = Function->HasAnyFunctionFlags(FUNC_Const);
+		//DetermineWantsEnumToExecExpansion(Function);
+
+		FunctionReference.SetFromField<UFunction>(Function, false);
+	}
+}
+
+void UMobaAbilityEdGraphNodeBase::SetDoubleClickEvent(FSingleNodeEvent InSingleNodeEvent)
+{
+	//FSingleNodeEvent SingleNodeEvent;
+	//SingleNodeEvent.BindUFunction(this, FName("JumpToDefinition"));
+	//CreateVisualWidget().Get()->SetDoubleClickEvent(SingleNodeEvent);
+}
+
+
+//void UMobaAbilityEdGraphNodeBase::Init(FName fucnname, FName tooltip)
 //{
-//	if (Function != NULL)
-//	{
-//		//bIsPureFunc = Function->HasAnyFunctionFlags(FUNC_BlueprintPure);
-//		//bIsConstFunc = Function->HasAnyFunctionFlags(FUNC_Const);
-//		//DetermineWantsEnumToExecExpansion(Function);
-//
-//		FunctionReference.SetFromField<UFunction>(Function, false);
-//	}
+//	FuncName = fucnname;
+//	Tooltip = tooltip;
 //}
 
-
-void UMobaAbilityEdGraphNodeBase::Init(FName fucnname, FName tooltip)
+UMobaAbilityEdGraphNodeBase::UMobaAbilityEdGraphNodeBase()
 {
-	FuncName = fucnname;
-	Tooltip = tooltip;
+	DocumentManager = MakeShareable(new FDocumentTracker);
 }
 
 void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
@@ -43,7 +59,7 @@ void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
 
 FText UMobaAbilityEdGraphNodeBase::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromName(FuncName); /*NSLOCTEXT("Editor", "MobaAbility", "Begin");*/
+	return FText::FromName(FunctionReference.GetMemberName()); /*NSLOCTEXT("Editor", "MobaAbility", "Begin");*/
 }
 
 FLinearColor UMobaAbilityEdGraphNodeBase::GetNodeTitleColor() const
@@ -73,7 +89,69 @@ bool UMobaAbilityEdGraphNodeBase::CanJumpToDefinition() const
 
 void UMobaAbilityEdGraphNodeBase::JumpToDefinition() const
 {
+	TSharedPtr<SGraphEditor> GraphEditor;
+	//if (bRequestRename)
+	//{
+	//	// If we are renaming, the graph will be open already, just grab the tab and it's content and jump to the node.
+	//	TSharedPtr<SDockTab> ActiveTab = DocumentManager->GetActiveTab();
+	//	check(ActiveTab.IsValid());
+	//	GraphEditor = StaticCastSharedRef<SGraphEditor>(ActiveTab->GetContent());
+	//}
+	//else
+	//{
+	//	// Open a graph editor and jump to the node
+
+		TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(Cast<UEdGraph>(GetOuter()));
+
+		TSharedPtr<SDockTab> TabWithGraph = DocumentManager->OpenDocument(Payload, FDocumentTracker::OpenNewDocument);
+		//if (TabWithGraph.IsValid())
+		//{
+
+			// We know that the contents of the opened tabs will be a graph editor.
+		GraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
+		GraphEditor->CaptureKeyboard();
+
+	//}
+
+	if (GraphEditor.IsValid())
+	{
+		GraphEditor->JumpToNode(this, false);
+	}
 }
+
+//TSharedPtr<SGraphEditor> UMobaAbilityEdGraphNodeBase::OpenGraphAndBringToFront(UEdGraph* Graph, bool bSetFocus)
+//{
+//	if (!IsValid(Graph))
+//	{
+//		return TSharedPtr<SGraphEditor>();
+//	}
+//
+//	// First, switch back to standard mode
+//	//SetCurrentMode(FBlueprintEditorApplicationModes::StandardBlueprintEditorMode);
+//
+//	// This will either reuse an existing tab or spawn a new one
+//	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(Graph);
+//
+//	TSharedPtr<SDockTab> TabWithGraph = DocumentManager->OpenDocument(Payload, FDocumentTracker::OpenNewDocument);
+//	if (TabWithGraph.IsValid())
+//	{
+//
+//		// We know that the contents of the opened tabs will be a graph editor.
+//		TSharedRef<SGraphEditor> NewGraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
+//		NewGraphEditor->CaptureKeyboard();
+//
+//		// Handover the keyboard focus to the new graph editor widget.
+//		if (bSetFocus)
+//		{
+//		}
+//
+//		return NewGraphEditor;
+//	}
+//	else
+//	{
+//		return TSharedPtr<SGraphEditor>();
+//	}
+//}
 
 //void UMobaAbilityEdGraphNodeBase::ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
 //{

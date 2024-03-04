@@ -46,10 +46,10 @@ public class Ability : ModuleRules
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework",
 
+                "GraphEditor",
                 "ToolMenus",
                 "BlueprintGraph",
                 "KismetCompiler",
-                "EngineAssetDefinitions",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
