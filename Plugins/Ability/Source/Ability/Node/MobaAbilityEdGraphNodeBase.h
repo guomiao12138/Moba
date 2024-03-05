@@ -23,8 +23,8 @@ protected:
 
 	TSharedPtr<class FDocumentTracker> DocumentManager;
 
-	FName FuncName;
-	FName Tooltip;
+	//FName FuncName;
+	//FName Tooltip;
 
 public:
 

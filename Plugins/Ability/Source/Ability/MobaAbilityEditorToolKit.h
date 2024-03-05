@@ -4,10 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Toolkits/AssetEditorToolkit.h"
+#include "WorkflowOrientedApp/WorkflowTabManager.h"
 
 /**
  * 
  */
+//struct FMobaAbilityGraphEditorSummoner : public FDocumentTabFactoryForObjects<UEdGraph>
+//{
+//	FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp);
+//};
+
+
 class ABILITY_API FMobaAbilityEditorToolKit final : public FAssetEditorToolkit
 {
 public:
@@ -40,12 +47,16 @@ public:
 
 	void SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents);
 
+	void Find(const UEdGraphNode* node);
 
 
+	TSharedPtr<SDockTab> OpenDocument(UObject* DocumentID, FDocumentTracker::EOpenDocumentCause Cause);
 private:
 	// 生成细节面板
 	TSharedRef<SDockTab> SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs) const;
-	TSharedRef<SDockTab> SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs) const;
+	TSharedRef<SDockTab> SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs);
 	TSharedPtr<FWorkspaceItem> WorkSpaceItem;
 	TObjectPtr<UEdGraph> EdGraph;
+
+	TSharedPtr<class FDocumentTracker> DocumentManager;
 };

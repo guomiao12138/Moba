@@ -2,14 +2,23 @@
 
 
 #include "MobaAbilityEdGraphNodeBase.h"
-#include "K2Node_CallFunction.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Editor/KismetCompiler/Public/KismetCompiler.h"
 #include "Ability/MobaAbility.h"
+#include "Ability/MobaAbilityEdGraph.h"
+#include "Ability/MobaAbilityEditorToolKit.h"
 
+#include "Kismet/KismetSystemLibrary.h"
 #include "SGraphNode.h"
 #include "WorkflowOrientedApp/WorkflowTabManager.h"
 #include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
+#include "Editor/BlueprintGraph/Public/BlueprintEditorSettings.h"
+#include "Editor/UnrealEd/Public/SourceCodeNavigation.h"
+#include "Editor/UnrealEd/Public/UnrealEdGlobals.h"
+#include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
+#include "Preferences/UnrealEdOptions.h"
+
+#include "Framework/Notifications/NotificationManager.h"
+#include "Widgets/Notifications/SNotificationList.h"
+
 
 FText UMobaAbilityEdGraphNodeBase::GetFunctionContextString() const
 {
@@ -44,7 +53,7 @@ void UMobaAbilityEdGraphNodeBase::SetDoubleClickEvent(FSingleNodeEvent InSingleN
 
 UMobaAbilityEdGraphNodeBase::UMobaAbilityEdGraphNodeBase()
 {
-	DocumentManager = MakeShareable(new FDocumentTracker);
+
 }
 
 void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
@@ -69,7 +78,7 @@ FLinearColor UMobaAbilityEdGraphNodeBase::GetNodeTitleColor() const
 
 FText UMobaAbilityEdGraphNodeBase::GetTooltipText() const
 {
-	return FText::FromName(Tooltip);
+	return  FText::FromName(FunctionReference.GetMemberName());
 	/*return NSLOCTEXT("EditorExtenstion", "MobaAbility Graph Node Tooltip", "Tooltip");*/
 }
 
@@ -80,7 +89,7 @@ UObject* UMobaAbilityEdGraphNodeBase::GetJumpTargetForDoubleClick() const
 
 bool UMobaAbilityEdGraphNodeBase::CanJumpToDefinition() const
 {
-	if (FuncName.IsNone())
+	if (FunctionReference.GetMemberName().IsNone())
 	{
 		return false;
 	}
@@ -89,36 +98,68 @@ bool UMobaAbilityEdGraphNodeBase::CanJumpToDefinition() const
 
 void UMobaAbilityEdGraphNodeBase::JumpToDefinition() const
 {
-	TSharedPtr<SGraphEditor> GraphEditor;
-	//if (bRequestRename)
-	//{
-	//	// If we are renaming, the graph will be open already, just grab the tab and it's content and jump to the node.
-	//	TSharedPtr<SDockTab> ActiveTab = DocumentManager->GetActiveTab();
-	//	check(ActiveTab.IsValid());
-	//	GraphEditor = StaticCastSharedRef<SGraphEditor>(ActiveTab->GetContent());
-	//}
-	//else
-	//{
-	//	// Open a graph editor and jump to the node
-
-		TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(Cast<UEdGraph>(GetOuter()));
-
-		TSharedPtr<SDockTab> TabWithGraph = DocumentManager->OpenDocument(Payload, FDocumentTracker::OpenNewDocument);
-		//if (TabWithGraph.IsValid())
-		//{
-
-			// We know that the contents of the opened tabs will be a graph editor.
-		GraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
-		GraphEditor->CaptureKeyboard();
-
-	//}
-
-	if (GraphEditor.IsValid())
+	if (ensure(GUnrealEd) && GUnrealEd->GetUnrealEdOptions()->IsCPPAllowed())
 	{
-		GraphEditor->JumpToNode(this, false);
-	}
-}
+		// For native functions, try going to the function definition in C++ if available
+		if (UFunction* TargetFunction = UMobaAbility::StaticClass()->FindFunctionByName(FunctionReference.GetMemberName()))
+		{
+			if (TargetFunction->IsNative())
+			{
+				// First try the nice way that will get to the right line number
+				bool bSucceeded = false;
+				const bool bNavigateToNativeFunctions = GetDefault<UBlueprintEditorSettings>()->bNavigateToNativeFunctionsFromCallNodes;
 
+				if (bNavigateToNativeFunctions)
+				{
+					if (FSourceCodeNavigation::CanNavigateToFunction(TargetFunction))
+					{
+						bSucceeded = FSourceCodeNavigation::NavigateToFunction(TargetFunction);
+					}
+
+					// Failing that, fall back to the older method which will still get the file open assuming it exists
+					if (!bSucceeded)
+					{
+						FString NativeParentClassHeaderPath;
+						const bool bFileFound = FSourceCodeNavigation::FindClassHeaderPath(TargetFunction, NativeParentClassHeaderPath) && (IFileManager::Get().FileSize(*NativeParentClassHeaderPath) != INDEX_NONE);
+						if (bFileFound)
+						{
+							const FString AbsNativeParentClassHeaderPath = FPaths::ConvertRelativePathToFull(NativeParentClassHeaderPath);
+							bSucceeded = FSourceCodeNavigation::OpenSourceFile(AbsNativeParentClassHeaderPath);
+						}
+					}
+				}
+				else
+				{
+					// Inform user that the function is native, give them opportunity to enable navigation to native
+					// functions:
+					FNotificationInfo Info(FText::FromString("Navigation to Native (c++) Functions Disabled"));
+					Info.ExpireDuration = 10.0f;
+					Info.CheckBoxState = bNavigateToNativeFunctions ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+
+					Info.CheckBoxStateChanged = FOnCheckStateChanged::CreateStatic(
+						[](ECheckBoxState NewState)
+						{
+							const FScopedTransaction Transaction(FText::FromString("ChangeNavigateToNativeFunctionsFromCallNodes Change Navigate to Native Functions from Call Nodes Setting"));
+
+							UBlueprintEditorSettings* MutableEditorSetings = GetMutableDefault<UBlueprintEditorSettings>();
+							MutableEditorSetings->Modify();
+							MutableEditorSetings->bNavigateToNativeFunctionsFromCallNodes = (NewState == ECheckBoxState::Checked) ? true : false;
+							MutableEditorSetings->SaveConfig();
+						}
+					);
+					Info.CheckBoxText = FText::FromString("EnableNavigationToNative Navigate to Native Functions from Blueprint Call Nodes?");
+
+					FSlateNotificationManager::Get().AddNotification(Info);
+				}
+
+				return;
+			}
+		}
+	}
+
+	// Otherwise, fall back to the inherited behavior which should go to the function entry node
+	Super::JumpToDefinition();
+}
 //TSharedPtr<SGraphEditor> UMobaAbilityEdGraphNodeBase::OpenGraphAndBringToFront(UEdGraph* Graph, bool bSetFocus)
 //{
 //	if (!IsValid(Graph))
