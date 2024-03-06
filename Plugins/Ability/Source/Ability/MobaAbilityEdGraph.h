@@ -9,13 +9,25 @@
 /**
  * 
  */
+class UMobaAbilityEdGraphNodeBase;
+
 UCLASS()
 class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
 {
 	GENERATED_BODY()
 	
-public:
+protected:
+	UMobaAbilityEdGraphNodeBase* BeginNode;
 
-	 //virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
+public:
+	UMobaAbilityEdGraph();
+
+	 virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
+
+	 virtual void BuildNode();
+
+	 virtual UMobaAbilityEdGraphNodeBase* CreateBeginNode();
+
+
 
 };

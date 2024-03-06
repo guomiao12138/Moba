@@ -44,6 +44,26 @@ void UMobaAbilityEdGraphNodeBase::SetDoubleClickEvent(FSingleNodeEvent InSingleN
 	//CreateVisualWidget().Get()->SetDoubleClickEvent(SingleNodeEvent);
 }
 
+UEdGraphPin* UMobaAbilityEdGraphNodeBase::GetExecutePin()
+{
+	return FindPin(UEdGraphSchema_K2::PN_Execute);
+}
+
+UEdGraphPin* UMobaAbilityEdGraphNodeBase::GetThenPin()
+{
+	return FindPin(UEdGraphSchema_K2::PN_Then);
+}
+
+void UMobaAbilityEdGraphNodeBase::SetNodeTitle(FName name)
+{
+	FunctionReference.SetMemberName(name);
+}
+
+void UMobaAbilityEdGraphNodeBase::CallFunction()
+{
+	GetOuter()->GetOuter()->ProcessEvent(FunctionReference.GetMemberParentClass()->FindFunctionByName(FunctionReference.GetMemberName()), NULL);
+}
+
 
 //void UMobaAbilityEdGraphNodeBase::Init(FName fucnname, FName tooltip)
 //{
@@ -139,7 +159,7 @@ void UMobaAbilityEdGraphNodeBase::JumpToDefinition() const
 					Info.CheckBoxStateChanged = FOnCheckStateChanged::CreateStatic(
 						[](ECheckBoxState NewState)
 						{
-							const FScopedTransaction Transaction(FText::FromString("ChangeNavigateToNativeFunctionsFromCallNodes Change Navigate to Native Functions from Call Nodes Setting"));
+							const FScopedTransaction Transaction(FText::FromString("ChangeNavigateToNative FunctionsFromCallNodes Change Navigate to Native Functions from Call Nodes Setting"));
 
 							UBlueprintEditorSettings* MutableEditorSetings = GetMutableDefault<UBlueprintEditorSettings>();
 							MutableEditorSetings->Modify();

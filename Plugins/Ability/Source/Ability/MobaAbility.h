@@ -18,7 +18,7 @@ private:
 	class UMobaAbilityEdGraph* Graph;
 
 public:
-	//virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
+	//virtual void ProcessEvent(UFunction* Function, void* Parms) override;
 
 	void Activate();
 

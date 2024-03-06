@@ -51,11 +51,48 @@ void FMobaAbilityEditorToolKit::UnregisterTabSpawners(const TSharedRef<FTabManag
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 }
 
+void FMobaAbilityEditorToolKit::SaveAsset_Execute()
+{
+	//if (HasEditingObject())
+	//{
+	//	return;
+	//}
+	FAssetEditorToolkit::SaveAsset_Execute();
+	//TArray<UObject*> ObjectsToSave;
+	//GetSaveableObjects(ObjectsToSave);
+
+	//if (ObjectsToSave.Num() == 0)
+	//{
+	//	return;
+	//}
+	//TArray<UPackage*> PackagesToSave;
+
+	//for (UObject* Object : ObjectsToSave)
+	//{
+	//	if ((Object == nullptr) || !Object->IsAsset())
+	//	{
+	//		// Log an invalid object but don't try to save it
+	//		//UE_LOG(LogAssetEditorToolkit, Log, TEXT("Invalid object to save: %s"), (Object != nullptr) ? *Object->GetFullName() : TEXT("Null Object"));
+	//	}
+	//	else
+	//	{
+	//		PackagesToSave.Add(Object->GetOutermost());
+	//	}
+	//}
+
+	//for (auto obj : PackagesToSave)
+	//{
+	//	obj->PreSave();
+	//	UPackage::Save();
+	//}
+
+}
+
 void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InAssets)
 {
 
 	//DocumentManager = MakeShareable(new FDocumentTracker);
-
+	//bCheckDirtyOnAssetSave = true;
 
 	//if (!DocumentManager.IsValid())
 	//{
@@ -70,14 +107,14 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	//	}
 	//}
 
-	UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>();
+	UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>(InAssets);
 	Cast<UMobaAbility>(InAssets)->SetGraph(graph);
 	EdGraph = graph;
 	EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
 	EdGraph->AddToRoot();
-
-	UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
-	EdGraph->AddNode(EdGraphNode);
+	graph->CreateBeginNode();
+	//UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
+	//EdGraph->AddNode(EdGraphNode);
 
 	const TSharedRef<FTabManager::FLayout> StandaloneRecoilAssetLayout = FTabManager::NewLayout("StandaloneMobaAbilityLayout_Layout")
 		->AddArea
@@ -106,7 +143,7 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	//RegenerateMenusAndToolbars();
 }
 
-UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
+UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
 {
 	check(ParentGraph != nullptr)
 	UMobaAbilityEdGraphNodeBase* ResultGraphNode = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);

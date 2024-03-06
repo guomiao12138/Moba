@@ -24,10 +24,13 @@ public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;// Must implement in derived class!
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
 	virtual void UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
+	virtual void SaveAsset_Execute() override;
+
+
 
 	void InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InAssets);
 
-	class UMobaAbilityEdGraphNodeBase* CreateNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
+	class UMobaAbilityEdGraphNodeBase* CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
 
 	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);
 	void OnFocused(const TSharedRef<SGraphEditor>& InSGraphEditor);

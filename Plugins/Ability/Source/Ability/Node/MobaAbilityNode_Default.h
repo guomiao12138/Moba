@@ -15,6 +15,7 @@ class ABILITY_API UMobaAbilityNode_Default : public UMobaAbilityEdGraphNodeBase
 	GENERATED_BODY()
 	
 public:
+	UMobaAbilityNode_Default();
 	virtual void AllocateDefaultPins() override;
-
+	virtual FLinearColor GetNodeTitleColor() const override;
 };
