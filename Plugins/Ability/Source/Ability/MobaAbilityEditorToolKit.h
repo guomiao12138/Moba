@@ -24,7 +24,7 @@ public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;// Must implement in derived class!
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
 	virtual void UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
-	virtual void SaveAsset_Execute() override;
+	//virtual void SaveAsset_Execute() override;
 
 
 

@@ -24,32 +24,62 @@ void UMobaAbilityEdGraph::NotifyGraphChanged(const FEdGraphEditAction& Action)
 
 void UMobaAbilityEdGraph::BuildNode()
 {
-	TArray<FFrame> framestack;
-	auto linkPins = BeginNode->GetThenPin()->LinkedTo;
-	for (auto p : linkPins)
-	{
-		if (auto n = Cast<UMobaAbilityEdGraphNodeBase>(p->GetOuter()))
-		{
-			n->CallFunction();
-		}
+	//TArray<FFrame> framestack;
+	//auto linkPins = BeginNode->GetThenPin()->LinkedTo;
+	//for (auto p : linkPins)
+	//{
+	//	if (auto n = Cast<UMobaAbilityEdGraphNodeBase>(p->GetOuter()))
+	//	{
+	//		n->CallFunction();
+	//	}
 
+	//}
+
+}
+
+void UMobaAbilityEdGraph::ActiveEventNode(FName eventname)
+{
+	if (!EventNodeMap.Contains(eventname))
+	{
+		return;
+	}
+	TArray<UEdGraphPin*> links = EventNodeMap[eventname]->GetThenPin()->LinkedTo;
+
+	TArray<UMobaAbilityEdGraphNodeBase*> nodes;
+
+	UMobaAbilityEdGraphNodeBase* next = nullptr;
+	for (auto link : links)
+	{
+		next = Cast<UMobaAbilityEdGraphNodeBase>(link->GetOuter());
+		while (next)
+		{
+			nodes.Add(next);
+			if (next->GetThenPin()->LinkedTo.Num() > 0)
+			{
+				next = Cast<UMobaAbilityEdGraphNodeBase>(next->GetThenPin()->LinkedTo[0]->GetOuter());
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
 
 }
 
-UMobaAbilityEdGraphNodeBase* UMobaAbilityEdGraph::CreateBeginNode()
+UMobaAbilityEdGraphNodeBase* UMobaAbilityEdGraph::CreateDefaultNode(FName eventname)
 {
 	UMobaAbilityNode_Default* ResultGraphNode = NewObject<UMobaAbilityNode_Default>(this);
 	Modify();
 	ResultGraphNode->SetFlags(RF_Transactional);
-	ResultGraphNode->SetNodeTitle(TEXT("Begin"));
+	ResultGraphNode->SetNodeTitle(eventname);
 	ResultGraphNode->Rename(nullptr, this, REN_NonTransactional);
 	ResultGraphNode->CreateNewGuid();
 	ResultGraphNode->NodePosX = 0;
-	ResultGraphNode->NodePosY = 0;
+	ResultGraphNode->NodePosY = EventNodeMap.Num() * 5;
 
 	ResultGraphNode->AllocateDefaultPins();
 	AddNode(ResultGraphNode);
-	BeginNode = ResultGraphNode;
+	EventNodeMap.Add(eventname, ResultGraphNode);
 	return ResultGraphNode;
 }

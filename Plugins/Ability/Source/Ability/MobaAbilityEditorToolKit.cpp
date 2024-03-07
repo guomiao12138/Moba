@@ -51,42 +51,12 @@ void FMobaAbilityEditorToolKit::UnregisterTabSpawners(const TSharedRef<FTabManag
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 }
 
-void FMobaAbilityEditorToolKit::SaveAsset_Execute()
-{
-	//if (HasEditingObject())
-	//{
-	//	return;
-	//}
-	FAssetEditorToolkit::SaveAsset_Execute();
-	//TArray<UObject*> ObjectsToSave;
-	//GetSaveableObjects(ObjectsToSave);
-
-	//if (ObjectsToSave.Num() == 0)
-	//{
-	//	return;
-	//}
-	//TArray<UPackage*> PackagesToSave;
-
-	//for (UObject* Object : ObjectsToSave)
-	//{
-	//	if ((Object == nullptr) || !Object->IsAsset())
-	//	{
-	//		// Log an invalid object but don't try to save it
-	//		//UE_LOG(LogAssetEditorToolkit, Log, TEXT("Invalid object to save: %s"), (Object != nullptr) ? *Object->GetFullName() : TEXT("Null Object"));
-	//	}
-	//	else
-	//	{
-	//		PackagesToSave.Add(Object->GetOutermost());
-	//	}
-	//}
-
-	//for (auto obj : PackagesToSave)
-	//{
-	//	obj->PreSave();
-	//	UPackage::Save();
-	//}
-
-}
+//void FMobaAbilityEditorToolKit::SaveAsset_Execute()
+//{
+//
+//	FAssetEditorToolkit::SaveAsset_Execute();
+//
+//}
 
 void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InAssets)
 {
@@ -106,13 +76,30 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	//		DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
 	//	}
 	//}
+	if (!InAssets->GetPackage()->GetGuid().IsValid())
+	{
+		UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>(InAssets);
+		Cast<UMobaAbility>(InAssets)->SetGraph(graph);
+		EdGraph = graph;
+		graph->CreateDefaultNode(TEXT("Start"));
+	}
+	else
+	{
+		EdGraph = Cast<UMobaAbility>(InAssets)->GetGraph();
+	}
 
-	UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>(InAssets);
-	Cast<UMobaAbility>(InAssets)->SetGraph(graph);
-	EdGraph = graph;
-	EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
-	EdGraph->AddToRoot();
-	graph->CreateBeginNode();
+	if (EdGraph)
+	{
+		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
+		EdGraph->AddToRoot();
+	}
+	else
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("FMobaAbilityEditorToolKit EdGraph is nullptr"))));
+		return;
+	}
+
+
 	//UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
 	//EdGraph->AddNode(EdGraphNode);
 
@@ -140,7 +127,7 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 		);
 	FAssetEditorToolkit::InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
 	//InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
-	//RegenerateMenusAndToolbars();
+	RegenerateMenusAndToolbars();
 }
 
 UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const

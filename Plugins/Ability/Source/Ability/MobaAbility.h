@@ -15,7 +15,10 @@ class ABILITY_API UMobaAbility : public UObject
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(SaveGame)
 	class UMobaAbilityEdGraph* Graph;
+
+	TObjectPtr<APawn> Owner;
 
 public:
 	//virtual void ProcessEvent(UFunction* Function, void* Parms) override;
@@ -39,4 +42,7 @@ public:
 	void XXXX();
 
 	UMobaAbilityEdGraph* SetGraph(UMobaAbilityEdGraph* InGraph) { return Graph = InGraph; }
+	UMobaAbilityEdGraph* GetGraph() { return Graph; }
+	APawn* GetOwner() { return Owner; }
+
 };

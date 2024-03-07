@@ -10,14 +10,14 @@
  * 
  */
 class UMobaAbilityEdGraphNodeBase;
-
+class UMobaAbilityNode_Default;
 UCLASS()
 class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
 {
 	GENERATED_BODY()
 	
 protected:
-	UMobaAbilityEdGraphNodeBase* BeginNode;
+	TMap<FName, UMobaAbilityNode_Default*> EventNodeMap;
 
 public:
 	UMobaAbilityEdGraph();
@@ -26,7 +26,9 @@ public:
 
 	 virtual void BuildNode();
 
-	 virtual UMobaAbilityEdGraphNodeBase* CreateBeginNode();
+	 void ActiveEventNode(FName eventname);
+
+	 virtual UMobaAbilityEdGraphNodeBase* CreateDefaultNode(FName eventname);
 
 
 

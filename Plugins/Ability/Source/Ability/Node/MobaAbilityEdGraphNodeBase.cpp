@@ -64,6 +64,19 @@ void UMobaAbilityEdGraphNodeBase::CallFunction()
 	GetOuter()->GetOuter()->ProcessEvent(FunctionReference.GetMemberParentClass()->FindFunctionByName(FunctionReference.GetMemberName()), NULL);
 }
 
+APawn* UMobaAbilityEdGraphNodeBase::GetCauser()
+{
+	if (auto graph = GetOuter())
+	{
+		if (auto ability = Cast<UMobaAbility>(graph->GetOuter()))
+		{
+			return ability->GetOwner();
+		}
+	}
+
+	return nullptr;
+}
+
 
 //void UMobaAbilityEdGraphNodeBase::Init(FName fucnname, FName tooltip)
 //{

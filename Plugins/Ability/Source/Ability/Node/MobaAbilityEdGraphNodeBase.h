@@ -54,4 +54,5 @@ public:
 	static FSingleNodeEvent SingleNodeEvent;
 
 	void CallFunction();
+	APawn* GetCauser();
 };
