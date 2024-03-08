@@ -65,6 +65,10 @@ void UMobaAbilityEdGraph::ActiveEventNode(FName eventname)
 		}
 	}
 
+	for (auto n : nodes)
+	{
+		n->CallFunction();
+	}
 }
 
 UMobaAbilityEdGraphNodeBase* UMobaAbilityEdGraph::CreateDefaultNode(FName eventname)

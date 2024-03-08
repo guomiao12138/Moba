@@ -76,16 +76,17 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	//		DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
 	//	}
 	//}
-	if (!InAssets->GetPackage()->GetGuid().IsValid())
+	auto asset = Cast<UMobaAbility>(InAssets);
+	if (asset->GetGraph() != nullptr)
 	{
-		UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>(InAssets);
-		Cast<UMobaAbility>(InAssets)->SetGraph(graph);
-		EdGraph = graph;
-		graph->CreateDefaultNode(TEXT("Start"));
+		EdGraph = asset->GetGraph();
 	}
 	else
 	{
-		EdGraph = Cast<UMobaAbility>(InAssets)->GetGraph();
+		UMobaAbilityEdGraph* MobaAbilityEdGraph = NewObject<UMobaAbilityEdGraph>(asset);
+		asset->SetGraph(MobaAbilityEdGraph);
+		EdGraph = MobaAbilityEdGraph;
+		MobaAbilityEdGraph->CreateDefaultNode(TEXT("Start"));
 	}
 
 	if (EdGraph)
@@ -96,7 +97,6 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	else
 	{
 		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("FMobaAbilityEditorToolKit EdGraph is nullptr"))));
-		return;
 	}
 
 

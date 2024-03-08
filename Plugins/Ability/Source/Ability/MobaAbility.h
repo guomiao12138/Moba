@@ -9,13 +9,13 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ABILITY_API UMobaAbility : public UObject
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(SaveGame)
+	UPROPERTY()
 	class UMobaAbilityEdGraph* Graph;
 
 	TObjectPtr<APawn> Owner;
@@ -33,10 +33,10 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-	void AAAA(FName name, int& num);
+	void AAAA(/*FName name, int& num*/);
 
 	UFUNCTION()
-	void CCCC(UAnimationAsset* asset);
+	void CCCC(/*UAnimationAsset* asset*/);
 
 	UFUNCTION()
 	void XXXX();

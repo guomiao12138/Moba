@@ -203,20 +203,21 @@ void UMobaAbility::Activate()
 	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
 	if (Graph)
 	{
-		Graph->BuildNode();
+		Graph->ActiveEventNode(TEXT("Start"));
 	}
 }
 
-void UMobaAbility::AAAA(FName name, int& num)
+void UMobaAbility::AAAA(/*FName name, int& num*/)
 {
-	UE_LOG(LogTemp, Display, TEXT("UMobaAbility UMobaAbilityUMobaAbilityUMobaAbilityUMobaAbilityUMobaAbilityUMobaAbility"));
+	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::AAAA"));
 }
 
-void UMobaAbility::CCCC(UAnimationAsset* asset)
+void UMobaAbility::CCCC(/*UAnimationAsset* asset*/)
 {
+	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::CCCC"));
 }
 
 void UMobaAbility::XXXX()
 {
-	UE_LOG(LogTemp, Display, TEXT("UMobaAbility UMobaAbilityUMobaAbilityUMobaAbilityUMobaAbilityUMobaAbilityUMobaAbility"));
+	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::XXXX"));
 }

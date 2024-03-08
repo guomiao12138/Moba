@@ -17,6 +17,7 @@ class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY()
 	TMap<FName, UMobaAbilityNode_Default*> EventNodeMap;
 
 public:
