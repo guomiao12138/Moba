@@ -14,6 +14,10 @@
 
 class UMobaAbilityEdGraphNodeBase;
 class UMobaAbility;
+struct FConnectionParams;
+class UMobaAbilityEdGraph;
+class FConnectionDrawingPolicy;
+
 UCLASS()
 class ABILITY_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
 {
@@ -38,14 +42,11 @@ public:
 	{
 		return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT(""));
 	}
-	
+	virtual class FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const override;
 	//virtual bool CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
 	//virtual FLinearColor GetSecondaryPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::Red; };
 
 	/** End UEdGraphSchema Interface */
-
-	FName FuncName;
-
 
 };
 

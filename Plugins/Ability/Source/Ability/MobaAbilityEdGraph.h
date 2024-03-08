@@ -9,13 +9,28 @@
 /**
  * 
  */
+class UMobaAbilityEdGraphNodeBase;
+class UMobaAbilityNode_Default;
 UCLASS()
 class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
 {
 	GENERATED_BODY()
 	
-public:
+protected:
+	UPROPERTY()
+	TMap<FName, UMobaAbilityNode_Default*> EventNodeMap;
 
-	 //virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
+public:
+	UMobaAbilityEdGraph();
+
+	 virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
+
+	 virtual void BuildNode();
+
+	 void ActiveEventNode(FName eventname);
+
+	 virtual UMobaAbilityEdGraphNodeBase* CreateDefaultNode(FName eventname);
+
+
 
 };

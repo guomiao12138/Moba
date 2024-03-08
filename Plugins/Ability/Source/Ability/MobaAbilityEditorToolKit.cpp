@@ -7,6 +7,8 @@
 #include "MobaAbility.h"
 #include "MobaAbilityEdGraph.h"
 
+#include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
+
 FName FMobaAbilityEditorToolKit::GetToolkitFName() const
 {
 	return FName("MobaAssetEditorToolkit");
@@ -29,9 +31,7 @@ FLinearColor FMobaAbilityEditorToolKit::GetWorldCentricTabColorScale() const
 
 void FMobaAbilityEditorToolKit::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager)
 {
-	SGraphEditor::FGraphEditorEvents InEvents;
-	//InEvents.OnDoubleClicked = SGraphEditor::FOnDoubleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::NaviagetionDoubleClicked);
-	SetupGraphEditorEvents(EdGraph, InEvents);
+
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 	WorkSpaceItem = InTabManager->AddLocalWorkspaceMenuCategory(INVTEXT("MobaAbilityEditor"));
 	InTabManager->RegisterTabSpawner(FName("MobaAbilityPropertyTab"), FOnSpawnTab::CreateRaw(this, &FMobaAbilityEditorToolKit::SpawnDetailTab))
@@ -39,15 +39,7 @@ void FMobaAbilityEditorToolKit::RegisterTabSpawners(const TSharedRef<FTabManager
 		.SetDisplayName(INVTEXT("Details"));
 
 
-	InTabManager->RegisterTabSpawner(FName("MobaAbilityGraphEditorTab"), FOnSpawnTab::CreateLambda([&](const FSpawnTabArgs& SpawnTabArgs)
-		{
-			return SNew(SDockTab)
-				[
-					SNew(SGraphEditor)
-						.GraphToEdit(EdGraph)
-						.GraphEvents(InEvents)
-				];
-		}))
+	InTabManager->RegisterTabSpawner(FName("MobaAbilityGraphEditorTab"), FOnSpawnTab::CreateSP(this, &FMobaAbilityEditorToolKit::SpawnGraphEdit))
 		.SetGroup(WorkSpaceItem.ToSharedRef())
 		.SetDisplayName(INVTEXT("MobaAbilityGraph"));
 }
@@ -59,16 +51,57 @@ void FMobaAbilityEditorToolKit::UnregisterTabSpawners(const TSharedRef<FTabManag
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 }
 
+//void FMobaAbilityEditorToolKit::SaveAsset_Execute()
+//{
+//
+//	FAssetEditorToolkit::SaveAsset_Execute();
+//
+//}
+
 void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InAssets)
 {
-	UMobaAbilityEdGraph* graph = NewObject<UMobaAbilityEdGraph>();
-	Cast<UMobaAbility>(InAssets)->SetGraph(graph);
-	EdGraph = graph;
-	EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
-	EdGraph->AddToRoot();
 
-	UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
-	EdGraph->AddNode(EdGraphNode);
+	//DocumentManager = MakeShareable(new FDocumentTracker);
+	//bCheckDirtyOnAssetSave = true;
+
+	//if (!DocumentManager.IsValid())
+	//{
+	//	DocumentManager = MakeShareable(new FDocumentTracker);
+	//	DocumentManager->Initialize(SharedThis(this));
+
+	//	{
+
+	//		TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShared<FMobaAbilityGraphEditorSummoner>(SharedThis(this));
+
+	//		DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
+	//	}
+	//}
+	auto asset = Cast<UMobaAbility>(InAssets);
+	if (asset->GetGraph() != nullptr)
+	{
+		EdGraph = asset->GetGraph();
+	}
+	else
+	{
+		UMobaAbilityEdGraph* MobaAbilityEdGraph = NewObject<UMobaAbilityEdGraph>(asset);
+		asset->SetGraph(MobaAbilityEdGraph);
+		EdGraph = MobaAbilityEdGraph;
+		MobaAbilityEdGraph->CreateDefaultNode(TEXT("Start"));
+	}
+
+	if (EdGraph)
+	{
+		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
+		EdGraph->AddToRoot();
+	}
+	else
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("FMobaAbilityEditorToolKit EdGraph is nullptr"))));
+	}
+
+
+	//UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
+	//EdGraph->AddNode(EdGraphNode);
 
 	const TSharedRef<FTabManager::FLayout> StandaloneRecoilAssetLayout = FTabManager::NewLayout("StandaloneMobaAbilityLayout_Layout")
 		->AddArea
@@ -94,10 +127,10 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 		);
 	FAssetEditorToolkit::InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
 	//InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
-	//RegenerateMenusAndToolbars();
+	RegenerateMenusAndToolbars();
 }
 
-UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
+UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
 {
 	check(ParentGraph != nullptr)
 	UMobaAbilityEdGraphNodeBase* ResultGraphNode = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
@@ -145,9 +178,10 @@ void FMobaAbilityEditorToolKit::OnGraphEditorDropStreamingLevel(const TArray<TWe
 
 void FMobaAbilityEditorToolKit::OnNodeDoubleClicked(UEdGraphNode* Node)
 {
-	if (Node->CanJumpToDefinition())
+	if (Node && Node->CanJumpToDefinition())
 	{
 		Node->JumpToDefinition();
+		//Find(Node);
 	}
 }
 
@@ -195,35 +229,85 @@ TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnDetailTab(const FSpawnTabAr
 	];
 }
 
-TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs) const
+TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs)
 {
+	SGraphEditor::FGraphEditorEvents InEvents;
+	//InEvents.OnDoubleClicked = SGraphEditor::FOnDoubleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::NaviagetionDoubleClicked);
+	SetupGraphEditorEvents(EdGraph, InEvents);
+
+	TSharedPtr<SGraphEditor> Editor = SNew(SGraphEditor)
+		.GraphToEdit(EdGraph)
+		.GraphEvents(InEvents);
+
 	return SNew(SDockTab)
 		[
-			SNew(SGraphEditor).GraphToEdit(EdGraph)
+			Editor.ToSharedRef()
 		];
 }
 
 
 void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents)
 {
-	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FMobaAbilityEditorToolKit::OnSelectedNodesChanged);
-	InEvents.OnFocused = SGraphEditor::FOnFocused::CreateSP(this, &FMobaAbilityEditorToolKit::OnFocused);
-	InEvents.OnCreateNodeOrPinMenu = SGraphEditor::FOnCreateNodeOrPinMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateNodeOrPinMenu);
-	InEvents.OnMouseButtonDown = SGraphEditor::FOnMouseButtonDown::CreateSP(this, &FMobaAbilityEditorToolKit::OnMouseButtonDown);
-	InEvents.OnNodeSingleClicked = SGraphEditor::FOnNodeSingleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSingleClicked);
-	InEvents.OnDropActor = SGraphEditor::FOnDropActor::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropActor);
-	InEvents.OnDropStreamingLevel = SGraphEditor::FOnDropStreamingLevel::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropStreamingLevel);
+	//InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FMobaAbilityEditorToolKit::OnSelectedNodesChanged);
+	//InEvents.OnFocused = SGraphEditor::FOnFocused::CreateSP(this, &FMobaAbilityEditorToolKit::OnFocused);
+	//InEvents.OnCreateNodeOrPinMenu = SGraphEditor::FOnCreateNodeOrPinMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateNodeOrPinMenu);
+	//InEvents.OnMouseButtonDown = SGraphEditor::FOnMouseButtonDown::CreateSP(this, &FMobaAbilityEditorToolKit::OnMouseButtonDown);
+	//InEvents.OnNodeSingleClicked = SGraphEditor::FOnNodeSingleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSingleClicked);
+	//InEvents.OnDropActor = SGraphEditor::FOnDropActor::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropActor);
+	//InEvents.OnDropStreamingLevel = SGraphEditor::FOnDropStreamingLevel::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropStreamingLevel);
 	InEvents.OnNodeDoubleClicked = FSingleNodeEvent::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeDoubleClicked);
-	InEvents.OnVerifyTextCommit = FOnNodeVerifyTextCommit::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeVerifyTitleCommit);
-	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeTitleCommitted);
-	InEvents.OnSpawnNodeByShortcut = SGraphEditor::FOnSpawnNodeByShortcut::CreateSP(this, &FMobaAbilityEditorToolKit::OnSpawnGraphNodeByShortcut, InGraph);
-	InEvents.OnNodeSpawnedByKeymap = SGraphEditor::FOnNodeSpawnedByKeymap::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSpawnedByKeymap);
-	InEvents.OnDisallowedPinConnection = SGraphEditor::FOnDisallowedPinConnection::CreateSP(this, &FMobaAbilityEditorToolKit::OnDisallowedPinConnection);
-	InEvents.OnDoubleClicked = SGraphEditor::FOnDoubleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::NaviagetionDoubleClicked);
-	InEvents.OnCreateActionMenu = SGraphEditor::FOnCreateActionMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateGraphActionMenu);
+	//InEvents.OnVerifyTextCommit = FOnNodeVerifyTextCommit::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeVerifyTitleCommit);
+	//InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeTitleCommitted);
+	//InEvents.OnSpawnNodeByShortcut = SGraphEditor::FOnSpawnNodeByShortcut::CreateSP(this, &FMobaAbilityEditorToolKit::OnSpawnGraphNodeByShortcut, InGraph);
+	//InEvents.OnNodeSpawnedByKeymap = SGraphEditor::FOnNodeSpawnedByKeymap::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSpawnedByKeymap);
+	//InEvents.OnDisallowedPinConnection = SGraphEditor::FOnDisallowedPinConnection::CreateSP(this, &FMobaAbilityEditorToolKit::OnDisallowedPinConnection);
+	//InEvents.OnDoubleClicked = SGraphEditor::FOnDoubleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::NaviagetionDoubleClicked);
+	//InEvents.OnCreateActionMenu = SGraphEditor::FOnCreateActionMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateGraphActionMenu);
 
 	// Custom menu for K2 schemas
 	if (InGraph->Schema != nullptr && InGraph->Schema->IsChildOf(UEdGraphSchema_K2::StaticClass()))
 	{
 	}
 }
+
+void FMobaAbilityEditorToolKit::Find(const UEdGraphNode* node)
+{
+	TSharedPtr<SGraphEditor> GraphEditor;
+	//if (bRequestRename)
+	//{
+	//	// If we are renaming, the graph will be open already, just grab the tab and it's content and jump to the node.
+	//	TSharedPtr<SDockTab> ActiveTab = DocumentManager->GetActiveTab();
+	//	check(ActiveTab.IsValid());
+	//	GraphEditor = StaticCastSharedRef<SGraphEditor>(ActiveTab->GetContent());
+	//}
+	//else
+	//{
+	//	// Open a graph editor and jump to the node
+
+	//TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(EdGraph);
+	TSharedPtr<SDockTab> TabWithGraph = OpenDocument(EdGraph, FDocumentTracker::OpenNewDocument);
+
+	if (TabWithGraph.IsValid())
+	{
+
+		// We know that the contents of the opened tabs will be a graph editor.
+
+		if (GraphEditor.IsValid())
+		{
+			GraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
+			GraphEditor->CaptureKeyboard();
+			GraphEditor->JumpToNode(node, false);
+		}
+	}
+
+}
+
+TSharedPtr<SDockTab> FMobaAbilityEditorToolKit::OpenDocument(UObject* DocumentID, FDocumentTracker::EOpenDocumentCause Cause)
+{
+	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(DocumentID);
+	return DocumentManager->OpenDocument(Payload, Cause);
+}
+
+//FMobaAbilityGraphEditorSummoner::FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp) : FDocumentTabFactoryForObjects<UEdGraph>(InHostingApp->GetToolbarTabId(), InHostingApp)
+//{
+//}

@@ -36,13 +36,22 @@ void FAbilityAssetTypeAction::OpenAssetEditor(const TArray<UObject*>& InObjects,
 
 	const EToolkitMode::Type ToolKitModeType = EditWithinLevelEditor ? EToolkitMode::WorldCentric : EToolkitMode::Standalone;
 
+
+	//TArray<FAssetData> Assets;
+	//Algo::Transform(InObjects, Assets, [](UObject* Object) { return FAssetData(Object); });
+
+	//FAssetOpenArgs OpenArgs;
+	//OpenArgs.OpenMethod = EditWithinLevelEditor ? EAssetOpenMethod::Edit : EAssetOpenMethod::View;
+	//OpenArgs.ToolkitHost = EditWithinLevelEditor;
+	//OpenArgs.Assets = Assets;
+	//AssetDefinitionPtr.Get()->OpenAssets(OpenArgs);
+
 	for (auto ObjectIterator = InObjects.CreateConstIterator(); ObjectIterator; ++ObjectIterator)
 	{
 		if (UMobaAbility* OurAsset = Cast<UMobaAbility>(*ObjectIterator))
 		{
 			const TSharedRef<FMobaAbilityEditorToolKit> RecoilAssetEditorToolKit = MakeShareable(new FMobaAbilityEditorToolKit());
 			//OurAsset->SetGraph(NewObject<UMobaAbilityEdGraph>(OurAsset));
-
 			RecoilAssetEditorToolKit->InitializeAssetEditor(ToolKitModeType, EditWithinLevelEditor, OurAsset);
 		}
 	}

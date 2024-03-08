@@ -4,10 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Toolkits/AssetEditorToolkit.h"
+#include "WorkflowOrientedApp/WorkflowTabManager.h"
 
 /**
  * 
  */
+//struct FMobaAbilityGraphEditorSummoner : public FDocumentTabFactoryForObjects<UEdGraph>
+//{
+//	FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp);
+//};
+
+
 class ABILITY_API FMobaAbilityEditorToolKit final : public FAssetEditorToolkit
 {
 public:
@@ -17,10 +24,13 @@ public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;// Must implement in derived class!
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
 	virtual void UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
+	//virtual void SaveAsset_Execute() override;
+
+
 
 	void InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InAssets);
 
-	class UMobaAbilityEdGraphNodeBase* CreateNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
+	class UMobaAbilityEdGraphNodeBase* CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
 
 	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);
 	void OnFocused(const TSharedRef<SGraphEditor>& InSGraphEditor);
@@ -40,12 +50,16 @@ public:
 
 	void SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents);
 
+	void Find(const UEdGraphNode* node);
 
 
+	TSharedPtr<SDockTab> OpenDocument(UObject* DocumentID, FDocumentTracker::EOpenDocumentCause Cause);
 private:
 	// 生成细节面板
 	TSharedRef<SDockTab> SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs) const;
-	TSharedRef<SDockTab> SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs) const;
+	TSharedRef<SDockTab> SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs);
 	TSharedPtr<FWorkspaceItem> WorkSpaceItem;
 	TObjectPtr<UEdGraph> EdGraph;
+
+	TSharedPtr<class FDocumentTracker> DocumentManager;
 };

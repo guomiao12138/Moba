@@ -2,10 +2,16 @@
 
 
 #include "MobaAbilityNodeEdGraphSchema.h"
-#include "Framework/Commands/GenericCommands.h"
 #include "Ability/Node/MobaAbilityEdGraphNodeBase.h"
 #include "Ability/MobaAbility.h"
+#include "Ability/Node/Schema/AbilityConnectionDrawingPolicy.h"
+
+#include "Framework/Commands/GenericCommands.h"
 #include "SGraphNode.h"
+#include "EdGraph/EdGraphSchema.h"
+
+
+
 
 UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
 {
@@ -19,6 +25,10 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 
 	for (auto func : FunctionArray)
 	{
+		if (AssetClass->FindFunction(func))
+		{
+
+		}
 		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(func), FText()));
 		ContextMenuBuilder.AddAction(Action);
 	}
@@ -60,6 +70,13 @@ void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGrap
 
 	Super::GetContextMenuActions(Menu, Context);
 }
+
+
+FConnectionDrawingPolicy* UMobaAbilityNodeEdGraphSchema::CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, FSlateWindowElementList& InDrawElements, UEdGraph* InGraphObj) const
+{
+	return new FMobaAbilityNodeConnectionDrawingPolicy(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
+}
+
 
 //UEdGraphPin* UMobaAbilityNodeEdGraphSchema::DropPinOnNode(UEdGraphNode* InTargetNode, const FName& InSourcePinName, const FEdGraphPinType& InSourcePinType, EEdGraphPinDirection InSourcePinDirection) const
 //{
@@ -106,10 +123,10 @@ UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph*
 	node->AllocateDefaultPins();
 	NodeCreator.Finalize();
 
-	FSingleNodeEvent SingleNodeEvent;
+	//FSingleNodeEvent SingleNodeEvent;
 	//SingleNodeEvent.CreateUObject(this, &);
 	//node->CreateVisualWidget().Get()->SetDoubleClickEvent();
-	ParentGraph->AddNode(node);
+	//ParentGraph->AddNode(node);
 
 	for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
 	{

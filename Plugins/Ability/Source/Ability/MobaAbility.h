@@ -9,16 +9,19 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ABILITY_API UMobaAbility : public UObject
 {
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
 	class UMobaAbilityEdGraph* Graph;
 
+	TObjectPtr<APawn> Owner;
+
 public:
-	//virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
+	//virtual void ProcessEvent(UFunction* Function, void* Parms) override;
 
 	void Activate();
 
@@ -30,13 +33,16 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-	void AAAA(FName name, int& num);
+	void AAAA(/*FName name, int& num*/);
 
 	UFUNCTION()
-	void CCCC(UAnimationAsset* asset);
+	void CCCC(/*UAnimationAsset* asset*/);
 
 	UFUNCTION()
 	void XXXX();
 
 	UMobaAbilityEdGraph* SetGraph(UMobaAbilityEdGraph* InGraph) { return Graph = InGraph; }
+	UMobaAbilityEdGraph* GetGraph() { return Graph; }
+	APawn* GetOwner() { return Owner; }
+
 };
