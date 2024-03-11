@@ -15,13 +15,15 @@ class ABILITY_API UMobaAbility : public UObject
 	GENERATED_BODY()
 
 private:
+	class UStaticMeshComponent* Mesh;
+
 	UPROPERTY()
 	class UMobaAbilityEdGraph* Graph;
 
 	TObjectPtr<APawn> Owner;
 
 public:
-	//virtual void ProcessEvent(UFunction* Function, void* Parms) override;
+	UMobaAbility();
 
 	void Activate();
 
@@ -45,4 +47,5 @@ public:
 	UMobaAbilityEdGraph* GetGraph() { return Graph; }
 	APawn* GetOwner() { return Owner; }
 
+	static UMobaAbility* SpawnAbility(FVector InLocation);
 };

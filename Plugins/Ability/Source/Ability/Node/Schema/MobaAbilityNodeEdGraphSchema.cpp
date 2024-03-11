@@ -25,10 +25,10 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 
 	for (auto func : FunctionArray)
 	{
-		if (AssetClass->FindFunction(func))
-		{
+		//if (AssetClass->FindFunction(func))
+		//{
 
-		}
+		//}
 		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(func), FText()));
 		ContextMenuBuilder.AddAction(Action);
 	}
