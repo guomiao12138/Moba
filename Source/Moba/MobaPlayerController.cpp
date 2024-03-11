@@ -55,6 +55,7 @@ void AMobaPlayerController::SetupInputComponent()
 
 void AMobaPlayerController::ClickPosition()
 {
+
 	Abilitys[0]->Activate();
 
 	FVector2D screenlocation;
@@ -63,6 +64,15 @@ void AMobaPlayerController::ClickPosition()
 	GetHitResultAtScreenPosition(screenlocation, ECollisionChannel::ECC_WorldStatic, true, hit);
 
 	DrawDebugPoint(GetWorld(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10);
+
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	if (auto aa = GetWorld()->SpawnActor<UMobaAbility>(hit.ImpactPoint, FRotator::ZeroRotator, Params))
+	{
+		UE_LOG(LogTemp, Display, TEXT("SpawnActor"));
+	} 
+
 
 	if (auto player = Cast<AMobaCharacterBase>(GetPawn()))
 	{
