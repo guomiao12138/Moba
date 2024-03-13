@@ -23,12 +23,12 @@ void UMobaAbility::Activate()
 	}
 }
 
-void UMobaAbility::AAAA(/*FName name, int& num*/)
+void UMobaAbility::AAAA(FName name)
 {
 	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::AAAA"));
 }
 
-void UMobaAbility::CCCC(/*UAnimationAsset* asset*/)
+void UMobaAbility::CCCC(UAnimationAsset* asset)
 {
 	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::CCCC"));
 }

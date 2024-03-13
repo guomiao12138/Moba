@@ -18,19 +18,13 @@ class ABILITY_API UMobaAbilityEdGraphNodeBase : public UEdGraphNode
 	
 protected:
 
-
-
 	TSharedPtr<class FDocumentTracker> DocumentManager;
-
-	//FName FuncName;
-	//FName Tooltip;
 
 public:
 	UPROPERTY()
 	FMemberReference FunctionReference;
 
 	UMobaAbilityEdGraphNodeBase();
-	//void Init(FName fucnname, FName tooltip);
 
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
@@ -43,14 +37,12 @@ public:
 
 	virtual FText GetFunctionContextString() const;
 	virtual void SetFromFunction(const UFunction* Function);
-	void SetDoubleClickEvent(FSingleNodeEvent InSingleNodeEvent);
+	virtual void CreateParamsPins();
 
 	UEdGraphPin* GetExecutePin();
 	UEdGraphPin* GetThenPin();
 	void SetNodeTitle(FName name);
-	//UFUNCTION()
-	//void aaa();
-	//TSharedPtr<SGraphEditor> OpenGraphAndBringToFront(UEdGraph* Graph, bool bSetFocus = true);
+
 	static FSingleNodeEvent SingleNodeEvent;
 
 	void CallFunction();
