@@ -9,6 +9,8 @@
 /**
  * 
  */
+class UAnimationAsset;
+
 UCLASS(BlueprintType)
 class ABILITY_API UMobaAbility : public UObject
 {
@@ -35,10 +37,10 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-	void AAAA(/*FName name, int& num*/);
+	void AAAA(FName name);
 
 	UFUNCTION()
-	void CCCC(/*UAnimationAsset* asset*/);
+	void CCCC(UAnimationAsset* asset);
 
 	UFUNCTION()
 	void XXXX();

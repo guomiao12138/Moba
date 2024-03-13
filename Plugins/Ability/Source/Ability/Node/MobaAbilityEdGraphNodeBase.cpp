@@ -37,11 +37,44 @@ void UMobaAbilityEdGraphNodeBase::SetFromFunction(const UFunction* Function)
 	}
 }
 
-void UMobaAbilityEdGraphNodeBase::SetDoubleClickEvent(FSingleNodeEvent InSingleNodeEvent)
+void UMobaAbilityEdGraphNodeBase::CreateParamsPins()
 {
-	//FSingleNodeEvent SingleNodeEvent;
-	//SingleNodeEvent.BindUFunction(this, FName("JumpToDefinition"));
-	//CreateVisualWidget().Get()->SetDoubleClickEvent(SingleNodeEvent);
+	FName funcName = FunctionReference.GetMemberName();
+	UFunction* Function = FunctionReference.GetMemberParentClass()->FindFunctionByName(funcName);
+
+	for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
+	{
+		FProperty* Param = *PropIt;
+
+		const bool bIsFunctionInput = !Param->HasAnyPropertyFlags(CPF_ReturnParm) && (!Param->HasAnyPropertyFlags(CPF_OutParm) || Param->HasAnyPropertyFlags(CPF_ReferenceParm));
+		const bool bIsRefParam = Param->HasAnyPropertyFlags(CPF_ReferenceParm) && bIsFunctionInput;
+
+		const EEdGraphPinDirection Direction = bIsFunctionInput ? EGPD_Input : EGPD_Output;
+
+		UEdGraphNode::FCreatePinParams PinParams;
+		PinParams.bIsReference = bIsRefParam;
+
+		UEdGraphPin* OwnerPin = nullptr;
+		uint64 CastFlags = PropIt.GetStruct()->ChildProperties->GetCastFlags();
+		if ((CastFlags & CASTCLASS_FBoolProperty) != 0)
+		{
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Boolean, Param->GetFName(), PinParams);
+		}
+		else if ((CastFlags & CASTCLASS_FNameProperty) != 0)
+		{
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Name, Param->GetFName(), PinParams);
+		}
+		else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
+		{
+			FObjectProperty* temp = CastField<FObjectProperty>(Param);
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_SoftObject, temp->PropertyClass, Param->GetFName());
+		}
+		//UEdGraphPin* OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Class, AActor::StaticClass(), Param->GetFName());
+		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
+
+		//OwnerPin->bAdvancedView = true;
+	}
+
 }
 
 UEdGraphPin* UMobaAbilityEdGraphNodeBase::GetExecutePin()
@@ -92,11 +125,10 @@ UMobaAbilityEdGraphNodeBase::UMobaAbilityEdGraphNodeBase()
 void UMobaAbilityEdGraphNodeBase::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
-	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Then);
+	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Succeed"));
+	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Faild"));
 
-	//CreatePin(EGPD_Input, TEXT("GraphNodePinCategory"), TEXT("GraphNodePinSubCategory"), nullptr, TEXT("AAAA"));
-	//CreatePin(EGPD_Output, TEXT("GraphNodePinCategory"), TEXT("GraphNodePinSubCategory"), nullptr, TEXT("BBBB"));
-	//CreatePin(EGPD_Output, TEXT("GraphNodePinCategory"), TEXT("GraphNodePinSubCategory"), nullptr, TEXT(""));
+	CreateParamsPins();
 }
 
 FText UMobaAbilityEdGraphNodeBase::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -193,66 +225,3 @@ void UMobaAbilityEdGraphNodeBase::JumpToDefinition() const
 	// Otherwise, fall back to the inherited behavior which should go to the function entry node
 	Super::JumpToDefinition();
 }
-//TSharedPtr<SGraphEditor> UMobaAbilityEdGraphNodeBase::OpenGraphAndBringToFront(UEdGraph* Graph, bool bSetFocus)
-//{
-//	if (!IsValid(Graph))
-//	{
-//		return TSharedPtr<SGraphEditor>();
-//	}
-//
-//	// First, switch back to standard mode
-//	//SetCurrentMode(FBlueprintEditorApplicationModes::StandardBlueprintEditorMode);
-//
-//	// This will either reuse an existing tab or spawn a new one
-//	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(Graph);
-//
-//	TSharedPtr<SDockTab> TabWithGraph = DocumentManager->OpenDocument(Payload, FDocumentTracker::OpenNewDocument);
-//	if (TabWithGraph.IsValid())
-//	{
-//
-//		// We know that the contents of the opened tabs will be a graph editor.
-//		TSharedRef<SGraphEditor> NewGraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
-//		NewGraphEditor->CaptureKeyboard();
-//
-//		// Handover the keyboard focus to the new graph editor widget.
-//		if (bSetFocus)
-//		{
-//		}
-//
-//		return NewGraphEditor;
-//	}
-//	else
-//	{
-//		return TSharedPtr<SGraphEditor>();
-//	}
-//}
-
-//void UMobaAbilityEdGraphNodeBase::ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
-//{
-//	Super::ExpandNode(CompilerContext, SourceGraph);
-//
-//	UEdGraphPin* ExecPin = GetExecPin();
-//	UEdGraphPin* ThenPin = GetThenPin();
-//	if (ExecPin && ThenPin) {
-//
-//		// create a CallFunction node
-//		//FName MyFunctionName = GET_FUNCTION_NAME_CHECKED(UMobaAbility, FuncName);
-//
-//		UK2Node_CallFunction* CallFuncNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
-//		CallFuncNode->FunctionReference.SetExternalMember(FuncName, UMobaAbility::StaticClass());
-//		CallFuncNode->AllocateDefaultPins();
-//
-//		// move pins
-//		CompilerContext.MovePinLinksToIntermediate(*ExecPin, *(CallFuncNode->GetExecPin()));
-//		CompilerContext.MovePinLinksToIntermediate(*ThenPin, *(CallFuncNode->GetThenPin()));
-//	}
-//
-//	BreakAllNodeLinks();
-//}
-
-//FSlateIcon UMobaAbilityEdGraphNodeBase::GetIconAndTint(FLinearColor& OutColor) const
-//{
-//	OutColor = GetNodeTitleColor();
-//	static FSlateIcon Icon(FAppStyle::GetAppStyleSetName(), "Kismet.AllClasses.FunctionIcon");
-//	return Icon;
-//}

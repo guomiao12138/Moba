@@ -86,12 +86,14 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 		UMobaAbilityEdGraph* MobaAbilityEdGraph = NewObject<UMobaAbilityEdGraph>(asset);
 		asset->SetGraph(MobaAbilityEdGraph);
 		EdGraph = MobaAbilityEdGraph;
-		MobaAbilityEdGraph->CreateDefaultNode(TEXT("Start"));
+		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
+		const UEdGraphSchema* Schema = EdGraph->GetSchema();
+		Schema->CreateDefaultNodesForGraph(*EdGraph);
+		//MobaAbilityEdGraph->CreateDefaultNode(TEXT("Start"));
 	}
 
 	if (EdGraph)
 	{
-		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
 		EdGraph->AddToRoot();
 	}
 	else

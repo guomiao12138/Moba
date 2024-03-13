@@ -5,6 +5,7 @@
 #include "Ability/Node/MobaAbilityEdGraphNodeBase.h"
 #include "Ability/MobaAbility.h"
 #include "Ability/Node/Schema/AbilityConnectionDrawingPolicy.h"
+#include "Ability/MobaAbilityEdGraph.h"
 
 #include "Framework/Commands/GenericCommands.h"
 #include "SGraphNode.h"
@@ -71,10 +72,34 @@ void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGrap
 	Super::GetContextMenuActions(Menu, Context);
 }
 
+const FPinConnectionResponse UMobaAbilityNodeEdGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const
+{
+	if (A->GetOwningNode() == B->GetOwningNode())
+	{
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Both are on the same node"));
+	}
+
+	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT(""));
+}
+
 
 FConnectionDrawingPolicy* UMobaAbilityNodeEdGraphSchema::CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, FSlateWindowElementList& InDrawElements, UEdGraph* InGraphObj) const
 {
 	return new FMobaAbilityNodeConnectionDrawingPolicy(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
+}
+
+void UMobaAbilityNodeEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
+{
+	TArray<FName> FunctionArray;
+	AssetClass->GenerateFunctionList(FunctionArray);
+
+	for (auto funcname : FunctionArray)
+	{
+		if (auto func = AssetClass->FindFunctionByName(funcname)->HasAnyFunctionFlags(FUNC_BlueprintEvent))
+		{
+			Cast<UMobaAbilityEdGraph>(&Graph)->CreateDefaultNode(funcname);
+		}
+	}
 }
 
 
@@ -100,19 +125,13 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph
 
 UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph* ParentGraph, const FVector2D Location)
 {
-	//UMobaAbilityEdGraphNodeBase* node = NewObject<UMobaAbilityEdGraphNodeBase>(ParentGraph);
-	//node->Init(functionName, functionName);
 	UFunction* Function = UMobaAbility::StaticClass()->FindFunctionByName(FunctionName);
-	//node->SetFromFunction(Function);
+
 	ParentGraph->Modify();
 	//node->SetFlags(RF_Transactional);
 
 	//node->Rename(nullptr, ParentGraph, REN_NonTransactional);
-	//node->CreateNewGuid();
-	//node->NodePosX = Location.X;
-	//node->NodePosY = Location.Y;
 
-	//node->AllocateDefaultPins();
 
 	FGraphNodeCreator<UMobaAbilityEdGraphNodeBase> NodeCreator(*ParentGraph);
 	UMobaAbilityEdGraphNodeBase* node = NodeCreator.CreateNode(false);
@@ -123,26 +142,6 @@ UMobaAbilityEdGraphNodeBase* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph*
 	node->AllocateDefaultPins();
 	NodeCreator.Finalize();
 
-	//FSingleNodeEvent SingleNodeEvent;
-	//SingleNodeEvent.CreateUObject(this, &);
-	//node->CreateVisualWidget().Get()->SetDoubleClickEvent();
-	//ParentGraph->AddNode(node);
-
-	for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
-	{
-		FProperty* Param = *PropIt;
-
-		const bool bIsFunctionInput = !Param->HasAnyPropertyFlags(CPF_ReturnParm) && (!Param->HasAnyPropertyFlags(CPF_OutParm) || Param->HasAnyPropertyFlags(CPF_ReferenceParm));
-		const bool bIsRefParam = Param->HasAnyPropertyFlags(CPF_ReferenceParm) && bIsFunctionInput;
-
-		const EEdGraphPinDirection Direction = bIsFunctionInput ? EGPD_Input : EGPD_Output;
-
-		UEdGraphNode::FCreatePinParams PinParams;
-		PinParams.bIsReference = bIsRefParam;
-
-		node->CreatePin(Direction, NAME_None, Param->GetFName(), PinParams);
-		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
-	}
 
 	return node;
 }
