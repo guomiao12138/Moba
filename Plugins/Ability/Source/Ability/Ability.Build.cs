@@ -49,7 +49,8 @@ public class Ability : ModuleRules
                 "GraphEditor",
                 "ToolMenus",
                 "BlueprintGraph",
-                "KismetCompiler",
+                /*"KismetCompiler",*/
+                "ApplicationCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
