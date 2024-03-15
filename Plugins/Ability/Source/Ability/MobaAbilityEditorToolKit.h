@@ -60,6 +60,7 @@ public:
 	FGraphPanelSelectionSet GetSelectedNodes() const;
 	bool CanDeleteSelected();
 	void DeleteSelected();
+	void DeleteSelectedDuplicatableNodes();
 
 	bool CanCopySelected();
 	void CopySelected();

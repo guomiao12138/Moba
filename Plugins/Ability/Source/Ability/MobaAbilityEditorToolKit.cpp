@@ -11,6 +11,7 @@
 #include "Framework/Commands/GenericCommands.h"
 #include "HAL/PlatformApplicationMisc.h"
 #include "Editor/UnrealEd/Public/EdGraphUtilities.h"
+#include "Editor/GraphEditor/Public/SNodePanel.h"
 
 void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
 {
@@ -379,56 +380,21 @@ bool FMobaAbilityEditorToolKit::CanCopySelected()
 
 void FMobaAbilityEditorToolKit::CopySelected()
 {
-	FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
-	TArray<UMobaAbilityEdGraphNodeBase*> SubNodes;
+	// Export the selected nodes and place the text on the clipboard
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
 
 	FString ExportedText;
 
-	int32 CopySubNodeIndex = 0;
-	for (FGraphPanelSelectionSet::TIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
+	for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
 	{
-		UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter);
-		UMobaAbilityEdGraphNodeBase* AINode = Cast<UMobaAbilityEdGraphNodeBase>(Node);
-		if (Node == nullptr)
+		if (UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter))
 		{
-			SelectedIter.RemoveCurrent();
-			continue;
+			Node->PrepareForCopying();
 		}
-
-		Node->PrepareForCopying();
-
-		//if (AINode)
-		//{
-		//	AINode->CopySubNodeIndex = CopySubNodeIndex;
-
-		//	// append all subnodes for selection
-		//	for (int32 Idx = 0; Idx < AINode->SubNodes.Num(); Idx++)
-		//	{
-		//		AINode->SubNodes[Idx]->CopySubNodeIndex = CopySubNodeIndex;
-		//		SubNodes.Add(AINode->SubNodes[Idx]);
-		//	}
-
-		//	CopySubNodeIndex++;
-		//}
 	}
 
-	for (int32 Idx = 0; Idx < SubNodes.Num(); Idx++)
-	{
-		SelectedNodes.Add(SubNodes[Idx]);
-		SubNodes[Idx]->PrepareForCopying();
-	}
-
-	//FEdGraphUtilities::ExportNodesToText(SelectedNodes, ExportedText);
-	//FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
-
-	//for (FGraphPanelSelectionSet::TIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
-	//{
-	//	UMobaAbilityEdGraphNodeBase* Node = Cast<UMobaAbilityEdGraphNodeBase>(*SelectedIter);
-	//	if (Node)
-	//	{
-	//		Node->PostCopyNode();
-	//	}
-	//}
+	FEdGraphUtilities::ExportNodesToText(SelectedNodes, /*out*/ ExportedText);
+	FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
 }
 
 bool FMobaAbilityEditorToolKit::CanPaste()
@@ -455,187 +421,179 @@ void FMobaAbilityEditorToolKit::Paste()
 
 void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
 {
-	//TSharedPtr<SGraphEditor> CurrentGraphEditor = UpdateGraphEdPtr.Pin();
-	//if (!CurrentGraphEditor.IsValid())
+	// Find the graph editor with focus
+	//TSharedPtr<SGraphEditor> FocusedGraphEd = FocusedGraphEdPtr.Pin();
+	//if (!FocusedGraphEd.IsValid())
 	//{
 	//	return;
 	//}
+	// Select the newly pasted stuff
+	bool bNeedToModifyStructurally = false;
+	{
+		const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
+		EdGraph->Modify();
 
-	//// Undo/Redo support
-	//const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
-	//UEdGraph* EdGraph = CurrentGraphEditor->GetCurrentGraph();
-	//UAIGraph* AIGraph = Cast<UAIGraph>(EdGraph);
+		// Clear the selection set (newly pasted stuff will be selected)
+		//SetUISelectionState(NAME_None);
 
-	//EdGraph->Modify();
-	//if (AIGraph)
-	//{
-	//	AIGraph->LockUpdates();
-	//}
+		// Grab the text to paste from the clipboard.
+		FString TextToImport;
+		FPlatformApplicationMisc::ClipboardPaste(TextToImport);
 
-	//UAIGraphNode* SelectedParent = NULL;
-	//bool bHasMultipleNodesSelected = false;
+		// Import the nodes
+		TSet<UEdGraphNode*> PastedNodes;
+		FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, /*out*/ PastedNodes);
 
-	//const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
-	//for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
-	//{
-	//	UAIGraphNode* Node = Cast<UAIGraphNode>(*SelectedIter);
-	//	if (Node && Node->IsSubNode())
-	//	{
-	//		Node = Node->ParentNode;
-	//	}
+		// Only do this step if we can create functions on the blueprint (i.e. not macro graphs, etc)
+		//if (NewDocument_IsVisibleForType(CGT_NewFunctionGraph))
+		//{
+		//	// Spawn Deferred Fixup Modal window if necessary
+		//	TArray<UK2Node_CallFunction*> FixupNodes;
+		//	for (UEdGraphNode* PastedNode : PastedNodes)
+		//	{
+		//		if (UK2Node_CallFunction* Node = Cast<UK2Node_CallFunction>(PastedNode))
+		//		{
+		//			if (Node->FunctionReference.IsSelfContext() && !Node->GetTargetFunction())
+		//			{
+		//				FixupNodes.Add(Node);
+		//			}
+		//		}
+		//	}
+		//	if (FixupNodes.Num() > 0)
+		//	{
+		//		if (!SFixupSelfContextDialog::CreateModal(FixupNodes, Cast<UBlueprint>(DestinationGraph->GetOuter()), this, FixupNodes.Num() != PastedNodes.Num()))
+		//		{
+		//			for (UEdGraphNode* Node : PastedNodes)
+		//			{
+		//				DestinationGraph->RemoveNode(Node);
+		//			}
 
-	//	if (Node)
-	//	{
-	//		if (SelectedParent == nullptr)
-	//		{
-	//			SelectedParent = Node;
-	//		}
-	//		else
-	//		{
-	//			bHasMultipleNodesSelected = true;
-	//			break;
-	//		}
-	//	}
-	//}
+		//			return;
+		//		}
+		//	}
+		//}
 
-	//// Clear the selection set (newly pasted stuff will be selected)
-	//CurrentGraphEditor->ClearSelectionSet();
+		// Update Paste Analytics
+		//AnalyticsStats.NodePasteCreateCount += PastedNodes.Num();
 
-	//// Grab the text to paste from the clipboard.
-	//FString TextToImport;
-	//FPlatformApplicationMisc::ClipboardPaste(TextToImport);
+		//{
+		//	UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForGraph(DestinationGraph);
+		//	UClass* CurrentClass = Blueprint ? Blueprint->GeneratedClass : nullptr;
+		//	if (CurrentClass)
+		//	{
+		//		FUpdatePastedNodes ReplaceNodes(CurrentClass, PastedNodes, DestinationGraph);
+		//		ReplaceNodes.ReplaceAll();
+		//	}
+		//}
 
-	//// Import the nodes
-	//TSet<UEdGraphNode*> PastedNodes;
-	//FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, /*out*/ PastedNodes);
+		//Average position of nodes so we can move them while still maintaining relative distances to each other
+		FVector2D AvgNodePosition(0.0f, 0.0f);
 
-	////Average position of nodes so we can move them while still maintaining relative distances to each other
-	//FVector2D AvgNodePosition(0.0f, 0.0f);
+		for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+		{
+			UEdGraphNode* Node = *It;
+			AvgNodePosition.X += Node->NodePosX;
+			AvgNodePosition.Y += Node->NodePosY;
+		}
 
-	//// Number of nodes used to calculate AvgNodePosition
-	//int32 AvgCount = 0;
+		float InvNumNodes = 1.0f / float(PastedNodes.Num());
+		AvgNodePosition.X *= InvNumNodes;
+		AvgNodePosition.Y *= InvNumNodes;
 
-	//for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
-	//{
-	//	UEdGraphNode* EdNode = *It;
-	//	UAIGraphNode* AINode = Cast<UAIGraphNode>(EdNode);
-	//	if (EdNode && (AINode == nullptr || !AINode->IsSubNode()))
-	//	{
-	//		AvgNodePosition.X += EdNode->NodePosX;
-	//		AvgNodePosition.Y += EdNode->NodePosY;
-	//		++AvgCount;
-	//	}
-	//}
+		TSet<FString> NamespacesToImport;
 
-	//if (AvgCount > 0)
-	//{
-	//	float InvNumNodes = 1.0f / float(AvgCount);
-	//	AvgNodePosition.X *= InvNumNodes;
-	//	AvgNodePosition.Y *= InvNumNodes;
-	//}
+		for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+		{
+			UEdGraphNode* Node = *It;
+			GraphEditor->SetNodeSelection(Node, true);
 
-	//bool bPastedParentNode = false;
+			Node->NodePosX = static_cast<int32>((Node->NodePosX - AvgNodePosition.X) + Location.X);
+			Node->NodePosY = static_cast<int32>((Node->NodePosY - AvgNodePosition.Y) + Location.Y);
 
-	//TMap<FGuid/*New*/, FGuid/*Old*/> NewToOldNodeMapping;
+			Node->SnapToGrid(SNodePanel::GetSnapGridSize());
 
-	//TMap<int32, UAIGraphNode*> ParentMap;
-	//for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
-	//{
-	//	UEdGraphNode* PasteNode = *It;
-	//	UAIGraphNode* PasteAINode = Cast<UAIGraphNode>(PasteNode);
+			// Give new node a different Guid from the old one
+			Node->CreateNewGuid();
 
-	//	if (PasteNode && (PasteAINode == nullptr || !PasteAINode->IsSubNode()))
-	//	{
-	//		bPastedParentNode = true;
+			// Collect any required imports from node dependencies
+			//TArray<UStruct*> ExternalDependencies;
+			//if (Node->HasExternalDependencies(&ExternalDependencies))
+			//{
+			//	for (const UStruct* ExternalDependency : ExternalDependencies)
+			//	{
+			//		FBlueprintNamespaceUtilities::GetDefaultImportsForObject(ExternalDependency, DeferredNamespaceImports);
+			//	}
+			//}
 
-	//		// Select the newly pasted stuff
-	//		CurrentGraphEditor->SetNodeSelection(PasteNode, true);
-
-	//		const FVector::FReal NodePosX = (PasteNode->NodePosX - AvgNodePosition.X) + Location.X;
-	//		const FVector::FReal NodePosY = (PasteNode->NodePosY - AvgNodePosition.Y) + Location.Y;
-
-	//		PasteNode->NodePosX = static_cast<int32>(NodePosX);
-	//		PasteNode->NodePosY = static_cast<int32>(NodePosY);
-
-	//		PasteNode->SnapToGrid(16);
-
-	//		const FGuid OldGuid = PasteNode->NodeGuid;
-
-	//		// Give new node a different Guid from the old one
-	//		PasteNode->CreateNewGuid();
-
-	//		const FGuid NewGuid = PasteNode->NodeGuid;
-
-	//		NewToOldNodeMapping.Add(NewGuid, OldGuid);
-
-	//		if (PasteAINode)
-	//		{
-	//			PasteAINode->RemoveAllSubNodes();
-	//			ParentMap.Add(PasteAINode->CopySubNodeIndex, PasteAINode);
-	//		}
-	//	}
-	//}
-
-	//for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
-	//{
-	//	UAIGraphNode* PasteNode = Cast<UAIGraphNode>(*It);
-	//	if (PasteNode && PasteNode->IsSubNode())
-	//	{
-	//		PasteNode->NodePosX = 0;
-	//		PasteNode->NodePosY = 0;
-
-	//		// remove subnode from graph, it will be referenced from parent node
-	//		PasteNode->DestroyNode();
-
-	//		PasteNode->ParentNode = ParentMap.FindRef(PasteNode->CopySubNodeIndex);
-	//		if (PasteNode->ParentNode)
-	//		{
-	//			PasteNode->ParentNode->AddSubNode(PasteNode, EdGraph);
-	//		}
-	//		else if (!bHasMultipleNodesSelected && !bPastedParentNode && SelectedParent)
-	//		{
-	//			PasteNode->ParentNode = SelectedParent;
-	//			SelectedParent->AddSubNode(PasteNode, EdGraph);
-	//		}
-	//	}
-	//}
-
-	//FixupPastedNodes(PastedNodes, NewToOldNodeMapping);
-
-	//if (AIGraph)
-	//{
-	//	AIGraph->UpdateClassData();
-	//	AIGraph->OnNodesPasted(TextToImport);
-	//	AIGraph->UnlockUpdates();
-	//}
-
-	//// Update UI
-	//CurrentGraphEditor->NotifyGraphChanged();
-
-	//UObject* GraphOwner = EdGraph->GetOuter();
-	//if (GraphOwner)
-	//{
-	//	GraphOwner->PostEditChange();
-	//	GraphOwner->MarkPackageDirty();
-	//}
+		}
+	}
+	// Update UI
+	GraphEditor->NotifyGraphChanged();
 }
 
 bool FMobaAbilityEditorToolKit::CanCutSelected()
 {
-	return false;
+	return CanCopySelected() && CanDeleteSelected();
 }
 
 void FMobaAbilityEditorToolKit::CutSelected()
 {
+	CopySelected();
+	DeleteSelectedDuplicatableNodes();
 }
 
 bool FMobaAbilityEditorToolKit::CanDuplicateSelected()
 {
-	return false;
+	return CanCopySelected();
 }
 
 void FMobaAbilityEditorToolKit::DuplicateSelected()
 {
+	CopySelected();
+	Paste();
+}
+
+
+void FMobaAbilityEditorToolKit::DeleteSelectedDuplicatableNodes()
+{
+	// Cache off the old selection
+	const FGraphPanelSelectionSet OldSelectedNodes = GetSelectedNodes();
+
+	// Clear the selection and only select the nodes that can be duplicated
+	FGraphPanelSelectionSet CurrentSelection;
+	//TSharedPtr<SGraphEditor> FocusedGraphEd = FocusedGraphEdPtr.Pin();
+	if (GraphEditor)
+	{
+		GraphEditor->ClearSelectionSet();
+
+		FGraphPanelSelectionSet RemainingNodes;
+		for (FGraphPanelSelectionSet::TConstIterator SelectedIter(OldSelectedNodes); SelectedIter; ++SelectedIter)
+		{
+			UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter);
+			if ((Node != nullptr) && Node->CanDuplicateNode())
+			{
+				GraphEditor->SetNodeSelection(Node, true);
+			}
+			else
+			{
+				RemainingNodes.Add(Node);
+			}
+		}
+
+		// Delete the duplicatable nodes
+		DeleteSelected();
+
+		// Reselect whatever's left from the original selection after the deletion
+		GraphEditor->ClearSelectionSet();
+
+		for (FGraphPanelSelectionSet::TConstIterator SelectedIter(RemainingNodes); SelectedIter; ++SelectedIter)
+		{
+			if (UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter))
+			{
+				GraphEditor->SetNodeSelection(Node, true);
+			}
+		}
+	}
 }
 
 
