@@ -8,6 +8,18 @@
 #include "MobaAbilityEdGraph.h"
 
 #include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
+#include "Framework/Commands/GenericCommands.h"
+#include "HAL/PlatformApplicationMisc.h"
+#include "Editor/UnrealEd/Public/EdGraphUtilities.h"
+#include "Editor/GraphEditor/Public/SNodePanel.h"
+
+void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
+{
+}
+
+void FMobaAbilityEditorToolKit::PostRedo(bool bSuccess)
+{
+}
 
 FName FMobaAbilityEditorToolKit::GetToolkitFName() const
 {
@@ -31,6 +43,7 @@ FLinearColor FMobaAbilityEditorToolKit::GetWorldCentricTabColorScale() const
 
 void FMobaAbilityEditorToolKit::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager)
 {
+	CreateUICommandList();
 
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 	WorkSpaceItem = InTabManager->AddLocalWorkspaceMenuCategory(INVTEXT("MobaAbilityEditor"));
@@ -104,7 +117,6 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 
 	//UMobaAbilityEdGraphNodeBase* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
 	//EdGraph->AddNode(EdGraphNode);
-
 	const TSharedRef<FTabManager::FLayout> StandaloneRecoilAssetLayout = FTabManager::NewLayout("StandaloneMobaAbilityLayout_Layout")
 		->AddArea
 		(
@@ -130,6 +142,38 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	FAssetEditorToolkit::InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
 	//InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
 	RegenerateMenusAndToolbars();
+
+}
+
+void FMobaAbilityEditorToolKit::CreateUICommandList()
+{
+	GraphEditorCommands = MakeShared<FUICommandList>();
+
+	GraphEditorCommands->MapAction(FGenericCommands::Get().Delete,
+		FExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::DeleteSelected),
+		FCanExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CanDeleteSelected)
+	);
+
+	GraphEditorCommands->MapAction(FGenericCommands::Get().Copy,
+		FExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CopySelected),
+		FCanExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CanCopySelected)
+	);
+
+	GraphEditorCommands->MapAction(FGenericCommands::Get().Cut,
+		FExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CutSelected),
+		FCanExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CanCutSelected)
+	);
+
+	GraphEditorCommands->MapAction(FGenericCommands::Get().Paste,
+		FExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::Paste),
+		FCanExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CanPaste)
+	);
+
+	GraphEditorCommands->MapAction(FGenericCommands::Get().Duplicate,
+		FExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::DuplicateSelected),
+		FCanExecuteAction::CreateSP(this, &FMobaAbilityEditorToolKit::CanDuplicateSelected)
+	);
+
 }
 
 UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
@@ -150,6 +194,10 @@ UMobaAbilityEdGraphNodeBase* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGra
 
 void FMobaAbilityEditorToolKit::OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection)
 {
+	if (NewSelection.Num() > 0)
+	{
+		/*GraphEditor*/
+	}
 }
 
 void FMobaAbilityEditorToolKit::OnFocused(const TSharedRef<SGraphEditor>& InSGraphEditor)
@@ -183,7 +231,6 @@ void FMobaAbilityEditorToolKit::OnNodeDoubleClicked(UEdGraphNode* Node)
 	if (Node && Node->CanJumpToDefinition())
 	{
 		Node->JumpToDefinition();
-		//Find(Node);
 	}
 }
 
@@ -237,20 +284,22 @@ TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnGraphEdit(const FSpawnTabAr
 	//InEvents.OnDoubleClicked = SGraphEditor::FOnDoubleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::NaviagetionDoubleClicked);
 	SetupGraphEditorEvents(EdGraph, InEvents);
 
-	TSharedPtr<SGraphEditor> Editor = SNew(SGraphEditor)
+	GraphEditor = SNew(SGraphEditor)
+		.AdditionalCommands(GraphEditorCommands)
 		.GraphToEdit(EdGraph)
-		.GraphEvents(InEvents);
+		.GraphEvents(InEvents)
+		.AssetEditorToolkit(this->AsShared());
 
 	return SNew(SDockTab)
 		[
-			Editor.ToSharedRef()
+			GraphEditor.ToSharedRef()
 		];
 }
 
 
 void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents)
 {
-	//InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FMobaAbilityEditorToolKit::OnSelectedNodesChanged);
+	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FMobaAbilityEditorToolKit::OnSelectedNodesChanged);
 	//InEvents.OnFocused = SGraphEditor::FOnFocused::CreateSP(this, &FMobaAbilityEditorToolKit::OnFocused);
 	//InEvents.OnCreateNodeOrPinMenu = SGraphEditor::FOnCreateNodeOrPinMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateNodeOrPinMenu);
 	//InEvents.OnMouseButtonDown = SGraphEditor::FOnMouseButtonDown::CreateSP(this, &FMobaAbilityEditorToolKit::OnMouseButtonDown);
@@ -267,49 +316,285 @@ void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraph
 	//InEvents.OnCreateActionMenu = SGraphEditor::FOnCreateActionMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateGraphActionMenu);
 
 	// Custom menu for K2 schemas
-	if (InGraph->Schema != nullptr && InGraph->Schema->IsChildOf(UEdGraphSchema_K2::StaticClass()))
-	{
-	}
+	//if (InGraph->Schema != nullptr && InGraph->Schema->IsChildOf(UEdGraphSchema_K2::StaticClass()))
+	//{
+	//}
 }
 
-void FMobaAbilityEditorToolKit::Find(const UEdGraphNode* node)
+FGraphPanelSelectionSet FMobaAbilityEditorToolKit::GetSelectedNodes() const
 {
-	TSharedPtr<SGraphEditor> GraphEditor;
-	//if (bRequestRename)
-	//{
-	//	// If we are renaming, the graph will be open already, just grab the tab and it's content and jump to the node.
-	//	TSharedPtr<SDockTab> ActiveTab = DocumentManager->GetActiveTab();
-	//	check(ActiveTab.IsValid());
-	//	GraphEditor = StaticCastSharedRef<SGraphEditor>(ActiveTab->GetContent());
-	//}
-	//else
-	//{
-	//	// Open a graph editor and jump to the node
+	return GraphEditor->GetSelectedNodes();
+}
 
-	//TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(EdGraph);
-	TSharedPtr<SDockTab> TabWithGraph = OpenDocument(EdGraph, FDocumentTracker::OpenNewDocument);
-
-	if (TabWithGraph.IsValid())
+bool FMobaAbilityEditorToolKit::CanDeleteSelected()
+{
+	// If any of the nodes can be deleted then we should allow deleting
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
+	for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
 	{
-
-		// We know that the contents of the opened tabs will be a graph editor.
-
-		if (GraphEditor.IsValid())
+		UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter);
+		if (Node && Node->CanUserDeleteNode())
 		{
-			GraphEditor = StaticCastSharedRef<SGraphEditor>(TabWithGraph->GetContent());
-			GraphEditor->CaptureKeyboard();
-			GraphEditor->JumpToNode(node, false);
+			return true;
 		}
 	}
 
+	return false;
 }
 
-TSharedPtr<SDockTab> FMobaAbilityEditorToolKit::OpenDocument(UObject* DocumentID, FDocumentTracker::EOpenDocumentCause Cause)
+void FMobaAbilityEditorToolKit::DeleteSelected()
 {
-	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(DocumentID);
-	return DocumentManager->OpenDocument(Payload, Cause);
+	const FScopedTransaction Transaction(FGenericCommands::Get().Delete->GetDescription());
+	GraphEditor->GetCurrentGraph()->Modify();
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
+
+	for (FGraphPanelSelectionSet::TConstIterator NodeIt(SelectedNodes); NodeIt; ++NodeIt)
+	{
+		if (UEdGraphNode* Node = Cast<UEdGraphNode>(*NodeIt))
+		{
+			if (Node->CanUserDeleteNode())
+			{
+				Node->Modify();
+				Node->DestroyNode();
+			}
+		}
+	}
+
+	GraphEditor->ClearSelectionSet();
 }
 
-//FMobaAbilityGraphEditorSummoner::FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp) : FDocumentTabFactoryForObjects<UEdGraph>(InHostingApp->GetToolbarTabId(), InHostingApp)
-//{
-//}
+bool FMobaAbilityEditorToolKit::CanCopySelected()
+{
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
+	for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
+	{
+		UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter);
+		if (Node && Node->CanDuplicateNode())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void FMobaAbilityEditorToolKit::CopySelected()
+{
+	// Export the selected nodes and place the text on the clipboard
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
+
+	FString ExportedText;
+
+	for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
+	{
+		if (UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter))
+		{
+			Node->PrepareForCopying();
+		}
+	}
+
+	FEdGraphUtilities::ExportNodesToText(SelectedNodes, /*out*/ ExportedText);
+	FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
+}
+
+bool FMobaAbilityEditorToolKit::CanPaste()
+{
+	//TSharedPtr<SGraphEditor> CurrentGraphEditor = UpdateGraphEdPtr.Pin();
+	//if (!CurrentGraphEditor.IsValid())
+	//{
+	//	return false;
+	//}
+
+	FString ClipboardContent;
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+
+	return FEdGraphUtilities::CanImportNodesFromText(EdGraph, ClipboardContent);
+}
+
+void FMobaAbilityEditorToolKit::Paste()
+{
+	if (GraphEditor)
+	{
+		PasteNodesHere(GraphEditor->GetPasteLocation());
+	}
+}
+
+void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
+{
+	// Find the graph editor with focus
+	//TSharedPtr<SGraphEditor> FocusedGraphEd = FocusedGraphEdPtr.Pin();
+	//if (!FocusedGraphEd.IsValid())
+	//{
+	//	return;
+	//}
+	// Select the newly pasted stuff
+	bool bNeedToModifyStructurally = false;
+	{
+		const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
+		EdGraph->Modify();
+
+		// Clear the selection set (newly pasted stuff will be selected)
+		//SetUISelectionState(NAME_None);
+
+		// Grab the text to paste from the clipboard.
+		FString TextToImport;
+		FPlatformApplicationMisc::ClipboardPaste(TextToImport);
+
+		// Import the nodes
+		TSet<UEdGraphNode*> PastedNodes;
+		FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, /*out*/ PastedNodes);
+
+		// Only do this step if we can create functions on the blueprint (i.e. not macro graphs, etc)
+		//if (NewDocument_IsVisibleForType(CGT_NewFunctionGraph))
+		//{
+		//	// Spawn Deferred Fixup Modal window if necessary
+		//	TArray<UK2Node_CallFunction*> FixupNodes;
+		//	for (UEdGraphNode* PastedNode : PastedNodes)
+		//	{
+		//		if (UK2Node_CallFunction* Node = Cast<UK2Node_CallFunction>(PastedNode))
+		//		{
+		//			if (Node->FunctionReference.IsSelfContext() && !Node->GetTargetFunction())
+		//			{
+		//				FixupNodes.Add(Node);
+		//			}
+		//		}
+		//	}
+		//	if (FixupNodes.Num() > 0)
+		//	{
+		//		if (!SFixupSelfContextDialog::CreateModal(FixupNodes, Cast<UBlueprint>(DestinationGraph->GetOuter()), this, FixupNodes.Num() != PastedNodes.Num()))
+		//		{
+		//			for (UEdGraphNode* Node : PastedNodes)
+		//			{
+		//				DestinationGraph->RemoveNode(Node);
+		//			}
+
+		//			return;
+		//		}
+		//	}
+		//}
+
+		// Update Paste Analytics
+		//AnalyticsStats.NodePasteCreateCount += PastedNodes.Num();
+
+		//{
+		//	UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForGraph(DestinationGraph);
+		//	UClass* CurrentClass = Blueprint ? Blueprint->GeneratedClass : nullptr;
+		//	if (CurrentClass)
+		//	{
+		//		FUpdatePastedNodes ReplaceNodes(CurrentClass, PastedNodes, DestinationGraph);
+		//		ReplaceNodes.ReplaceAll();
+		//	}
+		//}
+
+		//Average position of nodes so we can move them while still maintaining relative distances to each other
+		FVector2D AvgNodePosition(0.0f, 0.0f);
+
+		for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+		{
+			UEdGraphNode* Node = *It;
+			AvgNodePosition.X += Node->NodePosX;
+			AvgNodePosition.Y += Node->NodePosY;
+		}
+
+		float InvNumNodes = 1.0f / float(PastedNodes.Num());
+		AvgNodePosition.X *= InvNumNodes;
+		AvgNodePosition.Y *= InvNumNodes;
+
+		TSet<FString> NamespacesToImport;
+
+		for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+		{
+			UEdGraphNode* Node = *It;
+			GraphEditor->SetNodeSelection(Node, true);
+
+			Node->NodePosX = static_cast<int32>((Node->NodePosX - AvgNodePosition.X) + Location.X);
+			Node->NodePosY = static_cast<int32>((Node->NodePosY - AvgNodePosition.Y) + Location.Y);
+
+			Node->SnapToGrid(SNodePanel::GetSnapGridSize());
+
+			// Give new node a different Guid from the old one
+			Node->CreateNewGuid();
+
+			// Collect any required imports from node dependencies
+			//TArray<UStruct*> ExternalDependencies;
+			//if (Node->HasExternalDependencies(&ExternalDependencies))
+			//{
+			//	for (const UStruct* ExternalDependency : ExternalDependencies)
+			//	{
+			//		FBlueprintNamespaceUtilities::GetDefaultImportsForObject(ExternalDependency, DeferredNamespaceImports);
+			//	}
+			//}
+
+		}
+	}
+	// Update UI
+	GraphEditor->NotifyGraphChanged();
+}
+
+bool FMobaAbilityEditorToolKit::CanCutSelected()
+{
+	return CanCopySelected() && CanDeleteSelected();
+}
+
+void FMobaAbilityEditorToolKit::CutSelected()
+{
+	CopySelected();
+	DeleteSelectedDuplicatableNodes();
+}
+
+bool FMobaAbilityEditorToolKit::CanDuplicateSelected()
+{
+	return CanCopySelected();
+}
+
+void FMobaAbilityEditorToolKit::DuplicateSelected()
+{
+	CopySelected();
+	Paste();
+}
+
+
+void FMobaAbilityEditorToolKit::DeleteSelectedDuplicatableNodes()
+{
+	// Cache off the old selection
+	const FGraphPanelSelectionSet OldSelectedNodes = GetSelectedNodes();
+
+	// Clear the selection and only select the nodes that can be duplicated
+	FGraphPanelSelectionSet CurrentSelection;
+	//TSharedPtr<SGraphEditor> FocusedGraphEd = FocusedGraphEdPtr.Pin();
+	if (GraphEditor)
+	{
+		GraphEditor->ClearSelectionSet();
+
+		FGraphPanelSelectionSet RemainingNodes;
+		for (FGraphPanelSelectionSet::TConstIterator SelectedIter(OldSelectedNodes); SelectedIter; ++SelectedIter)
+		{
+			UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter);
+			if ((Node != nullptr) && Node->CanDuplicateNode())
+			{
+				GraphEditor->SetNodeSelection(Node, true);
+			}
+			else
+			{
+				RemainingNodes.Add(Node);
+			}
+		}
+
+		// Delete the duplicatable nodes
+		DeleteSelected();
+
+		// Reselect whatever's left from the original selection after the deletion
+		GraphEditor->ClearSelectionSet();
+
+		for (FGraphPanelSelectionSet::TConstIterator SelectedIter(RemainingNodes); SelectedIter; ++SelectedIter)
+		{
+			if (UEdGraphNode* Node = Cast<UEdGraphNode>(*SelectedIter))
+			{
+				GraphEditor->SetNodeSelection(Node, true);
+			}
+		}
+	}
+}
+
+
+
