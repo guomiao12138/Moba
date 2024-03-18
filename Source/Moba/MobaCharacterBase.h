@@ -14,7 +14,7 @@ class MOBA_API AMobaCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMobaPlayerController> MobaPlayerController;
 
 

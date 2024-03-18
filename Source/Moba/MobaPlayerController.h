@@ -17,11 +17,12 @@ class MOBA_API AMobaPlayerController : public AMobaPlayerControllerBase
 	GENERATED_BODY()
 
 
-
-private:
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMobaCharacterBase> Hero;
 
+
 protected:
+
 
 	FVector2D LastPosition;
 	int interval = 5;
@@ -50,5 +51,7 @@ public:
 	void MoveRight(float value);
 
 	void CreateDefaultHero();
+
+	AMobaCharacterBase* GetCurrentHero() { return Hero; };
 
 };
