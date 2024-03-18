@@ -16,6 +16,9 @@ public class Moba : ModuleRules
             "AIModule",
             "Ability",
             "UnrealEd",
+
+			"Sockets",
+            "Networking",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

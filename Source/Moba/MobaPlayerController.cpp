@@ -93,10 +93,10 @@ FVector AMobaPlayerController::IsMoveCamera()
 	FVector dir(0, 0, 0);
 	FVector2D ViewportPosition;
 	static int dirstep = 1;
-	static int forwardstep = dirstep;
-	static int backstep = -dirstep;
-	static int rightstep = dirstep;
-	static int leftstep = -dirstep;
+	static int forwardstep = -dirstep;
+	static int backstep = dirstep;
+	static int rightstep = -dirstep;
+	static int leftstep = dirstep;
 	
 	if (GetMousePosition(mousePosition.X, mousePosition.Y))
 	{

@@ -17,7 +17,6 @@ class MOBA_API AMobaPlayerController : public AMobaPlayerControllerBase
 	GENERATED_BODY()
 
 
-	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMobaCharacterBase> Hero;
 
 
@@ -52,6 +51,7 @@ public:
 
 	void CreateDefaultHero();
 
+	UFUNCTION(BlueprintPure)
 	AMobaCharacterBase* GetCurrentHero() { return Hero; };
 
 };
