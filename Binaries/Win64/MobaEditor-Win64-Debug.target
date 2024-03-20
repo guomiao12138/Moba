@@ -18,45 +18,9 @@
 		"IsLicenseeVersion": 0,
 		"IsPromotedBuild": 0,
 		"BranchName": "UE5",
-		"BuildId": "069e52db-11a6-4a16-918c-bbd7a6d63c6f"
+		"BuildId": "b28aaacf-afa5-4c0f-b19f-65d351ff9553"
 	},
 	"BuildProducts": [
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Moba-Win64-Debug.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Moba-Win64-Debug.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Ability-Win64-Debug.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Ability-Win64-Debug.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-VaFogOfWar-Win64-Debug.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-VaFogOfWar-Win64-Debug.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
-			"Type": "RequiredResource"
-		},
 		{
 			"Path": "$(EngineDir)/Binaries/Win64/AgentInterface.dll",
 			"Type": "DynamicLibrary"
@@ -6304,21 +6268,45 @@
 		{
 			"Path": "$(EngineDir)/Plugins/XGEController/Binaries/Win64/UnrealEditor-XGEController-Win64-Debug.pdb",
 			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Moba-Win64-Debug.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Moba-Win64-Debug.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Ability-Win64-Debug.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Ability-Win64-Debug.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Ability/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-VaFogOfWar-Win64-Debug.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-VaFogOfWar-Win64-Debug.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor-Win64-Debug.modules",
+			"Type": "RequiredResource"
 		}
 	],
 	"RuntimeDependencies": [
-		{
-			"Path": "$(ProjectDir)/Moba.uproject",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Ability/Ability.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/VaFogOfWar.uplugin",
-			"Type": "UFS"
-		},
 		{
 			"Path": "$(EngineDir)/Binaries/ThirdParty/CEF3/Win64/Resources/chrome_100_percent.pak",
 			"Type": "NonUFS"
@@ -29657,6 +29645,18 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/XGEController/XGEController.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Moba.uproject",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Ability/Ability.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/VaFogOfWar.uplugin",
 			"Type": "UFS"
 		}
 	],
