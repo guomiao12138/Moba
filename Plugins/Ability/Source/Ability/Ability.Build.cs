@@ -39,17 +39,11 @@ public class Ability : ModuleRules
 				"Slate",
 				"SlateCore",
 				"InputCore",
-				"EditorFramework",
-				"EditorStyle",
 				"UnrealEd",
-				"LevelEditor",
-				"InteractiveToolsFramework",
-				"EditorInteractiveToolsFramework",
 
                 "GraphEditor",
                 "ToolMenus",
                 "BlueprintGraph",
-                /*"KismetCompiler",*/
                 "ApplicationCore",
 				// ... add private dependencies that you statically link with here ...	
 			}

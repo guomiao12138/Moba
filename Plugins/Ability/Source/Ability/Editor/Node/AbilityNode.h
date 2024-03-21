@@ -1,0 +1,56 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "EdGraph/EdGraphNode.h"
+#include "Engine/MemberReference.h"
+#include "Editor/BlueprintGraph/Classes/K2Node.h"
+#include "AbilityNode.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class ABILITY_API UAbilityNode : public UEdGraphNode
+{
+	GENERATED_BODY()
+	
+protected:
+
+public:
+	UPROPERTY()
+	FMemberReference FunctionReference;
+
+	UPROPERTY(EditAnywhere)
+	bool CanTick = false;
+	bool Succeed = false;
+	int OutInputIndex = 0;
+
+	UAbilityNode();
+
+	virtual void AllocateDefaultPins() override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual FLinearColor GetNodeTitleColor() const override;
+	virtual FText GetTooltipText() const override;
+	virtual UObject* GetJumpTargetForDoubleClick() const override;
+	virtual bool CanJumpToDefinition() const override;
+	virtual void JumpToDefinition() const override;
+	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
+
+	virtual FText GetFunctionContextString() const;
+	virtual void SetFromFunction(const UFunction* Function);
+	virtual void CreateParamsPins();
+
+	UEdGraphPin* GetExecutePin();
+	UEdGraphPin* GetThenPin();
+	void SetNodeTitle(FName name);
+
+	virtual void Tick(float DeltaTime);
+
+	virtual void OnActiveNode();
+	virtual bool OnDeActiveNode() { return false; };
+
+	void CallFunction();
+	APawn* GetCauser();
+};
