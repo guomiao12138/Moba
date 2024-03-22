@@ -4,7 +4,7 @@
 #include "AssetToolsModule.h"
 #include "Ability/Editor/MobaAbilityEditorToolKit.h"
 #include "Ability/Editor/Node/AbilityNode.h"
-#include "Editor/AIGraph/Classes/AIGraphTypes.h"
+
 
 #define LOCTEXT_NAMESPACE "AbilityModule"
 

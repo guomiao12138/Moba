@@ -17,7 +17,6 @@ class UMobaAbility;
 struct FConnectionParams;
 class UMobaAbilityEdGraph;
 class FConnectionDrawingPolicy;
-//struct FGraphNodeClassHelper;
 
 UCLASS()
 class ABILITY_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
@@ -47,7 +46,6 @@ public:
 	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 	/** End UEdGraphSchema Interface */
 
-	//virtual FGraphNodeClassHelper& GetClassCache() const;
 };
 
 USTRUCT()

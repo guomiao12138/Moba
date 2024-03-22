@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Editor/Node/AbilityNode.h"
+#include "AbilityNode.h"
 #include "ChangeSpeed.generated.h"
 
 /**
@@ -14,7 +14,6 @@ class ABILITY_API UChangeSpeed : public UAbilityNode
 {
 	GENERATED_BODY()
 public:
-	UAbilityNode_Default();
-	virtual void AllocateDefaultPins() override;
-	virtual FLinearColor GetNodeTitleColor() const override;
+	//virtual void AllocateDefaultPins() override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 };

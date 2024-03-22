@@ -4,12 +4,9 @@
 #include "MobaAbilityEdGraph.h"
 #include "GraphEditAction.h"
 #include "EdGraph/EdGraphNode.h"
-#include "Ability/Editor/Node/AbilityNode_Default.h"
 
 UMobaAbilityEdGraph::UMobaAbilityEdGraph()
 {
-	//BeginNode = ;
-	GetOuter();
 }
 
 void UMobaAbilityEdGraph::NotifyGraphChanged(const FEdGraphEditAction& Action)
@@ -23,68 +20,3 @@ void UMobaAbilityEdGraph::NotifyGraphChanged(const FEdGraphEditAction& Action)
 	Super::NotifyGraphChanged(Action);
 }
 
-void UMobaAbilityEdGraph::BuildNode()
-{
-	//TArray<FFrame> framestack;
-	//auto linkPins = BeginNode->GetThenPin()->LinkedTo;
-	//for (auto p : linkPins)
-	//{
-	//	if (auto n = Cast<UAbilityNode>(p->GetOuter()))
-	//	{
-	//		n->CallFunction();
-	//	}
-
-	//}
-
-}
-
-void UMobaAbilityEdGraph::ActiveEventNode(FName eventname)
-{
-	if (!EventNodeMap.Contains(eventname))
-	{
-		return;
-	}
-	TArray<UEdGraphPin*> links = EventNodeMap[eventname]->GetThenPin()->LinkedTo;
-
-	TArray<UAbilityNode*> nodes;
-
-	UAbilityNode* next = nullptr;
-	for (auto link : links)
-	{
-		next = Cast<UAbilityNode>(link->GetOuter());
-		while (next)
-		{
-			nodes.Add(next);
-			if (next->GetThenPin()->LinkedTo.Num() > 0)
-			{
-				next = Cast<UAbilityNode>(next->GetThenPin()->LinkedTo[0]->GetOuter());
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	for (auto n : nodes)
-	{
-		n->CallFunction();
-	}
-}
-
-UAbilityNode* UMobaAbilityEdGraph::CreateDefaultNode(FName eventname)
-{
-	UAbilityNode_Default* ResultGraphNode = NewObject<UAbilityNode_Default>(this);
-	Modify();
-	ResultGraphNode->SetFlags(RF_Transactional);
-	ResultGraphNode->SetNodeTitle(eventname);
-	ResultGraphNode->Rename(nullptr, this, REN_NonTransactional);
-	ResultGraphNode->CreateNewGuid();
-	ResultGraphNode->NodePosX = 0;
-	ResultGraphNode->NodePosY = EventNodeMap.Num() * 5;
-
-	ResultGraphNode->AllocateDefaultPins();
-	AddNode(ResultGraphNode);
-	EventNodeMap.Add(eventname, ResultGraphNode);
-	return ResultGraphNode;
-}

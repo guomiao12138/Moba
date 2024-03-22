@@ -17,10 +17,7 @@ UMobaAbility::UMobaAbility()
 void UMobaAbility::Activate()
 {
 	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
-	if (Graph)
-	{
-		Graph->ActiveEventNode(TEXT("Start"));
-	}
+
 }
 
 void UMobaAbility::AAAA(FName name)

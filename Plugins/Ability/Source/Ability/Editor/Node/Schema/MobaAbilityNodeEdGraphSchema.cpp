@@ -3,6 +3,7 @@
 
 #include "MobaAbilityNodeEdGraphSchema.h"
 #include "Ability/Editor/Node/AbilityNode.h"
+#include "Ability/Editor/Node/UAbilityNode_Root.h"
 #include "Ability/Runtime/MobaAbility.h"
 #include "Ability/Editor/Node/Schema/AbilityConnectionDrawingPolicy.h"
 #include "Ability/Editor/MobaAbilityEdGraph.h"
@@ -11,8 +12,6 @@
 #include "Framework/Commands/GenericCommands.h"
 #include "SGraphNode.h"
 #include "EdGraph/EdGraphSchema.h"
-#include "Editor/AIGraph/Classes/AIGraphTypes.h"
-
 
 
 
@@ -21,33 +20,37 @@ UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
 	AssetClass = UMobaAbility::StaticClass();
 }
 
-FGraphNodeClassHelper& UMobaAbilityNodeEdGraphSchema::GetClassCache() const
-{
-	const FAbilityModule& EditorModule = FModuleManager::GetModuleChecked<FAbilityModule>(TEXT("BehaviorTreeEditor"));
-	FGraphNodeClassHelper* ClassHelper = EditorModule.GetClassCache().Get();
-	check(ClassHelper);
-	return *ClassHelper;
-}
+//FGraphNodeClassHelper& UMobaAbilityNodeEdGraphSchema::GetClassCache() const
+//{
+//	const FAbilityModule& EditorModule = FModuleManager::GetModuleChecked<FAbilityModule>(TEXT("BehaviorTreeEditor"));
+//	FGraphNodeClassHelper* ClassHelper = EditorModule.GetClassCache().Get();
+//	check(ClassHelper);
+//	return *ClassHelper;
+//}
 
 
 void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
-	TArray<FName> FunctionArray;
-	AssetClass->GenerateFunctionList(FunctionArray);
+	TArray<UClass*> res;
+	GetDerivedClasses(UAbilityNode::StaticClass(), res, true);
+	
 
-	FGraphNodeClassHelper& ClassCache = GetClassCache();
+	//TArray<FName> FunctionArray;
+	//AssetClass->GenerateFunctionList(FunctionArray);
 
-	TArray<FGraphNodeClassData> NodeClasses;
-	ClassCache.GatherClasses(UAbilityNode::StaticClass(), NodeClasses);
+	//FGraphNodeClassHelper& ClassCache = GetClassCache();
 
-	for (auto func : FunctionArray)
+	//TArray<FGraphNodeClassData> NodeClasses;
+	//ClassCache.GatherClasses(UAbilityNode::StaticClass(), NodeClasses);
+
+	for (auto s : res)
 	{
 		//if (AssetClass->FindFunction(func))
 		//{
 
 		//}
 		
-		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(func), FText()));
+		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(s->GetFName()), FText()));
 		ContextMenuBuilder.AddAction(Action);
 	}
 
@@ -110,8 +113,20 @@ FConnectionDrawingPolicy* UMobaAbilityNodeEdGraphSchema::CreateConnectionDrawing
 
 void UMobaAbilityNodeEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
-	auto* rootnode = Cast<UMobaAbilityEdGraph>(&Graph)->CreateDefaultNode(TEXT("Root"));
-	Cast<UMobaAbility>(Graph.GetOuter())->RootNode = rootnode;
+	//auto* rootnode = Cast<UMobaAbilityEdGraph>(&Graph)->CreateDefaultNode(TEXT("Root"));
+
+	UAbilityNode_Root* ResultGraphNode = NewObject<UAbilityNode_Root>(&Graph);
+	Graph.Modify();
+	ResultGraphNode->SetFlags(RF_Transactional);
+	ResultGraphNode->Rename(nullptr, &Graph, REN_NonTransactional);
+	ResultGraphNode->CreateNewGuid();
+	ResultGraphNode->NodePosX = 0;
+	ResultGraphNode->NodePosY = 0;
+
+	ResultGraphNode->AllocateDefaultPins();
+	Graph.AddNode(ResultGraphNode);
+
+	Cast<UMobaAbility>(Graph.GetOuter())->RootNode = ResultGraphNode;
 }
 
 UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode)
@@ -121,17 +136,12 @@ UEdGraphNode* FMobaAbilityGraphSchemaAction::PerformAction(UEdGraph* ParentGraph
 
 UAbilityNode* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph* ParentGraph, const FVector2D Location)
 {
-	UFunction* Function = UMobaAbility::StaticClass()->FindFunctionByName(FunctionName);
-
 	ParentGraph->Modify();
 	//node->SetFlags(RF_Transactional);
 
 	//node->Rename(nullptr, ParentGraph, REN_NonTransactional);
-
-
 	FGraphNodeCreator<UAbilityNode> NodeCreator(*ParentGraph);
 	UAbilityNode* node = NodeCreator.CreateNode(false);
-	node->SetFromFunction(Function);
 	node->SetFlags(RF_Transactional);
 	node->NodePosX = Location.X;
 	node->NodePosY = Location.Y;

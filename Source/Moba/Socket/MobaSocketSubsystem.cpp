@@ -8,12 +8,12 @@
 
 void UMobaSocketSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	Collection.ActivateExternalSubsystem(GetClass());
-	CreateSocket();
+	Super::Initialize(Collection);
 }
 
 void UMobaSocketSubsystem::Deinitialize()
 {
+	Super::Deinitialize();
 }
 
 void UMobaSocketSubsystem::CreateSocket()

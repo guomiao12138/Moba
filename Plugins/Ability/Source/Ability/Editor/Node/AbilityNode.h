@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
-#include "Engine/MemberReference.h"
 #include "Editor/BlueprintGraph/Classes/K2Node.h"
 #include "AbilityNode.generated.h"
 
@@ -19,8 +18,6 @@ class ABILITY_API UAbilityNode : public UEdGraphNode
 protected:
 
 public:
-	UPROPERTY()
-	FMemberReference FunctionReference;
 
 	UPROPERTY(EditAnywhere)
 	bool CanTick = false;
@@ -39,18 +36,15 @@ public:
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	virtual FText GetFunctionContextString() const;
-	virtual void SetFromFunction(const UFunction* Function);
 	virtual void CreateParamsPins();
 
 	UEdGraphPin* GetExecutePin();
 	UEdGraphPin* GetThenPin();
-	void SetNodeTitle(FName name);
 
 	virtual void Tick(float DeltaTime);
 
 	virtual void OnActiveNode();
 	virtual bool OnDeActiveNode() { return false; };
 
-	void CallFunction();
 	APawn* GetCauser();
 };

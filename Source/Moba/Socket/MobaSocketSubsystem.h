@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystems/LocalPlayerSubsystem.h"
 #include "MobaSocketSubsystem.generated.h"
 
 /**
@@ -24,7 +25,7 @@ public://重载的函数，可以做一些初始化和释放操作
     virtual void Initialize(FSubsystemCollectionBase& Collection)override;
     virtual void Deinitialize()override;
 
-
+    UFUNCTION(BlueprintCallable)
     void CreateSocket();
 
 };

@@ -31,7 +31,7 @@ public:
 #endif
 
 	UPROPERTY()
-	TObjectPtr<class UAbilityNode> RootNode;
+	TObjectPtr<class UAbilityNode_Root> RootNode;
 
 	UPROPERTY()
 	TObjectPtr<APawn> Owner;
