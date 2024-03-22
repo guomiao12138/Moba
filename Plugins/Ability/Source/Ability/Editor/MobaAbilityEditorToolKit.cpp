@@ -13,6 +13,8 @@
 #include "Editor/UnrealEd/Public/EdGraphUtilities.h"
 #include "Editor/GraphEditor/Public/SNodePanel.h"
 
+#include "IDetailsView.h"
+
 void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
 {
 }
@@ -210,11 +212,22 @@ FActionMenuContent FMobaAbilityEditorToolKit::OnCreateNodeOrPinMenu(UEdGraph* Cu
 
 FReply FMobaAbilityEditorToolKit::OnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InPointerEvent)
 {
-	return FReply::Handled();
+	if (auto node = GraphEditor.Get()->GetSingleSelectedNode())
+	{
+		OnNodeSingleClicked(node);
+		return FReply::Handled();
+	}
+	else
+	{
+		DetailsView->SetObject(GetEditingObject());
+		return FReply::Handled();
+	}
+	return FReply::Unhandled();
 }
 
 void FMobaAbilityEditorToolKit::OnNodeSingleClicked(UObject* Obj)
 {
+	DetailsView->SetObject(Obj);
 }
 
 void FMobaAbilityEditorToolKit::OnGraphEditorDropActor(const TArray<TWeakObjectPtr<AActor>>& Actors, UEdGraph* Graph, const FVector2D& DropLocation)
@@ -264,17 +277,17 @@ FActionMenuContent FMobaAbilityEditorToolKit::OnCreateGraphActionMenu(UEdGraph* 
 	return FActionMenuContent();
 }
 
-TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs) const
+TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs)
 {
 	FPropertyEditorModule& PropertyEditorModule = FModuleManager::Get().LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	const FDetailsViewArgs DetailsViewArgs;
 
-	const TSharedRef<IDetailsView> AssetPropertyView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
-	AssetPropertyView->SetObject(GetEditingObject());
+	DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
+	DetailsView->SetObject(GetEditingObject());
 	return SNew(SDockTab)
-	[
-		AssetPropertyView
-	];
+		[
+			DetailsView.ToSharedRef()
+		];
 }
 
 TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs)
@@ -299,10 +312,10 @@ TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnGraphEdit(const FSpawnTabAr
 void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents)
 {
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FMobaAbilityEditorToolKit::OnSelectedNodesChanged);
-	//InEvents.OnFocused = SGraphEditor::FOnFocused::CreateSP(this, &FMobaAbilityEditorToolKit::OnFocused);
+	InEvents.OnFocused = SGraphEditor::FOnFocused::CreateSP(this, &FMobaAbilityEditorToolKit::OnFocused);
 	//InEvents.OnCreateNodeOrPinMenu = SGraphEditor::FOnCreateNodeOrPinMenu::CreateSP(this, &FMobaAbilityEditorToolKit::OnCreateNodeOrPinMenu);
-	//InEvents.OnMouseButtonDown = SGraphEditor::FOnMouseButtonDown::CreateSP(this, &FMobaAbilityEditorToolKit::OnMouseButtonDown);
-	//InEvents.OnNodeSingleClicked = SGraphEditor::FOnNodeSingleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSingleClicked);
+	InEvents.OnMouseButtonDown = SGraphEditor::FOnMouseButtonDown::CreateSP(this, &FMobaAbilityEditorToolKit::OnMouseButtonDown);
+	InEvents.OnNodeSingleClicked = SGraphEditor::FOnNodeSingleClicked::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeSingleClicked);
 	//InEvents.OnDropActor = SGraphEditor::FOnDropActor::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropActor);
 	//InEvents.OnDropStreamingLevel = SGraphEditor::FOnDropStreamingLevel::CreateSP(this, &FMobaAbilityEditorToolKit::OnGraphEditorDropStreamingLevel);
 	InEvents.OnNodeDoubleClicked = FSingleNodeEvent::CreateSP(this, &FMobaAbilityEditorToolKit::OnNodeDoubleClicked);
@@ -443,49 +456,6 @@ void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
 		TSet<UEdGraphNode*> PastedNodes;
 		FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, /*out*/ PastedNodes);
 
-		// Only do this step if we can create functions on the blueprint (i.e. not macro graphs, etc)
-		//if (NewDocument_IsVisibleForType(CGT_NewFunctionGraph))
-		//{
-		//	// Spawn Deferred Fixup Modal window if necessary
-		//	TArray<UK2Node_CallFunction*> FixupNodes;
-		//	for (UEdGraphNode* PastedNode : PastedNodes)
-		//	{
-		//		if (UK2Node_CallFunction* Node = Cast<UK2Node_CallFunction>(PastedNode))
-		//		{
-		//			if (Node->FunctionReference.IsSelfContext() && !Node->GetTargetFunction())
-		//			{
-		//				FixupNodes.Add(Node);
-		//			}
-		//		}
-		//	}
-		//	if (FixupNodes.Num() > 0)
-		//	{
-		//		if (!SFixupSelfContextDialog::CreateModal(FixupNodes, Cast<UBlueprint>(DestinationGraph->GetOuter()), this, FixupNodes.Num() != PastedNodes.Num()))
-		//		{
-		//			for (UEdGraphNode* Node : PastedNodes)
-		//			{
-		//				DestinationGraph->RemoveNode(Node);
-		//			}
-
-		//			return;
-		//		}
-		//	}
-		//}
-
-		// Update Paste Analytics
-		//AnalyticsStats.NodePasteCreateCount += PastedNodes.Num();
-
-		//{
-		//	UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForGraph(DestinationGraph);
-		//	UClass* CurrentClass = Blueprint ? Blueprint->GeneratedClass : nullptr;
-		//	if (CurrentClass)
-		//	{
-		//		FUpdatePastedNodes ReplaceNodes(CurrentClass, PastedNodes, DestinationGraph);
-		//		ReplaceNodes.ReplaceAll();
-		//	}
-		//}
-
-		//Average position of nodes so we can move them while still maintaining relative distances to each other
 		FVector2D AvgNodePosition(0.0f, 0.0f);
 
 		for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
@@ -511,19 +481,7 @@ void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
 
 			Node->SnapToGrid(SNodePanel::GetSnapGridSize());
 
-			// Give new node a different Guid from the old one
 			Node->CreateNewGuid();
-
-			// Collect any required imports from node dependencies
-			//TArray<UStruct*> ExternalDependencies;
-			//if (Node->HasExternalDependencies(&ExternalDependencies))
-			//{
-			//	for (const UStruct* ExternalDependency : ExternalDependencies)
-			//	{
-			//		FBlueprintNamespaceUtilities::GetDefaultImportsForObject(ExternalDependency, DeferredNamespaceImports);
-			//	}
-			//}
-
 		}
 	}
 	// Update UI

@@ -6,12 +6,16 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaPlayerController.h"
 
+#include "Ability/Runtime/MobaAbilityComponent.h"
+
 // Sets default values
 AMobaCharacterBase::AMobaCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	//GetMesh()->SetSkeletalMeshAsset();
+
+	AbilityComponent = CreateDefaultSubobject<UMobaAbilityComponent>(TEXT("AbilityComponent"));
 }
 
 void AMobaCharacterBase::InitController(AMobaPlayerController* InController)
@@ -51,6 +55,7 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
+	AbilityComponent->ActiveAbility();
 	FVector dir = InLocation - GetActorLocation();
 	SetActorRelativeRotation(dir.Rotation());
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);

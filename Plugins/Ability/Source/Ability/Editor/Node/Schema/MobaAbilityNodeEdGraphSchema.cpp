@@ -50,7 +50,7 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 
 		//}
 		
-		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(s->GetFName()), FText()));
+		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(s->GetFName()), FText(), s));
 		ContextMenuBuilder.AddAction(Action);
 	}
 
@@ -141,11 +141,12 @@ UAbilityNode* FMobaAbilityGraphSchemaAction::CreateNode(UEdGraph* ParentGraph, c
 
 	//node->Rename(nullptr, ParentGraph, REN_NonTransactional);
 	FGraphNodeCreator<UAbilityNode> NodeCreator(*ParentGraph);
-	UAbilityNode* node = NodeCreator.CreateNode(false);
+	UAbilityNode* node = NodeCreator.CreateNode(false, NodeClass);
 	node->SetFlags(RF_Transactional);
 	node->NodePosX = Location.X;
 	node->NodePosY = Location.Y;
 	node->AllocateDefaultPins();
+	//node->PostPlacedNewNode();
 	NodeCreator.Finalize();
 
 

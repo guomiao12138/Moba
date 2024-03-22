@@ -13,7 +13,7 @@
 //{
 //	FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp);
 //};
-
+class UMobaAbility;
 
 class ABILITY_API FMobaAbilityEditorToolKit final : public FAssetEditorToolkit, public FEditorUndoClient
 {
@@ -78,10 +78,11 @@ public:
 
 private:
 	// 生成细节面板
-	TSharedRef<SDockTab> SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs) const;
+	TSharedRef<SDockTab> SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs);
 	TSharedRef<SDockTab> SpawnGraphEdit(const FSpawnTabArgs& SpawnTabArgs);
 	TSharedPtr<FWorkspaceItem> WorkSpaceItem;
 	TObjectPtr<UEdGraph> EdGraph;
 	TSharedPtr<SGraphEditor> GraphEditor;
+	TSharedPtr<IDetailsView> DetailsView;
 	TSharedPtr< FUICommandList > GraphEditorCommands;
 };

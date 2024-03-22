@@ -4,6 +4,9 @@
 #include "MobaAbilityComponent.h"
 #include "Ability/Runtime/MobaAbility.h"
 #include "Ability/Editor/Node/AbilityNode.h"
+#include "Ability/Editor/Node/UAbilityNode_Root.h"
+
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UMobaAbilityComponent::UMobaAbilityComponent()
@@ -45,7 +48,16 @@ void UMobaAbilityComponent::TickAbility(float DeltaTime)
 
 void UMobaAbilityComponent::ActiveAbility()
 {
-	CurrentAbility->Owner = Cast<APawn>(GetOwner());
+	if (!CurrentAbility && Abilitys.Num() > 0)
+	{
+		CurrentAbility = Abilitys[0];
+	}
+	else
+	{
+		return;
+	}
+
+	CurrentAbility->Owner = Cast<ACharacter>(GetOwner());
 	CurrentAbility->RootNode->OnActiveNode();
 	UAbilityNode* temp = CurrentAbility->RootNode;
 	UAbilityNode* pre = nullptr;

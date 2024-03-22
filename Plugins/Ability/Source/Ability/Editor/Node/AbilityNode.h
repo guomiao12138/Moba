@@ -34,7 +34,7 @@ public:
 	virtual bool CanJumpToDefinition() const override;
 	virtual void JumpToDefinition() const override;
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
-
+	virtual void PostPlacedNewNode() override;
 	virtual FText GetFunctionContextString() const;
 	virtual void CreateParamsPins();
 
@@ -46,5 +46,5 @@ public:
 	virtual void OnActiveNode();
 	virtual bool OnDeActiveNode() { return false; };
 
-	APawn* GetCauser();
+	ACharacter* GetOwnerPawn();
 };

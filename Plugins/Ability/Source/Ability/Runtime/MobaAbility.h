@@ -34,7 +34,7 @@ public:
 	TObjectPtr<class UAbilityNode_Root> RootNode;
 
 	UPROPERTY()
-	TObjectPtr<APawn> Owner;
+	TObjectPtr<ACharacter> Owner;
 
 	UMobaAbility();
 

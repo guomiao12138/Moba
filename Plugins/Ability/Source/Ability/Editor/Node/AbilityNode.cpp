@@ -28,7 +28,6 @@ FText UAbilityNode::GetFunctionContextString() const
 
 void UAbilityNode::CreateParamsPins()
 {
-
 	//for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
 	for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
@@ -50,21 +49,29 @@ void UAbilityNode::CreateParamsPins()
 		uint64 CastFlags = Property->GetCastFlags();
 		if ((CastFlags & CASTCLASS_FBoolProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Boolean, Property->GetFName(), PinParams);
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Boolean, Property->GetFName());
 		}
 		else if ((CastFlags & CASTCLASS_FNameProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Name, Property->GetFName(), PinParams);
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Name, Property->GetFName());
 		}
 		else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
 		{
 			FObjectProperty* temp = CastField<FObjectProperty>(Property);
 			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_SoftObject, temp->PropertyClass, Property->GetFName());
 		}
+		else if ((CastFlags & CASTCLASS_FFloatProperty) != 0)
+		{
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Real, UEdGraphSchema_K2::PC_Float, Property->GetFName());
+		}
+		else if ((CastFlags & CASTCLASS_FIntProperty) != 0)
+		{
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Real, UEdGraphSchema_K2::PC_Int, Property->GetFName());
+		}
 		//UEdGraphPin* OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Class, AActor::StaticClass(), Param->GetFName());
 		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
 
-		//OwnerPin->bAdvancedView = true;
+		OwnerPin->bAdvancedView = true;
 	}
 
 }
@@ -103,7 +110,7 @@ void UAbilityNode::OnActiveNode()
 	Succeed = true;
 }
 
-APawn* UAbilityNode::GetCauser()
+ACharacter* UAbilityNode::GetOwnerPawn()
 {
 	if (auto graph = GetOuter())
 	{
@@ -127,12 +134,11 @@ void UAbilityNode::AllocateDefaultPins()
 	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Succeed"));
 	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Faild"));
 
-	CreateParamsPins();
 }
 
 FText UAbilityNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString(GetClass()->GetName()); 
+	return FText::FromString("AbilityNode");
 }
 
 FLinearColor UAbilityNode::GetNodeTitleColor() const
@@ -223,4 +229,9 @@ void UAbilityNode::JumpToDefinition() const
 
 void UAbilityNode::PinConnectionListChanged(UEdGraphPin* Pin)
 {
+}
+
+void UAbilityNode::PostPlacedNewNode()
+{
+	CreateParamsPins();
 }

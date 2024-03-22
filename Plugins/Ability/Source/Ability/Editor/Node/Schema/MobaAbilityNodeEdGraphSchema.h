@@ -60,14 +60,14 @@ struct FMobaAbilityGraphSchemaAction : public FEdGraphSchemaAction
 		0
 	) {}
 
-	FMobaAbilityGraphSchemaAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip)
-		: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), 0)
+	FMobaAbilityGraphSchemaAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip, UClass* InNodeClass)
+		: FEdGraphSchemaAction(MoveTemp(InNodeCategory), MoveTemp(InMenuDesc), MoveTemp(InToolTip), 0), NodeClass(InNodeClass)
 	{
-		FunctionName = *InMenuDesc.ToString();
+		NodeName = *InMenuDesc.ToString();
 	}
 
-
-	FName FunctionName;
+	TSubclassOf<UAbilityNode> NodeClass;
+	FName NodeName;
 
 	// ºËÐÄº¯Êý
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;

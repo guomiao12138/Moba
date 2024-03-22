@@ -95,7 +95,7 @@ void AMobaPlayerController::SetupInputComponent()
 void AMobaPlayerController::ClickPosition()
 {
 
-	//Abilitys[0]->Activate();
+
 
 	FVector2D screenlocation;
 	GetMousePosition(screenlocation.X, screenlocation.Y);
