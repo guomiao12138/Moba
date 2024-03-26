@@ -18,7 +18,7 @@ public:
 	TObjectPtr<AMobaPlayerController> MobaPlayerController;
 
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
 
 public:

@@ -68,9 +68,27 @@ void UMobaAbilityComponent::ActiveAbility()
 		{
 			if (UEdGraphPin* pin = temp->GetThenPin())
 			{
-				temp = Cast<UAbilityNode>(pin->GetOwningNode());
-				temp->OnActiveNode();
+				if (pin->LinkedTo.Num() > 0)
+				{
+					temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode());
+					if (temp)
+					{
+						temp->OnActiveNode();
+					}
+				}
+				else
+				{
+					temp = nullptr;
+				}
 			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			break;
 		}
 	}
 }

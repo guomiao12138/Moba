@@ -15,15 +15,10 @@
 #include "Editor/UnrealEd/Public/UnrealEdGlobals.h"
 #include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
 #include "Preferences/UnrealEdOptions.h"
+#include "Misc/DefaultValueHelper.h"
 
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
-
-
-FText UAbilityNode::GetFunctionContextString() const
-{
-	return FText();
-}
 
 
 void UAbilityNode::CreateParamsPins()
@@ -31,7 +26,7 @@ void UAbilityNode::CreateParamsPins()
 	//for (TFieldIterator<FProperty> PropIt(Function); PropIt && (PropIt->PropertyFlags & CPF_Parm); ++PropIt)
 	for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
 	{
-		if (Property->Owner != GetClass())
+		if (Property->Owner != GetClass() || Property->HasAnyPropertyFlags(EPropertyFlags::CPF_SimpleDisplay))
 		{
 			continue;
 		}
@@ -41,9 +36,8 @@ void UAbilityNode::CreateParamsPins()
 		//const bool bIsRefParam = Property->HasAnyPropertyFlags(CPF_ReferenceParm) && bIsFunctionInput;
 
 		const EEdGraphPinDirection Direction = EGPD_Input;
-
 		UEdGraphNode::FCreatePinParams PinParams;
-		//PinParams.bIsReference = bIsRefParam;
+		PinParams.bIsReference = true;
 
 		UEdGraphPin* OwnerPin = nullptr;
 		uint64 CastFlags = Property->GetCastFlags();
@@ -58,7 +52,7 @@ void UAbilityNode::CreateParamsPins()
 		else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
 		{
 			FObjectProperty* temp = CastField<FObjectProperty>(Property);
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_SoftObject, temp->PropertyClass, Property->GetFName());
+			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_SoftObject, temp->PropertyClass, Property->GetFName(), PinParams);
 		}
 		else if ((CastFlags & CASTCLASS_FFloatProperty) != 0)
 		{
@@ -71,7 +65,10 @@ void UAbilityNode::CreateParamsPins()
 		//UEdGraphPin* OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Class, AActor::StaticClass(), Param->GetFName());
 		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
 
-		OwnerPin->bAdvancedView = true;
+		if (OwnerPin)
+		{
+			OwnerPin->bAdvancedView = true;
+		}
 	}
 
 }
@@ -102,7 +99,11 @@ void UAbilityNode::Tick(float DeltaTime)
 
 	}
 
-	Cast<UAbilityNode>(GetThenPin()->GetOwningNode())->Tick(DeltaTime);
+	for (auto sub : SubNodes)
+	{
+		sub->Tick(DeltaTime);
+	}
+	//Cast<UAbilityNode>(GetThenPin()->GetOwningNode())->Tick(DeltaTime);
 }
 
 void UAbilityNode::OnActiveNode()
@@ -229,9 +230,27 @@ void UAbilityNode::JumpToDefinition() const
 
 void UAbilityNode::PinConnectionListChanged(UEdGraphPin* Pin)
 {
+	ForEachNodeDirectlyConnectedToOutputs([&](UEdGraphNode* ChildNode)
+		{
+			SubNodes.Add(Cast<UAbilityNode>(ChildNode));
+		}
+	);
 }
 
 void UAbilityNode::PostPlacedNewNode()
 {
 	CreateParamsPins();
+}
+
+void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
+{
+	for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+	{
+		if (Property->GetName() == Pin->PinName)
+		{
+			float value;
+			FDefaultValueHelper::ParseFloat(Pin->DefaultValue, value);
+			Property->SetValue_InContainer(this, &value);
+		}
+	}
 }

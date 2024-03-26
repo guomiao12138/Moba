@@ -21,3 +21,12 @@ FText UAbilityNode_Root::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
 	return FText::FromString("Root");
 }
+
+UEdGraphPin* UAbilityNode_Root::GetThenPin()
+{
+	return FindPin(UEdGraphSchema_K2::PN_Then);
+}
+
+void UAbilityNode_Root::CreateParamsPins()
+{
+}

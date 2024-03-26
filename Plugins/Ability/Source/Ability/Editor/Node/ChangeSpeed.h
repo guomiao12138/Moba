@@ -17,13 +17,13 @@ public:
 	//virtual void AllocateDefaultPins() override;
 
 	UPROPERTY(EditAnywhere)
-	bool aa = false;
-
-	UPROPERTY(EditAnywhere)
 	float DuringTime = 2.f;
 
 	UPROPERTY(EditAnywhere)
 	float Speed = 0.f;
+
+	UPROPERTY(EditAnywhere, Category = GameplayTags)
+	TArray<struct FGameplayTag> GameplayTags;
 
 	FVector OldSpeed;
 

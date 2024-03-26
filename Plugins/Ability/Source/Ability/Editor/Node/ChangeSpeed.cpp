@@ -22,8 +22,9 @@ void UChangeSpeed::OnActiveNode()
 
 bool UChangeSpeed::OnDeActiveNode()
 {
+
 	UE_LOG(LogTemp, Display, TEXT("OnDeActiveNode"));
-	return false;
+	return true;
 }
 
 void UChangeSpeed::Tick(float DeltaTime)
@@ -36,12 +37,12 @@ void UChangeSpeed::Tick(float DeltaTime)
 		{
 			if (DuringTime > 0)
 			{
-				FVector cur = moveCom->Velocity.GetSafeNormal();
-				moveCom->Velocity = cur * Speed;
+				//FVector cur = moveCom->Velocity.GetSafeNormal();
+				//moveCom->Velocity = cur * Speed;
 			}
 			else
 			{
-				moveCom->Velocity = OldSpeed;
+				//moveCom->Velocity = OldSpeed;
 			}
 		}
 	}

@@ -104,13 +104,13 @@ void AMobaPlayerController::ClickPosition()
 
 	DrawDebugPoint(GetWorld(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10);
 
-	FActorSpawnParameters Params;
-	Params.Owner = this;
-	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	if (auto aa = GetWorld()->SpawnActor<UMobaAbility>(hit.ImpactPoint, FRotator::ZeroRotator, Params))
-	{
-		UE_LOG(LogTemp, Display, TEXT("SpawnActor"));
-	} 
+	//FActorSpawnParameters Params;
+	//Params.Owner = this;
+	//Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//if (auto aa = GetWorld()->SpawnActor<UMobaAbility>(hit.ImpactPoint, FRotator::ZeroRotator, Params))
+	//{
+	//	UE_LOG(LogTemp, Display, TEXT("SpawnActor"));
+	//} 
 
 
 	if (auto player = Cast<AMobaCharacterBase>(GetPawn()))

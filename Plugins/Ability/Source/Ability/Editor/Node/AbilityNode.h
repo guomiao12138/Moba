@@ -19,13 +19,14 @@ protected:
 
 public:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, SimpleDisplay)
 	bool CanTick = false;
 	bool Succeed = false;
 	int OutInputIndex = 0;
 
 	UAbilityNode();
 
+	//UEdGraphNode
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
@@ -35,16 +36,19 @@ public:
 	virtual void JumpToDefinition() const override;
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 	virtual void PostPlacedNewNode() override;
-	virtual FText GetFunctionContextString() const;
+	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;
+	//UEdGraphNode
 	virtual void CreateParamsPins();
-
 	UEdGraphPin* GetExecutePin();
-	UEdGraphPin* GetThenPin();
+	virtual UEdGraphPin* GetThenPin();
 
 	virtual void Tick(float DeltaTime);
 
 	virtual void OnActiveNode();
-	virtual bool OnDeActiveNode() { return false; };
+	virtual bool OnDeActiveNode() { return true; };
+
+	UPROPERTY()
+	TArray<UAbilityNode*> SubNodes;
 
 	ACharacter* GetOwnerPawn();
 };

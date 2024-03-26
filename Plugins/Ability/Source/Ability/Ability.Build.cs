@@ -27,7 +27,12 @@ public class Ability : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
-			}
+				"GameplayTags",
+                "GraphEditor",
+                "ToolMenus",
+                "BlueprintGraph",
+                "ApplicationCore",
+            }
 			);
 			
 		
@@ -41,10 +46,6 @@ public class Ability : ModuleRules
 				"InputCore",
 				"UnrealEd",
 
-                "GraphEditor",
-                "ToolMenus",
-                "BlueprintGraph",
-                "ApplicationCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

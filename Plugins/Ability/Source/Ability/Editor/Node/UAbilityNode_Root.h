@@ -19,4 +19,6 @@ public:
 	virtual void AllocateDefaultPins() override;
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual UEdGraphPin* GetThenPin() override;
+	virtual void CreateParamsPins() override;
 };
