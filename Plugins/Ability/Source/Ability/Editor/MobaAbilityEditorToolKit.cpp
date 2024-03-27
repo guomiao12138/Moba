@@ -103,7 +103,6 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
 		const UEdGraphSchema* Schema = EdGraph->GetSchema();
 		Schema->CreateDefaultNodesForGraph(*MobaAbilityEdGraph);
-		//MobaAbilityEdGraph->CreateDefaultNode(TEXT("Start"));
 	}
 
 	if (EdGraph)

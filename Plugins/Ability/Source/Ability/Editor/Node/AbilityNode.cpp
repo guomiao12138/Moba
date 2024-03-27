@@ -109,6 +109,24 @@ void UAbilityNode::Tick(float DeltaTime)
 void UAbilityNode::OnActiveNode()
 {
 	Succeed = true;
+	TArray<UEdGraphPin*> pins;
+	TArray<UAbilityNode*> Nodes;
+
+	for (UEdGraphPin* Pin : Pins)
+	{
+		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Input)
+		{
+			for (UEdGraphPin* Connection : Pin->LinkedTo)
+			{
+				// avoid including the current node in the case of a self connection:
+				if (Connection->GetOwningNode() != this)
+				{
+					PinDefaultValueChanged(Connection);
+					//NeighborsAcceptedForConsideration.Add(Connection->GetOwningNode());
+				}
+			}
+		}
+	}
 }
 
 ACharacter* UAbilityNode::GetOwnerPawn()

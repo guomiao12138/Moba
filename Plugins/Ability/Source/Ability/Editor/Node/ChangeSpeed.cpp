@@ -16,6 +16,7 @@ FText UChangeSpeed::GetNodeTitle(ENodeTitleType::Type TitleType) const
 
 void UChangeSpeed::OnActiveNode()
 {
+	Super::OnActiveNode();
 	UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"), DuringTime);
 	OldSpeed = Cast<ACharacter>(GetOwnerPawn())->GetCharacterMovement()->Velocity;
 }
@@ -30,6 +31,7 @@ bool UChangeSpeed::OnDeActiveNode()
 void UChangeSpeed::Tick(float DeltaTime)
 {
 	DuringTime -= DeltaTime;
+	UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"));
 
 	if (auto ac = GetOwnerPawn())
 	{
@@ -37,7 +39,6 @@ void UChangeSpeed::Tick(float DeltaTime)
 		{
 			if (DuringTime > 0)
 			{
-				//FVector cur = moveCom->Velocity.GetSafeNormal();
 				//moveCom->Velocity = cur * Speed;
 			}
 			else
