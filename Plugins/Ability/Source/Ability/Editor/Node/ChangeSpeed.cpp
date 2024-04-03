@@ -17,8 +17,8 @@ FText UChangeSpeed::GetNodeTitle(ENodeTitleType::Type TitleType) const
 void UChangeSpeed::OnActiveNode()
 {
 	Super::OnActiveNode();
-	UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"), DuringTime);
-	OldSpeed = Cast<ACharacter>(GetOwnerPawn())->GetCharacterMovement()->Velocity;
+	//UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"), DuringTime);
+	OldSpeed = Cast<ACharacter>(GetOwnerPawn())->GetCharacterMovement()->MaxWalkSpeed;
 }
 
 bool UChangeSpeed::OnDeActiveNode()
@@ -39,11 +39,11 @@ void UChangeSpeed::Tick(float DeltaTime)
 		{
 			if (DuringTime > 0)
 			{
-				//moveCom->Velocity = cur * Speed;
+				moveCom->MaxWalkSpeed = Speed;
 			}
 			else
 			{
-				//moveCom->Velocity = OldSpeed;
+				moveCom->MaxWalkSpeed = OldSpeed;
 			}
 		}
 	}

@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = GameplayTags)
 	TArray<struct FGameplayTag> GameplayTags;
 
-	FVector OldSpeed;
+	float OldSpeed;
 
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual void OnActiveNode() override;
