@@ -7,7 +7,7 @@ public class Moba : ModuleRules
 	public Moba(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-/*		bUseUnity = true;*/
+		bUseUnity = true;
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject",

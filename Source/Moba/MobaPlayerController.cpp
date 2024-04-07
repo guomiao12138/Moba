@@ -23,6 +23,7 @@ AMobaPlayerController::AMobaPlayerController()
 void AMobaPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	FInputModeGameAndUI gameinputmode;
 	gameinputmode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 	SetInputMode(gameinputmode);
@@ -203,7 +204,6 @@ void AMobaPlayerController::CreateDefaultHero()
 	FActorSpawnParameters spawnInfo;
 	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnInfo.ObjectFlags |= RF_Transient;
-
 	Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, GetPawn()->GetActorTransform(), spawnInfo);
 	if(Hero)
 	{

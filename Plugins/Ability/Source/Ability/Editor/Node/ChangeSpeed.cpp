@@ -30,7 +30,6 @@ bool UChangeSpeed::OnDeActiveNode()
 
 void UChangeSpeed::Tick(float DeltaTime)
 {
-	DuringTime -= DeltaTime;
 	UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"));
 
 	if (auto ac = GetOwnerPawn())
@@ -43,6 +42,7 @@ void UChangeSpeed::Tick(float DeltaTime)
 			}
 			else
 			{
+				DuringTime -= DeltaTime;
 				moveCom->MaxWalkSpeed = OldSpeed;
 			}
 		}

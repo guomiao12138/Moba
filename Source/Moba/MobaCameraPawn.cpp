@@ -12,6 +12,11 @@ AMobaCameraPawn::AMobaCameraPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+
+	if (RootComponent)
+	{
+		//RootComponent->MoveComponent(FVector::ZeroVector, FRotator::ZeroRotator, true, nullptr, MOVECOMP_NoFlags, ETeleportType::None);
+	}
 	//Mesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMeshComponent"));
 	//SetRootComponent(Mesh);
 	//Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
@@ -30,19 +35,22 @@ AMobaCameraPawn::AMobaCameraPawn()
 	//CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	////CameraComponent->AttachToComponent(SpringArmComponent,FAttachmentTransformRules::SnapToTargetIncludingScale);
 	//CameraComponent->SetupAttachment(SpringArmComponent);
+	SetActorRotation(FRotator(0, 180, 0));
 }
 
 // Called when the game starts or when spawned
 void AMobaCameraPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	//SetActorRotation(FRotator(0, 180, 0), TeleportFlagToEnum(false));
+
 }
 
 // Called every frame
 void AMobaCameraPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//SetActorRotation(GetActorRotation() + for);
 }
 
 // Called to bind functionality to input
