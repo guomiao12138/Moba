@@ -42,7 +42,7 @@ AMobaCameraPawn::AMobaCameraPawn()
 void AMobaCameraPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	//SetActorRotation(FRotator(0, 180, 0), TeleportFlagToEnum(false));
+	//SetActorRotation(FRotator(0, 180, 0));
 
 }
 

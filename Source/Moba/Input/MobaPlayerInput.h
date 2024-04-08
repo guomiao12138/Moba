@@ -15,5 +15,6 @@ class MOBA_API UMobaPlayerInput : public UPlayerInput
 	GENERATED_BODY()
 	
 public:
+	virtual void PostInitProperties() override;
 	UMobaPlayerInput();
 };

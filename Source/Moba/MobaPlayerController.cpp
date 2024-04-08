@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Input/MobaPlayerInput.h"
 
 #include "MobaPlayerController.h"
 #include "Components/InputComponent.h"
@@ -17,7 +18,7 @@
 #include "Socket/MobaSocketSubsystem.h"
 AMobaPlayerController::AMobaPlayerController()
 {
-
+	OverridePlayerInputClass = UMobaPlayerInput::StaticClass();
 }
 
 void AMobaPlayerController::BeginPlay()

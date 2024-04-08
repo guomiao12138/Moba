@@ -19,6 +19,7 @@ public class Moba : ModuleRules
 
 			"Sockets",
             "Networking",
+            "DeveloperSettings",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

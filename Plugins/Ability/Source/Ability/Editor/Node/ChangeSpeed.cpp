@@ -19,10 +19,25 @@ void UChangeSpeed::OnActiveNode()
 	Super::OnActiveNode();
 	//UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"), DuringTime);
 	OldSpeed = Cast<ACharacter>(GetOwnerPawn())->GetCharacterMovement()->MaxWalkSpeed;
+
+	if (auto ac = GetOwnerPawn())
+	{
+		if (auto moveCom = Cast<ACharacter>(ac)->GetCharacterMovement())
+		{
+			moveCom->MaxWalkSpeed = Speed;
+		}
+	}
 }
 
 bool UChangeSpeed::OnDeActiveNode()
 {
+	if (auto ac = GetOwnerPawn())
+	{
+		if (auto moveCom = Cast<ACharacter>(ac)->GetCharacterMovement())
+		{
+			moveCom->MaxWalkSpeed = OldSpeed;
+		}
+	}
 
 	UE_LOG(LogTemp, Display, TEXT("OnDeActiveNode"));
 	return true;
@@ -30,21 +45,5 @@ bool UChangeSpeed::OnDeActiveNode()
 
 void UChangeSpeed::Tick(float DeltaTime)
 {
-	UE_LOG(LogTemp, Display, TEXT("OnActiveNode  %f"));
 
-	if (auto ac = GetOwnerPawn())
-	{
-		if (auto moveCom = Cast<ACharacter>(ac)->GetCharacterMovement())
-		{
-			if (DuringTime > 0)
-			{
-				moveCom->MaxWalkSpeed = Speed;
-			}
-			else
-			{
-				DuringTime -= DeltaTime;
-				moveCom->MaxWalkSpeed = OldSpeed;
-			}
-		}
-	}
 }

@@ -20,6 +20,6 @@ class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
 public:
 	UMobaAbilityEdGraph();
 
-	 virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
+	virtual void NotifyGraphChanged(const FEdGraphEditAction& Action) override;
 
 };
