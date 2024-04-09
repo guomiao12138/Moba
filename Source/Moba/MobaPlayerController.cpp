@@ -64,6 +64,17 @@ void AMobaPlayerController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("ClickPosition"), EInputEvent::IE_Pressed, this, &AMobaPlayerController::ClickPosition);
 }
 
+void AMobaPlayerController::InitInputSystem()
+{
+	Super::InitInputSystem();
+
+	if (auto input = Cast<UMobaPlayerInput>(PlayerInput))
+	{
+		input->InitInputSetting();
+	}
+
+}
+
 void AMobaPlayerController::ClickPosition()
 {
 
@@ -205,6 +216,7 @@ void AMobaPlayerController::CreateDefaultHero()
 	FActorSpawnParameters spawnInfo;
 	spawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnInfo.ObjectFlags |= RF_Transient;
+	GetPawn()->SetActorRotation(FRotator(0, 180, 0));
 	Hero = GetWorld()->SpawnActor<AMobaCharacterBase>(HeroClass, GetPawn()->GetActorTransform(), spawnInfo);
 	if(Hero)
 	{

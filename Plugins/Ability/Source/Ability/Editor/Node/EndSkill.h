@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AbilityNode.h"
-#include "EndNode.generated.h"
+#include "EndSkill.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ABILITY_API UEndNode : public UAbilityNode
+class ABILITY_API UEndSkill : public UAbilityNode
 {
 	GENERATED_BODY()
 

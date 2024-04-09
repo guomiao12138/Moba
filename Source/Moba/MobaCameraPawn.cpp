@@ -35,7 +35,7 @@ AMobaCameraPawn::AMobaCameraPawn()
 	//CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	////CameraComponent->AttachToComponent(SpringArmComponent,FAttachmentTransformRules::SnapToTargetIncludingScale);
 	//CameraComponent->SetupAttachment(SpringArmComponent);
-	SetActorRotation(FRotator(0, 180, 0));
+
 }
 
 // Called when the game starts or when spawned

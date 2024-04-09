@@ -2,21 +2,30 @@
 
 
 #include "MobaPlayerInput.h"
-static FString InputConfig = FPaths::ProjectConfigDir() + TEXT("DefaultMoba.ini");
-void UMobaPlayerInput::PostInitProperties()
-{
-	Super::PostInitProperties();
+#include "UObject/ConstructorHelpers.h"
+#include "Moba/DataAsset/InputActionAsset.h"
 
-	FString value;
-	GConfig->GetString(TEXT("AAAAAA"), TEXT("ActionMappings"), value, InputConfig);
-	GConfig->SetInt(TEXT("AAAAAA"), TEXT("index"), 2, InputConfig);
-	//GConfig->SetString(TEXT("AAAAAA"), TEXT("ActionMappings"), , InputConfig);
-	GConfig->Flush(true);
+UMobaPlayerInput::UMobaPlayerInput()
+{
+	ConstructorHelpers::FObjectFinder<UInputActionAsset> Setting(TEXT("/Game/NewDataAsset.NewDataAsset"));
+	Setting.Object->ActionMappings;
+
 
 
 }
 
-UMobaPlayerInput::UMobaPlayerInput()
+void UMobaPlayerInput::InitInputSetting()
 {
-	
+	UInputActionAsset* asset = FindObject<UInputActionAsset>(nullptr, TEXT("/Game/NewDataAsset.NewDataAsset"));
+	if(!asset)
+	{
+		asset = LoadObject<UInputActionAsset>(nullptr, TEXT("/Game/NewDataAsset.NewDataAsset"));
+	}
+
+
+	for (auto ac : asset->ActionMappings)
+	{
+
+	}
+
 }

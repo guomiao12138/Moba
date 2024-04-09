@@ -42,6 +42,7 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
+	virtual void InitInputSystem() override;
 
 	void ClickPosition();
 

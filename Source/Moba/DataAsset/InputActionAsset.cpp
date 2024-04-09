@@ -5,7 +5,51 @@
 #include "UObject/ObjectSaveContext.h"
 #include "GameFramework/PlayerInput.h"
 
-static FString InputConfig = FPaths::ProjectConfigDir() + TEXT("DefaultMoba.ini");
+//void UInputActionAsset::Serialize(FArchive& Ar)
+//{
+//	Super::Serialize(Ar);
+//	FString ConfigPath = FPaths::ProjectConfigDir() + ConfigName;
+//
+//	TArray<FString> value;
+//	GConfig->GetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, ConfigPath);
+//	ActionMappings.Empty();
+//
+//	for (auto v : value)
+//	{
+//		//EKeys::GetMenuCategoryDisplayName();
+//		FInputActionMapping Action;
+//		FKey BaseKey(FName("J"));
+//		Action.BaseKey = BaseKey;
+//		ActionMappings.Add(Action);
+//	}
+//}
+
+void UInputActionAsset::PostLoad()
+{
+	Super::PostLoad();
+
+	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+
+	TArray<FString> value;
+	GConfig->GetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+	ActionMappings.Empty();
+
+
+
+	TArray<int> flag;
+
+	for (auto v : value)
+	{
+		for (int i = 0; i < v.Len(); i++)
+		{
+
+		}
+		FInputActionMapping Action;
+		FKey BaseKey(FName("J"));
+		Action.BaseKey = BaseKey;
+		ActionMappings.Add(Action);
+	}
+}
 
 void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -18,16 +62,36 @@ void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
 {
 	Super::PreSaveRoot(ObjectSaveContext);
-
-	for (struct FInputActionKeyMapping aa : ActionMappings)
+	if (ConfigName.IsEmpty())
 	{
-		//UE_LOG(LogTemp, Display, TEXT("-AxisConfig = (AxisKeyName = "%s", AxisProperties = (DeadZone = 0.25, Exponent = 1.f, Sensitivity = 1.f))"), aa.ActionName, aa.);
-		
+		UE_LOG(LogTemp, Warning, TEXT("ConfigName Is None, "));
+		return;
 	}
-	//FMLAdapterInputHelper
-	//FString value;
-	//GConfig->GetString(TEXT("AAAAAA"), TEXT("ActionMappings"), value, InputConfig);
-	GConfig->SetInt(TEXT("AAAAAA"), TEXT("index"), 2, InputConfig);
-	////GConfig->SetString(TEXT("AAAAAA"), TEXT("ActionMappings"), , InputConfig);
-	//GConfig->Flush(true);
+
+	if (!ConfigName.EndsWith(TEXT(".ini")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ConfigName should be xxx.ini"));
+		return;
+	}
+
+	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+
+	TArray<FString> value;
+	for (FInputActionMapping ac : ActionMappings)
+	{
+		value.Add(FString::Printf(TEXT("(ActionName = %s), (BaseKey = %s), (ModifyKey = %s)"), *ac.ActionName.ToString(), *ac.BaseKey.ToString(), *ac.ModifyKey.ToString()));
+	}
+	GConfig->SetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+
+	//for (FInputActionMapping ac : AxisMappings)
+	//{
+	//	value += FString::Printf(TEXT("(BaseKey = %s), (ModifyKey = %s)"), *ac.BaseKey.ToString(), *ac.ModifyKey.ToString()) + TEXT("\n");
+	//}
+	//GConfig->SetString(TEXT("InputSetting.Axis"), TEXT("ActionMappings"), *value, ConfigPath);
+	GConfig->Flush(false, configPath);
+}
+
+TArray<int> UInputActionAsset::FindKeyIndex(FString source, FString flag)
+{
+	return TArray<int>();
 }

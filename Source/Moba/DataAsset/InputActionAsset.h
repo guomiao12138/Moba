@@ -10,27 +10,57 @@
 /**
  * 
  */
+namespace ESteamSession
+{
+	enum Type
+	{
+
+
+	};
+};
+
 class FObjectPreSaveRootContext;
-struct FInputActionKeyMapping;
-UCLASS(config = Moba, DefaultConfig, meta=(DisplayName="AAAAAA"))
+USTRUCT(BlueprintType)
+struct FInputActionMapping
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FName ActionName;
+
+	UPROPERTY(EditAnywhere)
+	FKey BaseKey;
+
+	UPROPERTY(EditAnywhere)
+	FKey ModifyKey;
+};
+
+
+
+UCLASS(config = Moba, DefaultConfig, meta=(DisplayName="InputSetting"))
 class MOBA_API UInputActionAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere)
+	FString ConfigName;
 
 	UPROPERTY(Config, EditAnywhere)
-	TArray<struct FInputActionKeyMapping> ActionMappings;
+	TArray<FInputActionMapping> ActionMappings;
 
 	UPROPERTY(Config, EditAnywhere)
 	TArray<struct FInputAxisKeyMapping> AxisMappings;
 
-	UPROPERTY(Config, EditAnywhere)
-	int index = 0;
+	//virtual void Serialize(FArchive& Ar) override;
+	virtual void PostLoad() override;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
 #endif
+
+	TArray<int> FindKeyIndex(FString source, FString flag);
+
 };
 
