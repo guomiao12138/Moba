@@ -25,7 +25,9 @@ void UMobaPlayerInput::InitInputSetting()
 
 	for (auto ac : asset->ActionMappings)
 	{
-
+		FInputActionKeyMapping action;
+		action.ActionName = EInputAction::GetName(ac.ActionName);
+		action.Key = ac.BaseKey;
+		AddActionMapping(action);
 	}
-
 }
