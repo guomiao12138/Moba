@@ -33,9 +33,9 @@ namespace t \
 	{\
 		return (t::Type)GetEnumClass()->GetValueByName(name);\
 	}\
-	FORCEINLINE int GetValue(FString name)\
+	FORCEINLINE FString GetName()\
 	{\
-		return GetEnumClass()->GetValueByName(*name);\
+		return GetEnumClass()->GetName();\
 	}\
 }\
 
@@ -47,10 +47,14 @@ namespace EInputAction
 
 	enum Type
 	{
+		MoveForawd,
+		MoveRight,
+		ClickPosition,
 		Q,
 		W,
 		E,
 		R,
+		Max,
 	};
 
 }
@@ -63,18 +67,32 @@ struct FInputActionMapping
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<EInputAction::Type> ActionName;
+	TEnumAsByte<EInputAction::Type> ActionName = EInputAction::Max;
 
 	UPROPERTY(EditAnywhere)
-	FKey BaseKey;
+	FKey BaseKey = EKeys::Invalid;
 
 	UPROPERTY(EditAnywhere)
-	FKey ModifyKey;
+	FKey ModifyKey = EKeys::Invalid;
+};
+
+USTRUCT(BlueprintType)
+struct FInputAxisMapping
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EInputAction::Type> ActionName = EInputAction::Max;
+
+	UPROPERTY(EditAnywhere)
+	float Scale = 1.f;
+
+	UPROPERTY(EditAnywhere)
+	FKey Key = EKeys::Invalid;
 };
 
 
-
-UCLASS(config = Moba, DefaultConfig, meta=(DisplayName="InputSetting"))
+UCLASS(config = Moba, configdonotcheckdefaults, meta=(DisplayName="InputSetting"))
 class MOBA_API UInputActionAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
@@ -87,11 +105,12 @@ public:
 	TArray<FInputActionMapping> ActionMappings;
 
 	UPROPERTY(Config, EditAnywhere)
-	TArray<struct FInputAxisKeyMapping> AxisMappings;
+	TArray<FInputAxisMapping> AxisMappings;
 
-	//virtual void Serialize(FArchive& Ar) override;
+	virtual void Serialize(FArchive& Ar) override;
 	virtual void PostLoad() override;
-
+	virtual bool IsReadyForAsyncPostLoad() const override;
+	//virtual void Serialize(FStructuredArchiveRecord Record) override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;

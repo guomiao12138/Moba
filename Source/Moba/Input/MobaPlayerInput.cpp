@@ -2,26 +2,29 @@
 
 
 #include "MobaPlayerInput.h"
-#include "UObject/ConstructorHelpers.h"
 #include "Moba/DataAsset/InputActionAsset.h"
 
 UMobaPlayerInput::UMobaPlayerInput()
 {
-	ConstructorHelpers::FObjectFinder<UInputActionAsset> Setting(TEXT("/Game/NewDataAsset.NewDataAsset"));
-	Setting.Object->ActionMappings;
-
-
 
 }
 
 void UMobaPlayerInput::InitInputSetting()
 {
-	UInputActionAsset* asset = FindObject<UInputActionAsset>(nullptr, TEXT("/Game/NewDataAsset.NewDataAsset"));
+	FString configPath = FPaths::ProjectConfigDir() + TEXT("DefaultMoba.ini");
+	//GConfig->LoadFile
+	//asset->PostLoad();
+
+	UInputActionAsset* asset = FindObject<UInputActionAsset>(nullptr, TEXT("/Game/InputSetting.InputSetting"));
 	if(!asset)
 	{
-		asset = LoadObject<UInputActionAsset>(nullptr, TEXT("/Game/NewDataAsset.NewDataAsset"));
+		asset = LoadObject<UInputActionAsset>(nullptr, TEXT("/Game/InputSetting.InputSetting"));
 	}
-
+	if (!asset)
+	{
+		return;
+	}
+	asset->ReloadConfig();
 
 	for (auto ac : asset->ActionMappings)
 	{
@@ -29,5 +32,14 @@ void UMobaPlayerInput::InitInputSetting()
 		action.ActionName = EInputAction::GetName(ac.ActionName);
 		action.Key = ac.BaseKey;
 		AddActionMapping(action);
+	}
+
+	for (auto ax : asset->AxisMappings)
+	{
+		FInputAxisKeyMapping axis;
+		axis.AxisName = EInputAction::GetName(ax.ActionName);
+		axis.Key = ax.Key;
+		axis.Scale = ax.Scale;
+		AddAxisMapping(axis);
 	}
 }

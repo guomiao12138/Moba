@@ -5,6 +5,8 @@
 #include "UObject/ObjectSaveContext.h"
 #include "GameFramework/PlayerInput.h"
 
+#include "Misc/DefaultValueHelper.h"
+
 
 
 
@@ -49,17 +51,18 @@ void UInputActionAsset::PostLoad()
 	Super::PostLoad();
 
 	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+	LoadConfig(UInputActionAsset::StaticClass(), *configPath);
 
-	TArray<FString> value;
+	/*TArray<FString> value;
+	TArray<FString> value1;
 	GConfig->GetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+	GConfig->GetArray(TEXT("InputSetting.Action"), TEXT("AxisMappings"), value1, configPath);
 	ActionMappings.Empty();
-
-
 
 	int flag = -1;
 	int flag1 = -1;
 	TArray<FString> KeyName;
-
+	value.Append(value1);
 	for (auto v : value)
 	{
 		KeyName.Empty();
@@ -82,18 +85,47 @@ void UInputActionAsset::PostLoad()
 			}
 		}
 
-		if (KeyName.Num() < 3)
+		if (KeyName.Num() == 3)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s KeyName is not enough 3"), *configPath);
-			return;
+			//UE_LOG(LogTemp, Warning, TEXT("%s KeyName is not enough 3"), *configPath);
+
+			FInputActionMapping Action;
+			Action.ActionName = EInputAction::GetValueByName(*KeyName[0]);
+			Action.BaseKey = FKey(*KeyName[1]);
+			Action.ModifyKey = FKey(*KeyName[2]);
+			ActionMappings.Add(Action);
+			//return;
+		}
+		if (KeyName.Num() == 2)
+		{
+			FInputAxisMapping Axis;
+			Axis.ActionName = EInputAction::GetValueByName(*KeyName[0]);
+			Axis.Key = FKey(*KeyName[1]);
+			float scale = 0.f;
+			Axis.Scale = FDefaultValueHelper::ParseFloat((*KeyName[2]), scale);
+			AxisMappings.Add(Axis);
 		}
 
-		FInputActionMapping Action;
-		Action.ActionName = (EInputAction::Type)EInputAction::GetValue(*KeyName[0]);
-		Action.BaseKey = FKey(*KeyName[1]);
-		Action.ModifyKey = FKey(*KeyName[2]);
-		ActionMappings.Add(Action);
+
 	}
+	*/
+
+	//TArray<FString> value;
+	//GConfig->GetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+	//ActionMappings.Empty();
+}
+
+
+bool UInputActionAsset::IsReadyForAsyncPostLoad() const
+{
+	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+	SaveConfig();
+
+	return true;
+}
+void UInputActionAsset::Serialize(FArchive& Ar)
+{
+	Super::Serialize(Ar);
 }
 
 void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -106,34 +138,45 @@ void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 
 void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
 {
-	Super::PreSaveRoot(ObjectSaveContext);
-	if (ConfigName.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ConfigName Is None, "));
-		return;
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("GetName   %s"), *EInputAction::GetName());
 
-	if (!ConfigName.EndsWith(TEXT(".ini")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ConfigName should be xxx.ini"));
-		return;
-	}
+	Super::PreSaveRoot(ObjectSaveContext);
 
 	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
 
-	TArray<FString> value;
-	for (FInputActionMapping ac : ActionMappings)
-	{
-		value.Add(FString::Printf(TEXT("(ActionName = %s), (BaseKey = %s), (ModifyKey = %s)"), *EInputAction::GetName(ac.ActionName).ToString(), *ac.BaseKey.ToString(), *ac.ModifyKey.ToString()));
-	}
-	GConfig->SetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+	//TryUpdateDefaultConfigFile();
+	SaveConfig();
+	//LoadConfig(UInputActionAsset::StaticClass(), *configPath);
 
-	//for (FInputActionMapping ac : AxisMappings)
+	//if (ConfigName.IsEmpty())
 	//{
-	//	value += FString::Printf(TEXT("(BaseKey = %s), (ModifyKey = %s)"), *ac.BaseKey.ToString(), *ac.ModifyKey.ToString()) + TEXT("\n");
+	//	UE_LOG(LogTemp, Warning, TEXT("ConfigName Is None"));
+	//	return;
 	//}
-	//GConfig->SetString(TEXT("InputSetting.Axis"), TEXT("ActionMappings"), *value, ConfigPath);
-	GConfig->Flush(false, configPath);
+
+	//if (!ConfigName.EndsWith(TEXT(".ini")))
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("ConfigName should be xxx.ini"));
+	//	return;
+	//}
+
+	//FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+
+	//TArray<FString> value;
+	//for (FInputActionMapping ac : ActionMappings)
+	//{
+	//	value.Add(FString::Printf(TEXT("(ActionName = %s), (BaseKey = %s), (ModifyKey = %s)"), *EInputAction::GetName(ac.ActionName).ToString(), *ac.BaseKey.ToString(), *ac.ModifyKey.ToString()));
+	//}
+	//GConfig->SetArray(TEXT("InputSetting.Action"), TEXT("ActionMappings"), value, configPath);
+
+	//value.Empty();
+	//for (FInputAxisMapping ax : AxisMappings)
+	//{
+	//	value.Add(FString::Printf(TEXT("(ActionName = %s), (Key = %s), (Scale = %f)"), *EInputAction::GetName(ax.ActionName).ToString(), *ax.Key.ToString(), ax.Scale));
+	//}
+	//GConfig->SetArray(TEXT("InputSetting.Axis"), TEXT("ActionMappings"), value, configPath);
+
+	//GConfig->Flush(false, configPath);
 }
 
 TArray<int> UInputActionAsset::FindKeyIndex(FString source, FString flag)
