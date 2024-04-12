@@ -13,11 +13,6 @@
 				"DeveloperSettings"
 			]
 		}
-	],
-	"Plugins": [
-		{
-			"Name": "ModelViewViewModel",
-			"Enabled": true
-		}
 	]
+
 }

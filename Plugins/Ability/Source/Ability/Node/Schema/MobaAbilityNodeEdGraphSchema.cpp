@@ -2,12 +2,10 @@
 
 
 #include "MobaAbilityNodeEdGraphSchema.h"
-#include "Ability/Editor/Node/AbilityNode.h"
-#include "Ability/Editor/Node/UAbilityNode_Root.h"
-#include "Ability/Runtime/MobaAbility.h"
-#include "Ability/Editor/Node/Schema/AbilityConnectionDrawingPolicy.h"
-#include "Ability/Editor/MobaAbilityEdGraph.h"
-#include "Ability/AbilityModule.h"
+#include "Ability/Node/AbilityNode.h"
+#include "Ability/Node/UAbilityNode_Root.h"
+#include "Ability/MobaAbility.h"
+#include "Ability/Node/Schema/AbilityConnectionDrawingPolicy.h"
 
 #include "Framework/Commands/GenericCommands.h"
 #include "SGraphNode.h"
@@ -19,15 +17,6 @@ UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
 {
 	AssetClass = UMobaAbility::StaticClass();
 }
-
-//FGraphNodeClassHelper& UMobaAbilityNodeEdGraphSchema::GetClassCache() const
-//{
-//	const FAbilityModule& EditorModule = FModuleManager::GetModuleChecked<FAbilityModule>(TEXT("BehaviorTreeEditor"));
-//	FGraphNodeClassHelper* ClassHelper = EditorModule.GetClassCache().Get();
-//	check(ClassHelper);
-//	return *ClassHelper;
-//}
-
 
 void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
@@ -49,16 +38,14 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 		//{
 
 		//}
-		
+		if (s->GetName() ==  "Root")
+		{
+			continue;
+		}
 		const TSharedPtr<FMobaAbilityGraphSchemaAction> Action = MakeShareable(new FMobaAbilityGraphSchemaAction(FText::FromString("MobaAbility"), FText::FromName(s->GetFName()), FText(), s));
 		ContextMenuBuilder.AddAction(Action);
 	}
 
-
-
-
-
-	
 	Super::GetGraphContextActions(ContextMenuBuilder);
 }
 

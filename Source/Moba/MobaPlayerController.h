@@ -32,9 +32,6 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<class UMobaAbility*> Abilitys;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMobaCharacterBase> HeroClass;
 
 	AMobaPlayerController();

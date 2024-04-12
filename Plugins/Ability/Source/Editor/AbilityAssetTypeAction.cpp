@@ -2,12 +2,13 @@
 
 
 #include "AbilityAssetTypeAction.h"
-#include "Ability/Runtime/MobaAbility.h"
+#include "Ability/MobaAbility.h"
 #include "MobaAbilityEditorToolKit.h"
 
-FAbilityAssetTypeAction::FAbilityAssetTypeAction(EAssetTypeCategories::Type Type)
+
+
+FAbilityAssetTypeAction::FAbilityAssetTypeAction(EAssetTypeCategories::Type Categeory) : MyAssetCategory(Categeory)
 {
-	MyAssetCategory = Type;
 }
 
 UClass* FAbilityAssetTypeAction::GetSupportedClass() const
@@ -56,3 +57,4 @@ void FAbilityAssetTypeAction::OpenAssetEditor(const TArray<UObject*>& InObjects,
 		}
 	}
 }
+

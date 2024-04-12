@@ -2,9 +2,9 @@
 
 
 #include "MobaAbilityEditorToolKit.h"
-#include "Node/AbilityNode.h"
-#include "Node/Schema/MobaAbilityNodeEdGraphSchema.h"
-#include "Ability/Runtime/MobaAbility.h"
+#include "Ability/Node/AbilityNode.h"
+#include "Ability/Node/Schema/MobaAbilityNodeEdGraphSchema.h"
+#include "Ability/MobaAbility.h"
 #include "MobaAbilityEdGraph.h"
 
 #include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
@@ -176,21 +176,21 @@ void FMobaAbilityEditorToolKit::CreateUICommandList()
 
 }
 
-UAbilityNode* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
-{
-	check(ParentGraph != nullptr)
-	UAbilityNode* ResultGraphNode = NewObject<UAbilityNode>(ParentGraph);
-	ParentGraph->Modify();
-	ResultGraphNode->SetFlags(RF_Transactional);
-
-	ResultGraphNode->Rename(nullptr, ParentGraph, REN_NonTransactional);
-	ResultGraphNode->CreateNewGuid();
-	ResultGraphNode->NodePosX = NodeLocation.X;
-	ResultGraphNode->NodePosY = NodeLocation.Y;
-
-	ResultGraphNode->AllocateDefaultPins();
-	return ResultGraphNode;
-}
+//UAbilityNode* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
+//{
+//	check(ParentGraph != nullptr)
+//	UAbilityNode* ResultGraphNode = NewObject<UAbilityNode>(ParentGraph);
+//	ParentGraph->Modify();
+//	ResultGraphNode->SetFlags(RF_Transactional);
+//
+//	ResultGraphNode->Rename(nullptr, ParentGraph, REN_NonTransactional);
+//	ResultGraphNode->CreateNewGuid();
+//	ResultGraphNode->NodePosX = NodeLocation.X;
+//	ResultGraphNode->NodePosY = NodeLocation.Y;
+//
+//	ResultGraphNode->AllocateDefaultPins();
+//	return ResultGraphNode;
+//}
 
 void FMobaAbilityEditorToolKit::OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection)
 {

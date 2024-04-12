@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UPlayeAnimation : public UAbilityNode
+class UPlayeAnimation : public UAbilityNode
 {
 	GENERATED_BODY()
 	

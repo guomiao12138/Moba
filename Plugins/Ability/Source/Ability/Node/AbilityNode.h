@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UAbilityNode : public UEdGraphNode
+class UAbilityNode : public UEdGraphNode
 {
 	GENERATED_BODY()
 	

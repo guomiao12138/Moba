@@ -109,14 +109,12 @@ public:
 
 	virtual void Serialize(FArchive& Ar) override;
 	virtual void PostLoad() override;
-	virtual bool IsReadyForAsyncPostLoad() const override;
 	//virtual void Serialize(FStructuredArchiveRecord Record) override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
 #endif
 
-	TArray<int> FindKeyIndex(FString source, FString flag);
-
+	void LoadSettingFile(bool Default);
 };
 

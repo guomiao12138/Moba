@@ -9,7 +9,7 @@
 #include "Slate/SGameLayerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
-#include "Ability/Runtime/MobaAbility.h"
+//#include "Ability/MobaAbility.h"
 
 #include "SocketSubsystem.h"
 #include "Sockets.h"
@@ -53,8 +53,9 @@ void AMobaPlayerController::SetupInputComponent()
 	InputComponent->AddActionBinding(ActionBinding);\
 }\
 	
-#define ADDAXIS(name, function) InputComponent->BindAxis(name, this, &AMobaPlayerController::function);
 
+#define ADDAXIS(name, function) InputComponent->BindAxis(name, this, &AMobaPlayerController::function);
+	//InputComponent->BindAction();
 
 	//ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
 	//ADDAXIS(TEXT("MoveForward"), MoveForward);

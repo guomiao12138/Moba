@@ -50,8 +50,7 @@ void UInputActionAsset::PostLoad()
 {
 	Super::PostLoad();
 
-	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
-	LoadConfig(UInputActionAsset::StaticClass(), *configPath);
+
 
 	/*TArray<FString> value;
 	TArray<FString> value1;
@@ -115,14 +114,6 @@ void UInputActionAsset::PostLoad()
 	//ActionMappings.Empty();
 }
 
-
-bool UInputActionAsset::IsReadyForAsyncPostLoad() const
-{
-	FString configPath = FPaths::ProjectConfigDir() + ConfigName;
-	SaveConfig();
-
-	return true;
-}
 void UInputActionAsset::Serialize(FArchive& Ar)
 {
 	Super::Serialize(Ar);
@@ -130,10 +121,12 @@ void UInputActionAsset::Serialize(FArchive& Ar)
 
 void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UInputActionAsset, ActionMappings))
+	if (!PropertyChangedEvent.Property->HasAnyPropertyFlags(EPropertyFlags::CPF_Config))
 	{
-		//ActionMappings.Add(PropertyChangedEvent.);
+		return;
 	}
+
+	TryUpdateDefaultConfigFile();
 }
 
 void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
@@ -179,7 +172,16 @@ void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
 	//GConfig->Flush(false, configPath);
 }
 
-TArray<int> UInputActionAsset::FindKeyIndex(FString source, FString flag)
+void UInputActionAsset::LoadSettingFile(bool Default)
 {
-	return TArray<int>();
+	if (Default)
+	{
+		FString configPath = FPaths::ProjectConfigDir() + ConfigName;
+		LoadConfig(UInputActionAsset::StaticClass(), *configPath);
+	}
+	else
+	{
+		ReloadConfig();
+	}
 }
+

@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UEndSkill : public UAbilityNode
+class UEndSkill : public UAbilityNode
 {
 	GENERATED_BODY()
 

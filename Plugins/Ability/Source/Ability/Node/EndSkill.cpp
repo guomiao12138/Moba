@@ -3,7 +3,7 @@
 
 #include "EndSkill.h"
 #include "GameFramework/Character.h"
-#include "Ability/Runtime/MobaAbilityComponent.h"
+#include "Ability/MobaAbilityComponent.h"
 
 void UEndSkill::AllocateDefaultPins()
 {

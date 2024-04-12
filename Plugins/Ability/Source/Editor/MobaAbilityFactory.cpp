@@ -2,7 +2,7 @@
 
 
 #include "MobaAbilityFactory.h"
-#include "Ability/Runtime/MobaAbility.h"
+#include "Ability/MobaAbility.h"
 
 UMobaAbilityFactory::UMobaAbilityFactory()
 {

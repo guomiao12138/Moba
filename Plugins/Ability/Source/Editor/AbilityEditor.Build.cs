@@ -2,17 +2,18 @@
 
 using UnrealBuildTool;
 
-public class Ability : ModuleRules
+public class AbilityEditor : ModuleRules
 {
-	public Ability(ReadOnlyTargetRules Target) : base(Target)
+	public AbilityEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
-            }
-            );
+/*				System.IO.Path.Combine(GetModuleDirectory("Ability"), "Private"),*/
+			}
+			);
 				
 		
 		PrivateIncludePaths.AddRange(
@@ -27,14 +28,11 @@ public class Ability : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
-                "UnrealEd",
-				"AbilityEditor",
-
-                "GameplayTags",
                 "ApplicationCore",
                 "AssetTools",
                 "ToolMenus",
                 "BlueprintGraph",
+                "Ability",
                 "GraphEditor",
             }
             );
@@ -47,7 +45,7 @@ public class Ability : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"InputCore",
+                "UnrealEd",
 				// ... add private dependencies that you statically link with here ...	
             }
 			);

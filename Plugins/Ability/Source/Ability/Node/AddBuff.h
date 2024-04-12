@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UAddBuff : public UAbilityNode
+class UAddBuff : public UAbilityNode
 {
 	GENERATED_BODY()
 	

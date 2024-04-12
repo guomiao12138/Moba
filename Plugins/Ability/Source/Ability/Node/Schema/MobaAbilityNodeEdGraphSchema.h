@@ -15,7 +15,6 @@
 class UAbilityNode;
 class UMobaAbility;
 struct FConnectionParams;
-class UMobaAbilityEdGraph;
 class FConnectionDrawingPolicy;
 
 UCLASS()

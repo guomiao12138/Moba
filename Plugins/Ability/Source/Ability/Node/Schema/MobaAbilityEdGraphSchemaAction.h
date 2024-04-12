@@ -9,7 +9,7 @@
  * 
  */
 USTRUCT()
-struct ABILITY_API FMobaAbilityEdGraphSchemaAction : public FEdGraphSchemaAction
+struct FMobaAbilityEdGraphSchemaAction : public FEdGraphSchemaAction
 {
 	GENERATED_USTRUCT_BODY()
 	

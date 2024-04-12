@@ -9,10 +9,8 @@
 /**
  * 
  */
-class UAbilityNode;
-class UAbilityNode_Root;
 UCLASS()
-class ABILITY_API UMobaAbilityEdGraph : public UEdGraph
+class UMobaAbilityEdGraph : public UEdGraph
 {
 	GENERATED_BODY()
 	

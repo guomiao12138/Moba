@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "WorkflowOrientedApp/WorkflowTabManager.h"
+#include "EditorUndoClient.h"
+#include "GraphEditor.h"
 
 /**
  * 
@@ -14,14 +16,16 @@
 //	FMobaAbilityGraphEditorSummoner(TSharedPtr<FMobaAbilityEditorToolKit> InHostingApp);
 //};
 class UMobaAbility;
+class SGraphEditor;
+struct FActionMenuContent;
 
-class ABILITY_API FMobaAbilityEditorToolKit final : public FAssetEditorToolkit, public FEditorUndoClient
+class FMobaAbilityEditorToolKit final : public FAssetEditorToolkit, public FEditorUndoClient
 {
 public:
 
 	//FEditorUndoClient
-	virtual void PostUndo(bool bSuccess);
-	virtual void PostRedo(bool bSuccess);
+	virtual void PostUndo(bool bSuccess) override;
+	virtual void PostRedo(bool bSuccess) override;
 	// FEditorUndoClient
 
 	virtual FName GetToolkitFName() const override;				// Must implement in derived class!
@@ -34,7 +38,7 @@ public:
 
 	void InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UMobaAbility* InAsset);
 	void CreateUICommandList();
-	class UAbilityNode* CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
+	//class UAbilityNode* CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
 
 	//GraphEditorEvents
 	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);

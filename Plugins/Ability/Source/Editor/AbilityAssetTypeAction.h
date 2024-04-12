@@ -10,11 +10,10 @@
  * 
  */
 
-class ABILITY_API FAbilityAssetTypeAction : public FAssetTypeActions_Base
+class FAbilityAssetTypeAction : public FAssetTypeActions_Base
 {
 public:
-
-	FAbilityAssetTypeAction(EAssetTypeCategories::Type Type);
+	FAbilityAssetTypeAction(EAssetTypeCategories::Type Categeory);
 
 	virtual UClass* GetSupportedClass() const override;
 	virtual FText GetName() const override;

@@ -2,9 +2,9 @@
 
 
 #include "AbilityNode.h"
-#include "Ability/Runtime/MobaAbility.h"
-#include "Ability/Editor/MobaAbilityEdGraph.h"
-#include "Ability/Editor/MobaAbilityEditorToolKit.h"
+#include "Ability/MobaAbility.h"
+#include "Editor/MobaAbilityEdGraph.h"
+#include "Editor/MobaAbilityEditorToolKit.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "SGraphNode.h"

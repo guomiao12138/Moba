@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UChangeSpeed : public UAbilityNode
+class UChangeSpeed : public UAbilityNode
 {
 	GENERATED_BODY()
 public:

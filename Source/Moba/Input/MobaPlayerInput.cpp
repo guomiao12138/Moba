@@ -11,10 +11,6 @@ UMobaPlayerInput::UMobaPlayerInput()
 
 void UMobaPlayerInput::InitInputSetting()
 {
-	FString configPath = FPaths::ProjectConfigDir() + TEXT("DefaultMoba.ini");
-	//GConfig->LoadFile
-	//asset->PostLoad();
-
 	UInputActionAsset* asset = FindObject<UInputActionAsset>(nullptr, TEXT("/Game/InputSetting.InputSetting"));
 	if(!asset)
 	{
@@ -24,8 +20,9 @@ void UMobaPlayerInput::InitInputSetting()
 	{
 		return;
 	}
-	asset->ReloadConfig();
 
+	asset->LoadSettingFile(true);
+	
 	for (auto ac : asset->ActionMappings)
 	{
 		FInputActionKeyMapping action;

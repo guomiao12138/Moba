@@ -6,7 +6,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaPlayerController.h"
 
-#include "Ability/Runtime/MobaAbilityComponent.h"
+//#include "Ability/MobaAbilityComponent.h"
 
 // Sets default values
 AMobaCharacterBase::AMobaCharacterBase()
@@ -15,7 +15,7 @@ AMobaCharacterBase::AMobaCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 	//GetMesh()->SetSkeletalMeshAsset();
 
-	AbilityComponent = CreateDefaultSubobject<UMobaAbilityComponent>(TEXT("AbilityComponent"));
+	//AbilityComponent = CreateDefaultSubobject<UMobaAbilityComponent>(TEXT("AbilityComponent"));
 }
 
 void AMobaCharacterBase::InitController(AMobaPlayerController* InController)
@@ -55,7 +55,7 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
-	AbilityComponent->ActiveAbility();
+	//AbilityComponent->ActiveAbility();
 	FVector dir = InLocation - GetActorLocation();
 	SetActorRelativeRotation(dir.Rotation());
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);

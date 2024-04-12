@@ -2,7 +2,7 @@
 
 
 #include "MobaAbility.h"
-#include "Ability/Editor/MobaAbilityEdGraph.h"
+#include "Editor/MobaAbilityEdGraph.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 UMobaAbility::UMobaAbility()
@@ -18,19 +18,4 @@ void UMobaAbility::Activate()
 {
 	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
 
-}
-
-void UMobaAbility::AAAA(FName name)
-{
-	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::AAAA"));
-}
-
-void UMobaAbility::CCCC(UAnimationAsset* asset)
-{
-	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::CCCC"));
-}
-
-void UMobaAbility::XXXX()
-{
-	UE_LOG(LogTemp, Display, TEXT("UMobaAbility::XXXX"));
 }

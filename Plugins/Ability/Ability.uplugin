@@ -17,8 +17,13 @@
 	"Modules": [
 		{
 			"Name": "Ability",
-			"Type": "Editor",
+			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "AbilityEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }

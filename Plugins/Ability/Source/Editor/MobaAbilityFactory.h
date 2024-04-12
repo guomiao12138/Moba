@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ABILITY_API UMobaAbilityFactory : public UFactory
+class UMobaAbilityFactory : public UFactory
 {
 	GENERATED_BODY()
 	

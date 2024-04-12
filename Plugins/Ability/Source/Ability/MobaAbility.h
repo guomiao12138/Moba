@@ -26,7 +26,7 @@ private:
 public:
 #if WITH_EDITORONLY_DATA
 	UPROPERTY()
-	class UMobaAbilityEdGraph* Graph;
+	TObjectPtr<class UEdGraph> Graph;
 
 #endif
 
@@ -43,19 +43,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	FName AbilityName;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Start();
 	
-
-	UFUNCTION(BlueprintCallable)
-	void AAAA(FName name);
-
-	UFUNCTION()
-	void CCCC(UAnimationAsset* asset);
-
-	UFUNCTION()
-	void XXXX();
-
 	//void SetGraph(UMobaAbilityEdGraph* InGraph) { Graph = InGraph; }
 	//UMobaAbilityEdGraph* GetGraph() { return Graph; }
 	

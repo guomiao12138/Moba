@@ -18,8 +18,8 @@ public:
 	TObjectPtr<AMobaPlayerController> MobaPlayerController;
 
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
 
 public:
 	// Sets default values for this character's properties

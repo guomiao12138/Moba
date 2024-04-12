@@ -2,9 +2,9 @@
 
 
 #include "MobaAbilityComponent.h"
-#include "Ability/Runtime/MobaAbility.h"
-#include "Ability/Editor/Node/AbilityNode.h"
-#include "Ability/Editor/Node/UAbilityNode_Root.h"
+#include "Ability/MobaAbility.h"
+#include "Node/AbilityNode.h"
+#include "Node/UAbilityNode_Root.h"
 
 #include "GameFramework/Character.h"
 
@@ -40,57 +40,57 @@ void UMobaAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void UMobaAbilityComponent::TickAbility(float DeltaTime)
 {
-	if (CurrentAbility)
-	{
-		CurrentAbility->RootNode->Tick(DeltaTime);
-	}
+	//if (CurrentAbility)
+	//{
+	//	CurrentAbility->RootNode->Tick(DeltaTime);
+	//}
 }
 
 void UMobaAbilityComponent::ActiveAbility()
 {
-	if (!CurrentAbility && Abilitys.Num() > 0)
-	{
-		CurrentAbility = Abilitys[0];
-	}
-	else
-	{
-		return;
-	}
+	//if (!CurrentAbility && Abilitys.Num() > 0)
+	//{
+	//	CurrentAbility = Abilitys[0];
+	//}
+	//else
+	//{
+	//	return;
+	//}
 
-	CurrentAbility->Owner = Cast<ACharacter>(GetOwner());
-	CurrentAbility->RootNode->OnActiveNode();
-	UAbilityNode* temp = CurrentAbility->RootNode;
-	UAbilityNode* pre = nullptr;
+	//CurrentAbility->Owner = Cast<ACharacter>(GetOwner());
+	//CurrentAbility->RootNode->OnActiveNode();
+	//UAbilityNode* temp = CurrentAbility->RootNode;
+	//UAbilityNode* pre = nullptr;
 
-	while (temp)
-	{
-		if (temp->OnDeActiveNode())
-		{
-			if (UEdGraphPin* pin = temp->GetThenPin())
-			{
-				if (pin->LinkedTo.Num() > 0)
-				{
-					temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode());
-					if (temp)
-					{
-						temp->OnActiveNode();
-					}
-				}
-				else
-				{
-					temp = nullptr;
-				}
-			}
-			else
-			{
-				break;
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
+	//while (temp)
+	//{
+	//	if (temp->OnDeActiveNode())
+	//	{
+	//		if (UEdGraphPin* pin = temp->GetThenPin())
+	//		{
+	//			if (pin->LinkedTo.Num() > 0)
+	//			{
+	//				temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode());
+	//				if (temp)
+	//				{
+	//					temp->OnActiveNode();
+	//				}
+	//			}
+	//			else
+	//			{
+	//				temp = nullptr;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			break;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		break;
+	//	}
+	//}
 }
 
 void UMobaAbilityComponent::SetCurrentAbility(UMobaAbility* InAbility)
@@ -100,9 +100,9 @@ void UMobaAbilityComponent::SetCurrentAbility(UMobaAbility* InAbility)
 
 void UMobaAbilityComponent::ActiveNode(TArray<UEdGraphPin*> InPins)
 {
-	for (auto pin : InPins)
-	{
-		Cast<UAbilityNode>(pin->GetOwningNode())->OnActiveNode();
-	}
+	//for (auto pin : InPins)
+	//{
+	//	Cast<UAbilityNode>(pin->GetOwningNode())->OnActiveNode();
+	//}
 }
 
