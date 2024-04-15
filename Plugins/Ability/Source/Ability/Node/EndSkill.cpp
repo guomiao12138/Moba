@@ -7,7 +7,7 @@
 
 void UEndSkill::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
+	CreatePin(EGPD_Input, TEXT("exec"), TEXT("then"));
 }
 
 FText UEndSkill::GetNodeTitle(ENodeTitleType::Type TitleType) const

@@ -7,8 +7,9 @@ public class Ability : ModuleRules
 	public Ability(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
-		PublicIncludePaths.AddRange(
+		bUseUnity = true;
+
+        PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
             }
@@ -27,15 +28,7 @@ public class Ability : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
-                "UnrealEd",
-				"AbilityEditor",
-
                 "GameplayTags",
-                "ApplicationCore",
-                "AssetTools",
-                "ToolMenus",
-                "BlueprintGraph",
-                "GraphEditor",
             }
             );
 			

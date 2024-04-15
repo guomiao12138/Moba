@@ -3,7 +3,6 @@
 
 #include "AbilityNode.h"
 #include "Ability/MobaAbility.h"
-#include "Editor/MobaAbilityEdGraph.h"
 #include "Editor/MobaAbilityEditorToolKit.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -43,24 +42,24 @@ void UAbilityNode::CreateParamsPins()
 		uint64 CastFlags = Property->GetCastFlags();
 		if ((CastFlags & CASTCLASS_FBoolProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Boolean, Property->GetFName());
+			OwnerPin = CreatePin(Direction, TEXT("bool"), Property->GetFName());
 		}
 		else if ((CastFlags & CASTCLASS_FNameProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Name, Property->GetFName());
+			OwnerPin = CreatePin(Direction, TEXT("name"), Property->GetFName());
 		}
 		else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
 		{
 			FObjectProperty* temp = CastField<FObjectProperty>(Property);
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_SoftObject, temp->PropertyClass, Property->GetFName(), PinParams);
+			OwnerPin = CreatePin(Direction, TEXT("softobject"), temp->PropertyClass, Property->GetFName(), PinParams);
 		}
 		else if ((CastFlags & CASTCLASS_FFloatProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Real, UEdGraphSchema_K2::PC_Float, Property->GetFName());
+			OwnerPin = CreatePin(Direction, TEXT("real"), TEXT("float"), Property->GetFName());
 		}
 		else if ((CastFlags & CASTCLASS_FIntProperty) != 0)
 		{
-			OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Real, UEdGraphSchema_K2::PC_Int, Property->GetFName());
+			OwnerPin = CreatePin(Direction, TEXT("real"), TEXT("int"), Property->GetFName());
 		}
 		//UEdGraphPin* OwnerPin = CreatePin(Direction, UEdGraphSchema_K2::PC_Class, AActor::StaticClass(), Param->GetFName());
 		//FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("Editor Print Action With Pin Hello World with point %s"), *Param->GetName())));
@@ -75,7 +74,7 @@ void UAbilityNode::CreateParamsPins()
 
 UEdGraphPin* UAbilityNode::GetExecutePin()
 {
-	return FindPin(UEdGraphSchema_K2::PN_Execute);
+	return FindPin(TEXT("execute"));
 }
 
 UEdGraphPin* UAbilityNode::GetThenPin()
@@ -149,9 +148,9 @@ UAbilityNode::UAbilityNode()
 
 void UAbilityNode::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Execute);
-	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Succeed"));
-	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, TEXT("Faild"));
+	CreatePin(EGPD_Input, TEXT("exec"), TEXT("execute"));
+	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Succeed"));
+	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Faild"));
 
 }
 

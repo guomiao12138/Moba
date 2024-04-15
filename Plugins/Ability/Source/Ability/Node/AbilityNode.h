@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
-#include "Editor/BlueprintGraph/Classes/K2Node.h"
 #include "AbilityNode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UAbilityNode : public UEdGraphNode
+class ABILITY_API UAbilityNode : public UEdGraphNode
 {
 	GENERATED_BODY()
 	

@@ -3,7 +3,7 @@
 
 #include "MobaAbilityEditorToolKit.h"
 #include "Ability/Node/AbilityNode.h"
-#include "Ability/Node/Schema/MobaAbilityNodeEdGraphSchema.h"
+#include "Schema/MobaAbilityNodeEdGraphSchema.h"
 #include "Ability/MobaAbility.h"
 #include "MobaAbilityEdGraph.h"
 
@@ -12,7 +12,8 @@
 #include "HAL/PlatformApplicationMisc.h"
 #include "Editor/UnrealEd/Public/EdGraphUtilities.h"
 #include "Editor/GraphEditor/Public/SNodePanel.h"
-
+#include "ScopedTransaction.h"
+#include "PropertyEditorModule.h"
 #include "IDetailsView.h"
 
 void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
@@ -353,7 +354,7 @@ bool FMobaAbilityEditorToolKit::CanDeleteSelected()
 
 void FMobaAbilityEditorToolKit::DeleteSelected()
 {
-	const FScopedTransaction Transaction(FGenericCommands::Get().Delete->GetDescription());
+	//const FScopedTransaction Transaction(FGenericCommands::Get().Delete->GetDescription());
 	GraphEditor->GetCurrentGraph()->Modify();
 	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
 

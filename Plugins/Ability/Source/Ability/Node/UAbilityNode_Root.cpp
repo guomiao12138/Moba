@@ -9,7 +9,7 @@ UAbilityNode_Root::UAbilityNode_Root()
 
 void UAbilityNode_Root::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Exec, UEdGraphSchema_K2::PN_Then);
+	CreatePin(EGPD_Output, TEXT("exec"), TEXT("then"));
 }
 
 FLinearColor UAbilityNode_Root::GetNodeTitleColor() const
@@ -24,7 +24,7 @@ FText UAbilityNode_Root::GetNodeTitle(ENodeTitleType::Type TitleType) const
 
 UEdGraphPin* UAbilityNode_Root::GetThenPin()
 {
-	return FindPin(UEdGraphSchema_K2::PN_Then);
+	return FindPin(TEXT("then"));
 }
 
 void UAbilityNode_Root::CreateParamsPins()

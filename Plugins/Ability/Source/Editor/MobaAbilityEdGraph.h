@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UMobaAbilityEdGraph : public UEdGraph
+class ABILITYEDITOR_API UMobaAbilityEdGraph : public UEdGraph
 {
 	GENERATED_BODY()
 	

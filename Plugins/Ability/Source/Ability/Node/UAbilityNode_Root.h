@@ -10,7 +10,7 @@
  * 
  */
 UCLASS(meta=(DisplayName = "Root"))
-class UAbilityNode_Root : public UAbilityNode
+class ABILITY_API UAbilityNode_Root : public UAbilityNode
 {
 	GENERATED_BODY()
 	

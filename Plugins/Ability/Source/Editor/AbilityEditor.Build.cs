@@ -7,8 +7,9 @@ public class AbilityEditor : ModuleRules
 	public AbilityEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
-		PublicIncludePaths.AddRange(
+		bUseUnity = true;
+
+        PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
 /*				System.IO.Path.Combine(GetModuleDirectory("Ability"), "Private"),*/
@@ -29,11 +30,18 @@ public class AbilityEditor : ModuleRules
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
                 "ApplicationCore",
-                "AssetTools",
-                "ToolMenus",
-                "BlueprintGraph",
-                "Ability",
                 "GraphEditor",
+                "UnrealEd",
+
+                "BlueprintGraph",		// For the graph pin colors
+                "ToolMenus",
+/*				"UnrealEd",
+				"AssetTools",
+                "KismetCompiler",*/
+
+
+                "Ability",
+
             }
             );
 			
@@ -45,7 +53,6 @@ public class AbilityEditor : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-                "UnrealEd",
 				// ... add private dependencies that you statically link with here ...	
             }
 			);

@@ -5,12 +5,12 @@
 #include "Ability/Node/AbilityNode.h"
 #include "Ability/Node/UAbilityNode_Root.h"
 #include "Ability/MobaAbility.h"
-#include "Ability/Node/Schema/AbilityConnectionDrawingPolicy.h"
+#include "AbilityConnectionDrawingPolicy.h"
 
 #include "Framework/Commands/GenericCommands.h"
 #include "SGraphNode.h"
 #include "EdGraph/EdGraphSchema.h"
-
+#include "ToolMenu.h"
 
 
 UMobaAbilityNodeEdGraphSchema::UMobaAbilityNodeEdGraphSchema()
@@ -100,8 +100,6 @@ FConnectionDrawingPolicy* UMobaAbilityNodeEdGraphSchema::CreateConnectionDrawing
 
 void UMobaAbilityNodeEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
-	//auto* rootnode = Cast<UMobaAbilityEdGraph>(&Graph)->CreateDefaultNode(TEXT("Root"));
-
 	UAbilityNode_Root* ResultGraphNode = NewObject<UAbilityNode_Root>(&Graph);
 	Graph.Modify();
 	ResultGraphNode->SetFlags(RF_Transactional);

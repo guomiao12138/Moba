@@ -18,7 +18,7 @@ struct FConnectionParams;
 class FConnectionDrawingPolicy;
 
 UCLASS()
-class ABILITY_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
+class ABILITYEDITOR_API UMobaAbilityNodeEdGraphSchema : public UEdGraphSchema
 {
 	GENERATED_BODY()
 	
