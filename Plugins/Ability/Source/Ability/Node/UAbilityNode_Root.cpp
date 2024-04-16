@@ -6,7 +6,7 @@
 UAbilityNode_Root::UAbilityNode_Root()
 {
 }
-
+#if WITH_EDITOR
 void UAbilityNode_Root::AllocateDefaultPins()
 {
 	CreatePin(EGPD_Output, TEXT("exec"), TEXT("then"));
@@ -24,9 +24,10 @@ FText UAbilityNode_Root::GetNodeTitle(ENodeTitleType::Type TitleType) const
 
 UEdGraphPin* UAbilityNode_Root::GetThenPin()
 {
-	return FindPin(TEXT("then"));
+	return FindPinChecked(TEXT("then"));
 }
 
 void UAbilityNode_Root::CreateParamsPins()
 {
 }
+#endif

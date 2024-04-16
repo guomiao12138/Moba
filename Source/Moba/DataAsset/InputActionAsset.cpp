@@ -119,6 +119,7 @@ void UInputActionAsset::Serialize(FArchive& Ar)
 	Super::Serialize(Ar);
 }
 
+#if WITH_EDITORONLY_DATA
 void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if (!PropertyChangedEvent.Property->HasAnyPropertyFlags(EPropertyFlags::CPF_Config))
@@ -171,6 +172,8 @@ void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
 
 	//GConfig->Flush(false, configPath);
 }
+
+#endif
 
 void UInputActionAsset::LoadSettingFile(bool Default)
 {

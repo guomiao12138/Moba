@@ -16,9 +16,12 @@ class ABILITY_API UAbilityNode_Root : public UAbilityNode
 	
 public:
 	UAbilityNode_Root();
+
+#if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual UEdGraphPin* GetThenPin() override;
 	virtual void CreateParamsPins() override;
+#endif	
 };

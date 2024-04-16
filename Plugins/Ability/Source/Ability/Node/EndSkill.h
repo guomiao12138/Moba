@@ -15,8 +15,12 @@ class UEndSkill : public UAbilityNode
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-	virtual void OnActiveNode() override;
 	virtual void CreateParamsPins() override;
+#endif
+
+	virtual void OnActiveNode() override;
+
 };

@@ -3,22 +3,106 @@
 
 #include "AbilityNode.h"
 #include "Ability/MobaAbility.h"
-#include "Editor/MobaAbilityEditorToolKit.h"
 
 #include "Kismet/KismetSystemLibrary.h"
-#include "SGraphNode.h"
-#include "WorkflowOrientedApp/WorkflowTabManager.h"
-#include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
-#include "Editor/BlueprintGraph/Public/BlueprintEditorSettings.h"
-#include "Editor/UnrealEd/Public/SourceCodeNavigation.h"
-#include "Editor/UnrealEd/Public/UnrealEdGlobals.h"
-#include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
-#include "Preferences/UnrealEdOptions.h"
+//#include "Editor/BlueprintGraph/Public/BlueprintEditorSettings.h"
+//#include "Editor/UnrealEd/Public/SourceCodeNavigation.h"
+//#include "Editor/UnrealEd/Public/UnrealEdGlobals.h"
+//#include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
+//#include "Preferences/UnrealEdOptions.h"
 #include "Misc/DefaultValueHelper.h"
 
-#include "Framework/Notifications/NotificationManager.h"
-#include "Widgets/Notifications/SNotificationList.h"
+//#include "Framework/Notifications/NotificationManager.h"
+//#include "Widgets/Notifications/SNotificationList.h"
+#include "EdGraph/EdGraphPin.h"
 
+
+
+
+
+void UAbilityNode::Tick(float DeltaTime)
+{
+
+	if (CanTick && Succeed)
+	{
+
+
+	}
+
+	for (auto sub : SubNodes)
+	{
+		sub->Tick(DeltaTime);
+	}
+	//Cast<UAbilityNode>(GetThenPin()->GetOwningNode())->Tick(DeltaTime);
+}
+
+void UAbilityNode::OnActiveNode()
+{
+	Succeed = true;
+	TArray<UEdGraphPin*> pins;
+	TArray<UAbilityNode*> Nodes;
+
+	for (UEdGraphPin* Pin : Pins)
+	{
+		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Input)
+		{
+			for (UEdGraphPin* Connection : Pin->LinkedTo)
+			{
+				// avoid including the current node in the case of a self connection:
+				if (Connection->GetOwningNode() != this)
+				{
+					//PinDefaultValueChanged(Connection);
+					//NeighborsAcceptedForConsideration.Add(Connection->GetOwningNode());
+				}
+			}
+		}
+	}
+}
+
+ACharacter* UAbilityNode::GetOwnerPawn()
+{
+	if (auto graph = GetOuter())
+	{
+		if (auto ability = Cast<UMobaAbility>(graph->GetOuter()))
+		{
+			return ability->Owner;
+		}
+	}
+
+	return nullptr;
+}
+
+UAbilityNode::UAbilityNode()
+{
+
+}
+
+#if WITH_EDITOR
+
+UEdGraphPin* UAbilityNode::GetExecutePin()
+{
+	return FindPinChecked(TEXT("execute"));
+}
+
+UEdGraphPin* UAbilityNode::GetThenPin()
+{
+	if (Succeed)
+	{
+		return FindPinChecked(TEXT("Succeed"));
+	}
+	else
+	{
+		return FindPinChecked(TEXT("Faild"));
+	}
+}
+
+void UAbilityNode::AllocateDefaultPins()
+{
+	CreatePin(EGPD_Input, TEXT("exec"), TEXT("execute"));
+	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Succeed"));
+	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Faild"));
+
+}
 
 void UAbilityNode::CreateParamsPins()
 {
@@ -69,88 +153,6 @@ void UAbilityNode::CreateParamsPins()
 			OwnerPin->bAdvancedView = true;
 		}
 	}
-
-}
-
-UEdGraphPin* UAbilityNode::GetExecutePin()
-{
-	return FindPin(TEXT("execute"));
-}
-
-UEdGraphPin* UAbilityNode::GetThenPin()
-{
-	if (Succeed)
-	{
-		return FindPin(TEXT("Succeed"));
-	}
-	else
-	{
-		return FindPin(TEXT("Faild"));
-	}
-}
-
-void UAbilityNode::Tick(float DeltaTime)
-{
-
-	if (CanTick && Succeed)
-	{
-
-
-	}
-
-	for (auto sub : SubNodes)
-	{
-		sub->Tick(DeltaTime);
-	}
-	//Cast<UAbilityNode>(GetThenPin()->GetOwningNode())->Tick(DeltaTime);
-}
-
-void UAbilityNode::OnActiveNode()
-{
-	Succeed = true;
-	TArray<UEdGraphPin*> pins;
-	TArray<UAbilityNode*> Nodes;
-
-	for (UEdGraphPin* Pin : Pins)
-	{
-		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Input)
-		{
-			for (UEdGraphPin* Connection : Pin->LinkedTo)
-			{
-				// avoid including the current node in the case of a self connection:
-				if (Connection->GetOwningNode() != this)
-				{
-					PinDefaultValueChanged(Connection);
-					//NeighborsAcceptedForConsideration.Add(Connection->GetOwningNode());
-				}
-			}
-		}
-	}
-}
-
-ACharacter* UAbilityNode::GetOwnerPawn()
-{
-	if (auto graph = GetOuter())
-	{
-		if (auto ability = Cast<UMobaAbility>(graph->GetOuter()))
-		{
-			return ability->Owner;
-		}
-	}
-
-	return nullptr;
-}
-
-UAbilityNode::UAbilityNode()
-{
-
-}
-
-void UAbilityNode::AllocateDefaultPins()
-{
-	CreatePin(EGPD_Input, TEXT("exec"), TEXT("execute"));
-	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Succeed"));
-	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Faild"));
 
 }
 
@@ -271,3 +273,5 @@ void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
 		}
 	}
 }
+
+#endif

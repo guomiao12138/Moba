@@ -26,6 +26,7 @@ public:
 	UAbilityNode();
 
 	//UEdGraphNode
+#if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
@@ -36,10 +37,12 @@ public:
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 	virtual void PostPlacedNewNode() override;
 	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;
-	//UEdGraphNode
 	virtual void CreateParamsPins();
 	UEdGraphPin* GetExecutePin();
 	virtual UEdGraphPin* GetThenPin();
+#endif
+	//UEdGraphNode
+
 
 	virtual void Tick(float DeltaTime);
 

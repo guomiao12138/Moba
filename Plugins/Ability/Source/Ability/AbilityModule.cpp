@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AbilityModule.h"
-#include "AssetToolsModule.h"
 
 #define LOCTEXT_NAMESPACE "AbilityModule"
 

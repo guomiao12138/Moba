@@ -3,10 +3,12 @@
 
 #include "PlayeAnimation.h"
 
+#if WITH_EDITOR
 FText UPlayeAnimation::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
 	return FText::FromString("PlayeAnimation");
 }
+#endif
 
 void UPlayeAnimation::OnActiveNode()
 {

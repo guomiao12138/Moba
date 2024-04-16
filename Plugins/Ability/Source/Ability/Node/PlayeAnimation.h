@@ -19,7 +19,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAnimationAsset* Asset;
 
+#if WITH_EDITOR
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+#endif
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
 };
