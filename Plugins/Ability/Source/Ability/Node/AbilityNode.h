@@ -18,12 +18,14 @@ protected:
 
 public:
 
-	UPROPERTY(EditAnywhere, SimpleDisplay)
-	bool CanTick = false;
+
 	bool Succeed = false;
 	int OutInputIndex = 0;
 
 	UAbilityNode();
+
+	UPROPERTY(EditAnywhere, SimpleDisplay, Category = "AbilityNode")
+	bool CanTick = false;
 
 	//UEdGraphNode
 #if WITH_EDITOR

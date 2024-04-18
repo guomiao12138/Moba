@@ -15,9 +15,9 @@ class UPlayeAnimation : public UAbilityNode
 	GENERATED_BODY()
 	
 public:
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AbilityNode")
 	UAnimationAsset* Asset;
+
 
 #if WITH_EDITOR
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;

@@ -29,7 +29,7 @@ public:
 
 	void TickAbility(float DeltaTime);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Ability")
 	TArray<UMobaAbility*> Abilitys;
 
 

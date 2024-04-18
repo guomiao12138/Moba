@@ -16,17 +16,20 @@ class UChangeSpeed : public UAbilityNode
 public:
 	//virtual void AllocateDefaultPins() override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AbilityNode")
 	float DuringTime = 2.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AbilityNode")
 	float Speed = 0.f;
 
-	UPROPERTY(EditAnywhere, Category = GameplayTags)
+	UPROPERTY(EditAnywhere, Category = "AbilityNode | GameplayTags")
 	TArray<struct FGameplayTag> GameplayTags;
 
 	float OldSpeed;
 #if WITH_EDITOR
+
+
+
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 #endif
 	virtual void OnActiveNode() override;
