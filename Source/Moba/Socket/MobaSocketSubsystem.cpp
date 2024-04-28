@@ -20,7 +20,7 @@ void UMobaSocketSubsystem::Deinitialize()
 	Super::Deinitialize();
 	if (Socket)
 	{
-		Socket->Close();	
+		//Socket->Close();	
 		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
 	}
 }

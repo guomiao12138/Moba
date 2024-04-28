@@ -3,16 +3,10 @@
 
 #include "InputActionAsset.h"
 #include "UObject/ObjectSaveContext.h"
-#include "GameFramework/PlayerInput.h"
 
 #include "Misc/DefaultValueHelper.h"
 
-void UInputActionAsset::PostLoad()
-{
-	Super::PostLoad();
-}
-
-void UInputActionAsset::PostInitProperties()
+void UDeafultSettingAsset::PostInitProperties()
 {
 	Super::PostInitProperties();
 
@@ -26,7 +20,7 @@ void UInputActionAsset::PostInitProperties()
 }
 
 #if WITH_EDITOR
-void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void UDeafultSettingAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if (!PropertyChangedEvent.Property->HasAnyPropertyFlags(EPropertyFlags::CPF_Config))
 	{
@@ -36,11 +30,10 @@ void UInputActionAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	SaveConfig(CPF_Config, *configPath);
 }
 
-void UInputActionAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
+void UDeafultSettingAsset::PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext)
 {
 	Super::PreSaveRoot(ObjectSaveContext);
 
 	SaveConfig();
 }
-
 #endif

@@ -39,14 +39,23 @@ namespace t \
 	}\
 }\
 
-UCLASS(config = MobaInputSetting, configdonotcheckdefaults, meta = (DisplayName = "InputSetting"))
+UCLASS(config = Game, abstract, configdonotcheckdefaults)
 class MOBA_API UDeafultSettingAsset : public UPrimaryDataAsset
 {
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(Config, EditAnywhere)
+	bool CanLoadDefault = true;
+
 	virtual void PostInitProperties() override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
+#endif
 };
+
 UENUM(BlueprintType)
 namespace EInputAction
 {
@@ -98,27 +107,18 @@ struct FInputAxisMapping
 };
 
 
-UCLASS(config = MobaInputSetting, configdonotcheckdefaults, meta=(DisplayName="InputSetting"))
+UCLASS(config = MobaInputSetting)
 class MOBA_API UInputActionAsset : public UDeafultSettingAsset
 {
 	GENERATED_BODY()
 	
 public:
 
-	UPROPERTY(Config, EditAnywhere)
-	bool CanLoadDefault = true;
-
-	UPROPERTY(Config, EditAnywhere)
+	UPROPERTY(GlobalConfig, EditAnywhere)
 	TArray<FInputActionMapping> ActionMappings;
 
-	UPROPERTY(Config, EditAnywhere)
+	UPROPERTY(GlobalConfig, EditAnywhere)
 	TArray<FInputAxisMapping> AxisMappings;
 
-	virtual void PostLoad() override;
-	virtual void PostInitProperties() override;
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
-#endif
 };
 
