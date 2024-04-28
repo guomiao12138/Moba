@@ -5,23 +5,33 @@
 #include "SocketSubsystem.h"
 #include "Sockets.h"
 #include "Interfaces/IPv4/IPv4Address.h"
+#include "Moba/Setting/SocketDeveloperSettings.h"
 
 void UMobaSocketSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+	CreateSocket();
+
 }
 
 void UMobaSocketSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+	if (Socket)
+	{
+		Socket->Close();	
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
+	}
 }
 
 void UMobaSocketSubsystem::CreateSocket()
 {
-	FSocket* Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("default"), false);
+	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(NAME_Stream, TEXT("MobaSocketSubsystem"), false);
+	USocketDeveloperSettings* setting = GetMutableDefault<USocketDeveloperSettings>();
 
-	FString address = TEXT("127.0.0.1");
-	int32 port = 19834;
+	FString address = setting->ip;
+	int32 port = setting->port;
 	FIPv4Address ip;
 	FIPv4Address::Parse(address, ip);
 

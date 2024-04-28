@@ -20,7 +20,9 @@ public class Moba : ModuleRules
             "Networking",
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] {
+            "DeveloperSettings"
+        });
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
@@ -31,6 +33,5 @@ public class Moba : ModuleRules
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
 
         RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Config", "DefaultMobaInputSetting.ini"));
-        RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Plugins", "Ability"));
     }
 }

@@ -28,4 +28,6 @@ public://重载的函数，可以做一些初始化和释放操作
     UFUNCTION(BlueprintCallable)
     void CreateSocket();
 
+public:
+    class FSocket* Socket;
 };
