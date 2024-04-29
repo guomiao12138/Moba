@@ -70,8 +70,7 @@ void UMobaAbilityComponent::ActiveAbility()
 	//		{
 	//			if (pin->LinkedTo.Num() > 0)
 	//			{
-	//				temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode());
-	//				if (temp)
+	//				if (temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode()))
 	//				{
 	//					temp->OnActiveNode();
 	//				}

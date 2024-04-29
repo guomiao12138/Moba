@@ -107,7 +107,7 @@ void AMobaPlayerController::ClickPosition()
 		//player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
 	}
 
-	MoveTo.Broadcast(hit.ImpactPoint);
+	MoveTo.Broadcast(hit.Location);
 }
 
 FVector AMobaPlayerController::IsMoveCamera()
