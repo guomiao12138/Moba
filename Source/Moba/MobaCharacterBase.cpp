@@ -6,7 +6,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "MobaPlayerController.h"
 
-//#include "Ability/MobaAbilityComponent.h"
+#include "Ability/MobaAbilityComponent.h"
 
 // Sets default values
 AMobaCharacterBase::AMobaCharacterBase()
@@ -15,7 +15,7 @@ AMobaCharacterBase::AMobaCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 	//GetMesh()->SetSkeletalMeshAsset();
 
-	//AbilityComponent = CreateDefaultSubobject<UMobaAbilityComponent>(TEXT("AbilityComponent"));
+	AbilityComponent = CreateDefaultSubobject<UMobaAbilityComponent>(TEXT("AbilityComponent"));
 }
 
 void AMobaCharacterBase::InitController(AMobaPlayerController* InController)

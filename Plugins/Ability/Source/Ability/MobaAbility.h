@@ -10,13 +10,15 @@
  * 
  */
 class UAnimationAsset;
+class ACharacter;
 
 UCLASS(BlueprintType)
 class ABILITY_API UMobaAbility : public UObject
 {
 	GENERATED_BODY()
 
-private:
+private:	
+	UPROPERTY()
 	class UStaticMeshComponent* Mesh;
 
 
@@ -40,7 +42,7 @@ public:
 
 	void Activate();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "MobaAbility")
 	FName AbilityName;
 
 	

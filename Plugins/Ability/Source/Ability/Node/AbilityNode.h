@@ -54,5 +54,5 @@ public:
 	UPROPERTY()
 	TArray<UAbilityNode*> SubNodes;
 
-	ACharacter* GetOwnerPawn();
+	class ACharacter* GetOwnerPawn();
 };
