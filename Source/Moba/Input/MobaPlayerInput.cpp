@@ -21,7 +21,7 @@ void UMobaPlayerInput::InitInputSetting()
 		return;
 	}
 
-	asset->LoadSettingFile(true);
+	//asset->LoadSettingFile(true);
 	
 	for (auto ac : asset->ActionMappings)
 	{

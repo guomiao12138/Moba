@@ -37,9 +37,6 @@ void AMobaPlayerController::BeginPlay()
 		auto location = Hero->GetActorLocation();
 		//UE_LOG(LogTemp, Display, TEXT("mouse_x : %f, mouse_y : %f, size_x: %d, size_y : %d"), location.X, location.Y, location.Z);
 	}
-
-	auto subsystem = USubsystemBlueprintLibrary::GetGameInstanceSubsystem(GetWorld(), UMobaSocketSubsystem::StaticClass());
-	Cast<UMobaSocketSubsystem>(subsystem)->CreateSocket();
 }
 
 void AMobaPlayerController::SetupInputComponent()
@@ -107,7 +104,7 @@ void AMobaPlayerController::ClickPosition()
 		//player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
 	}
 
-	MoveTo.Broadcast(hit.ImpactPoint);
+	MoveTo.Broadcast(hit.Location);
 }
 
 FVector AMobaPlayerController::IsMoveCamera()

@@ -39,6 +39,22 @@ namespace t \
 	}\
 }\
 
+UCLASS(config = Game, abstract, configdonotcheckdefaults)
+class MOBA_API UDeafultSettingAsset : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(Config, EditAnywhere)
+	bool CanLoadDefault = true;
+
+	virtual void PostInitProperties() override;
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
+#endif
+};
 
 UENUM(BlueprintType)
 namespace EInputAction
@@ -60,7 +76,6 @@ namespace EInputAction
 }
 ENUM_EX(EInputAction);
 
-class FObjectPreSaveRootContext;
 USTRUCT(BlueprintType)
 struct FInputActionMapping
 {
@@ -92,29 +107,18 @@ struct FInputAxisMapping
 };
 
 
-UCLASS(config = Moba, configdonotcheckdefaults, meta=(DisplayName="InputSetting"))
-class MOBA_API UInputActionAsset : public UPrimaryDataAsset
+UCLASS(config = MobaInputSetting)
+class MOBA_API UInputActionAsset : public UDeafultSettingAsset
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere)
-	FString ConfigName;
 
-	UPROPERTY(Config, EditAnywhere)
+	UPROPERTY(GlobalConfig, EditAnywhere)
 	TArray<FInputActionMapping> ActionMappings;
 
-	UPROPERTY(Config, EditAnywhere)
+	UPROPERTY(GlobalConfig, EditAnywhere)
 	TArray<FInputAxisMapping> AxisMappings;
 
-	virtual void Serialize(FArchive& Ar) override;
-	virtual void PostLoad() override;
-	//virtual void Serialize(FStructuredArchiveRecord Record) override;
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual void PreSaveRoot(FObjectPreSaveRootContext ObjectSaveContext) override;
-#endif
-
-	void LoadSettingFile(bool Default);
 };
 
