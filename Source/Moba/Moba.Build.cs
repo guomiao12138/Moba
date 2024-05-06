@@ -18,10 +18,11 @@ public class Moba : ModuleRules
             "Ability",
             "Sockets",
             "Networking",
+            "Protobuf",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
-            "DeveloperSettings"
+/*            "DeveloperSettings"*/
         });
 
         // Uncomment if you are using Slate UI
