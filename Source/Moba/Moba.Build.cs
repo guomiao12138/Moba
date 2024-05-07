@@ -9,7 +9,8 @@ public class Moba : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = true;
-		PublicDependencyModuleNames.AddRange(new string[] { 
+
+        PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject",
 			"Engine", 
@@ -18,7 +19,6 @@ public class Moba : ModuleRules
             "Ability",
             "Sockets",
             "Networking",
-            "Protobuf",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
@@ -32,6 +32,11 @@ public class Moba : ModuleRules
         // PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+        ShadowVariableWarningLevel = WarningLevel.Off;
+        bEnableUndefinedIdentifierWarnings = false;
+        bEnableExceptions = true;
+        PublicDefinitions.Add("_CRT_SECURE_NO_WARNINGS");
+        PublicDefinitions.Add("PROTOBUF_VERSION");
 
         RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Config", "DefaultMobaInputSetting.ini"));
     }

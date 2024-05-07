@@ -1,0 +1,7 @@
+syntax = "proto3";
+package lm;
+message test
+{
+   int32   id       = 1;
+   string  greeting = 2;
+}
