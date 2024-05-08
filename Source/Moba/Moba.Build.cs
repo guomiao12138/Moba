@@ -19,6 +19,7 @@ public class Moba : ModuleRules
             "Ability",
             "Sockets",
             "Networking",
+            "MobaProtobufLibrary",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
@@ -32,11 +33,6 @@ public class Moba : ModuleRules
         // PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
-        ShadowVariableWarningLevel = WarningLevel.Off;
-        bEnableUndefinedIdentifierWarnings = false;
-        bEnableExceptions = true;
-        PublicDefinitions.Add("_CRT_SECURE_NO_WARNINGS");
-        PublicDefinitions.Add("PROTOBUF_VERSION");
 
         RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Config", "DefaultMobaInputSetting.ini"));
     }

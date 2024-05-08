@@ -18,7 +18,7 @@
 		"IsLicenseeVersion": 0,
 		"IsPromotedBuild": 0,
 		"BranchName": "UE5",
-		"BuildId": "bad83fd4-f09f-4fda-9e73-c5392545260b"
+		"BuildId": "baf96c9b-661a-4dfb-a316-b37df7783750"
 	},
 	"BuildProducts": [
 		{
@@ -63,6 +63,18 @@
 		},
 		{
 			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/MobaProtobuf/Binaries/Win64/UnrealEditor-MobaProtobuf.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/MobaProtobuf/Binaries/Win64/UnrealEditor-MobaProtobuf.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/MobaProtobuf/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -6285,6 +6297,10 @@
 		},
 		{
 			"Path": "$(ProjectDir)/Plugins/Marketplace/VaFogOfWar/VaFogOfWar.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/MobaProtobuf/MobaProtobuf.uplugin",
 			"Type": "UFS"
 		},
 		{

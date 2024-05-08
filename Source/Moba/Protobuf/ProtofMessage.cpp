@@ -2,11 +2,12 @@
 
 
 #include "ProtofMessage.h"
-#include "Protobuf/Protobuf.h"
+//#include "Windows/AllowWindowsPlatformTypes.h"
+#include "test.pb.h"
+//#include "Windows/HideWindowsPlatformTypes.h"
 
 ProtofMessage::ProtofMessage()
 {
 	//lm::test aa;
-	lm::test aa;
 	
 }
