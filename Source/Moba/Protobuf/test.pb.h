@@ -44,20 +44,17 @@ struct TableStruct_test_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_test_2eproto;
-namespace lm {
 class test;
 struct testDefaultTypeInternal;
 extern testDefaultTypeInternal _test_default_instance_;
-}  // namespace lm
 PROTOBUF_NAMESPACE_OPEN
-template<> ::lm::test* Arena::CreateMaybeMessage<::lm::test>(Arena*);
+template<> ::test* Arena::CreateMaybeMessage<::test>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace lm {
 
 // ===================================================================
 
 class test final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lm.test) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:test) */ {
  public:
   inline test() : test(nullptr) {}
   ~test() override;
@@ -160,7 +157,7 @@ class test final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "lm.test";
+    return "test";
   }
   protected:
   explicit test(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -203,7 +200,7 @@ class test final :
   void _internal_set_id(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:lm.test)
+  // @@protoc_insertion_point(class_scope:test)
  private:
   class _Internal;
 
@@ -237,7 +234,7 @@ inline int32_t test::_internal_id() const {
   return _impl_.id_;
 }
 inline int32_t test::id() const {
-  // @@protoc_insertion_point(field_get:lm.test.id)
+  // @@protoc_insertion_point(field_get:test.id)
   return _internal_id();
 }
 inline void test::_internal_set_id(int32_t value) {
@@ -246,7 +243,7 @@ inline void test::_internal_set_id(int32_t value) {
 }
 inline void test::set_id(int32_t value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:lm.test.id)
+  // @@protoc_insertion_point(field_set:test.id)
 }
 
 // string greeting = 2;
@@ -254,7 +251,7 @@ inline void test::clear_greeting() {
   _impl_.greeting_.ClearToEmpty();
 }
 inline const std::string& test::greeting() const {
-  // @@protoc_insertion_point(field_get:lm.test.greeting)
+  // @@protoc_insertion_point(field_get:test.greeting)
   return _internal_greeting();
 }
 template <typename ArgT0, typename... ArgT>
@@ -262,11 +259,11 @@ inline PROTOBUF_ALWAYS_INLINE
 void test::set_greeting(ArgT0&& arg0, ArgT... args) {
  
  _impl_.greeting_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lm.test.greeting)
+  // @@protoc_insertion_point(field_set:test.greeting)
 }
 inline std::string* test::mutable_greeting() {
   std::string* _s = _internal_mutable_greeting();
-  // @@protoc_insertion_point(field_mutable:lm.test.greeting)
+  // @@protoc_insertion_point(field_mutable:test.greeting)
   return _s;
 }
 inline const std::string& test::_internal_greeting() const {
@@ -281,7 +278,7 @@ inline std::string* test::_internal_mutable_greeting() {
   return _impl_.greeting_.Mutable(GetArenaForAllocation());
 }
 inline std::string* test::release_greeting() {
-  // @@protoc_insertion_point(field_release:lm.test.greeting)
+  // @@protoc_insertion_point(field_release:test.greeting)
   return _impl_.greeting_.Release();
 }
 inline void test::set_allocated_greeting(std::string* greeting) {
@@ -296,7 +293,7 @@ inline void test::set_allocated_greeting(std::string* greeting) {
     _impl_.greeting_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lm.test.greeting)
+  // @@protoc_insertion_point(field_set_allocated:test.greeting)
 }
 
 #ifdef __GNUC__
@@ -305,7 +302,6 @@ inline void test::set_allocated_greeting(std::string* greeting) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace lm
 
 // @@protoc_insertion_point(global_scope)
 

@@ -6,7 +6,7 @@
 /**
  * 
  */
-class MOBA_API ProtofMessage
+class ProtofMessage
 {
 public:
 	ProtofMessage();

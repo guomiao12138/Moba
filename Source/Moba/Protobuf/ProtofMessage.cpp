@@ -8,6 +8,10 @@
 
 ProtofMessage::ProtofMessage()
 {
-	//lm::test aa;
-	
+	test aa;
+
+	aa.set_id(333);
+	aa.set_greeting("aaaaaaa");
+	std::string sss = aa.SerializeAsString();
+	const char* a = sss.c_str();
 }

@@ -20,7 +20,6 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace _pb = ::PROTOBUF_NAMESPACE_ID;
 namespace _pbi = _pb::internal;
 
-namespace lm {
 PROTOBUF_CONSTEXPR test::test(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.greeting_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -35,36 +34,35 @@ struct testDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 testDefaultTypeInternal _test_default_instance_;
-}  // namespace lm
 static ::_pb::Metadata file_level_metadata_test_2eproto[1];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_test_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_test_2eproto = nullptr;
 
 const uint32_t TableStruct_test_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::lm::test, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::test, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::lm::test, _impl_.id_),
-  PROTOBUF_FIELD_OFFSET(::lm::test, _impl_.greeting_),
+  PROTOBUF_FIELD_OFFSET(::test, _impl_.id_),
+  PROTOBUF_FIELD_OFFSET(::test, _impl_.greeting_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::lm::test)},
+  { 0, -1, -1, sizeof(::test)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::lm::_test_default_instance_._instance,
+  &::_test_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_test_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\ntest.proto\022\002lm\"$\n\004test\022\n\n\002id\030\001 \001(\005\022\020\n\010"
-  "greeting\030\002 \001(\tb\006proto3"
+  "\n\ntest.proto\"$\n\004test\022\n\n\002id\030\001 \001(\005\022\020\n\010gree"
+  "ting\030\002 \001(\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_test_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_test_2eproto = {
-    false, false, 62, descriptor_table_protodef_test_2eproto,
+    false, false, 58, descriptor_table_protodef_test_2eproto,
     "test.proto",
     &descriptor_table_test_2eproto_once, nullptr, 0, 1,
     schemas, file_default_instances, TableStruct_test_2eproto::offsets,
@@ -77,7 +75,6 @@ PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_test_2ep
 
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_test_2eproto(&descriptor_table_test_2eproto);
-namespace lm {
 
 // ===================================================================
 
@@ -89,7 +86,7 @@ test::test(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:lm.test)
+  // @@protoc_insertion_point(arena_constructor:test)
 }
 test::test(const test& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -109,7 +106,7 @@ test::test(const test& from)
       _this->GetArenaForAllocation());
   }
   _this->_impl_.id_ = from._impl_.id_;
-  // @@protoc_insertion_point(copy_constructor:lm.test)
+  // @@protoc_insertion_point(copy_constructor:test)
 }
 
 inline void test::SharedCtor(
@@ -128,7 +125,7 @@ inline void test::SharedCtor(
 }
 
 test::~test() {
-  // @@protoc_insertion_point(destructor:lm.test)
+  // @@protoc_insertion_point(destructor:test)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -146,7 +143,7 @@ void test::SetCachedSize(int size) const {
 }
 
 void test::Clear() {
-// @@protoc_insertion_point(message_clear_start:lm.test)
+// @@protoc_insertion_point(message_clear_start:test)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -176,7 +173,7 @@ const char* test::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
           auto str = _internal_mutable_greeting();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lm.test.greeting"));
+          CHK_(::_pbi::VerifyUTF8(str, "test.greeting"));
         } else
           goto handle_unusual;
         continue;
@@ -205,7 +202,7 @@ failure:
 
 uint8_t* test::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lm.test)
+  // @@protoc_insertion_point(serialize_to_array_start:test)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -220,7 +217,7 @@ uint8_t* test::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_greeting().data(), static_cast<int>(this->_internal_greeting().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "lm.test.greeting");
+      "test.greeting");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_greeting(), target);
   }
@@ -229,12 +226,12 @@ uint8_t* test::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:lm.test)
+  // @@protoc_insertion_point(serialize_to_array_end:test)
   return target;
 }
 
 size_t test::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lm.test)
+// @@protoc_insertion_point(message_byte_size_start:test)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -266,7 +263,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*test::GetClassData() const { r
 void test::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
   auto* const _this = static_cast<test*>(&to_msg);
   auto& from = static_cast<const test&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lm.test)
+  // @@protoc_insertion_point(class_specific_merge_from_start:test)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -281,7 +278,7 @@ void test::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_
 }
 
 void test::CopyFrom(const test& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lm.test)
+// @@protoc_insertion_point(class_specific_copy_from_start:test)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -310,11 +307,10 @@ void test::InternalSwap(test* other) {
 }
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace lm
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::lm::test*
-Arena::CreateMaybeMessage< ::lm::test >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lm::test >(arena);
+template<> PROTOBUF_NOINLINE ::test*
+Arena::CreateMaybeMessage< ::test >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::test >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 
