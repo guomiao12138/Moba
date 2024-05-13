@@ -13,14 +13,10 @@
 #include "Misc/DefaultValueHelper.h"
 
 #include "TimerManager.h"
+
 UServer::UServer()
 {
-	FConsoleManager& ConsoleManager = (FConsoleManager&)IConsoleManager::Get();
-	ConsoleManager.RegisterConsoleCommand(
-		TEXT("SendMessage"),
-		TEXT("UServer Call SendMessage Test"),
-		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UServer::SendMessage),
-		ECVF_Default);
+
 }
 
 UServer::~UServer()
@@ -36,12 +32,18 @@ UServer::~UServer()
 		Socket.Reset();
 	}
 
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	//GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	CloseAllConnect();
 }
 
 void UServer::Init()
 {
+	IConsoleManager::Get().RegisterConsoleCommand(
+		TEXT("SendMessage"),
+		TEXT("UServer Call SendMessage Test"),
+		FConsoleCommandWithArgsDelegate::CreateUObject(this, &UServer::SendMessage),
+		ECVF_Default);
+
 	if (CreateSocket())
 	{
 		USocketDeveloperSettings* Setting = GetMutableDefault<USocketDeveloperSettings>();
@@ -49,7 +51,7 @@ void UServer::Init()
 		{
 			if (Listen())
 			{
-				ServeRunnable = MakeShareable(new FServeRunnable(TWeakObjectPtr<UServer>(this)));
+				ServeRunnable = MakeShareable(new FServerRunnable(TWeakObjectPtr<UServer>(this)));
 				//GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &UServer::Test), Setting->CheckAccpetRate, true);
 			}
 		}
@@ -118,7 +120,7 @@ void UServer::Accept()
 		FSocket* ClientSocket = Socket->Accept(*addr, TEXT("Client Connect"));
 		if (ClientSocket)
 		{
-			TSharedRef<FServeConnectRunnable> Runable = MakeShared<FServeConnectRunnable>(RunnableNum, TSharedPtr<FSocket>(ClientSocket));
+			TSharedRef<FServerConnectRunnable> Runable = MakeShared<FServerConnectRunnable>(RunnableNum, TSharedPtr<FSocket>(ClientSocket));
 			ClientMap.Add(RunnableNum, Runable);
 			RunnableNum++;
 			UE_LOG(LogTemp, Display, TEXT("Client is connected, RunnableIndex : %d"), RunnableNum);
@@ -138,7 +140,7 @@ bool UServer::HasConnection(bool& InHasConnect)
 {
 	if (Socket.IsValid())
 	{
-		return Socket->HasPendingConnection(InHasConnect);
+		return Socket->WaitForPendingConnection(InHasConnect, FTimespan::FromSeconds(0.25f));
 	}
 	InHasConnect = false;
 	return false;
@@ -182,31 +184,38 @@ void UServer::SendMessage(const TArray<FString>& Args)
 		TArray<uint8> Buffer;
 		for (auto arg : Args)
 		{
-			Buffer.Add(*(uint8*)TCHAR_TO_UTF8(arg.GetCharArray().GetData()));
+			//Buffer.Add(*(uint8*)TCHAR_TO_UTF8(arg.GetCharArray().GetData()));
+
+			FString tryToString(reinterpret_cast<const char*>(Buffer.GetData()));
+			int32 sent = 0;
+			SendMsg(0, Buffer);
+			//if (ClientMap[0]->ClientSocket->Send((uint8*)TCHAR_TO_UTF8(arg.GetCharArray().GetData()), Buffer.Num(), sent))
+			//{
+			//	UE_LOG(LogTemp, Display, TEXT("Server : SendMessage %s"), *arg);
+			//}
 		}
-		ClientMap[0]->SendMsg(Buffer);
 	}
 }
 
-FServeConnectRunnable::FServeConnectRunnable(int32 InRunnableIndex, TSharedPtr<FSocket> InClientSocket)
+FServerConnectRunnable::FServerConnectRunnable(int32 InRunnableIndex, TSharedPtr<FSocket> InClientSocket)
 {
 	RunnableIndex = InRunnableIndex;
 	ClientSocket = InClientSocket;
 	Thread = FRunnableThread::Create(this, TEXT("Server Connect Thread"));
 }
 
-void FServeConnectRunnable::SendMsg(TArray<uint8> InBuffer)
+void FServerConnectRunnable::SendMsg(TArray<uint8> InBuffer)
 {
 	int32 BytesSent = 0;
 	ClientSocket->Send(InBuffer.GetData(), InBuffer.Num(), BytesSent);
 }
 
-bool FServeConnectRunnable::Init()
+bool FServerConnectRunnable::Init()
 {
 	return IsRuning;
 }
 
-uint32 FServeConnectRunnable::Run()
+uint32 FServerConnectRunnable::Run()
 {
 	while (IsRuning)
 	{
@@ -223,7 +232,7 @@ uint32 FServeConnectRunnable::Run()
 			{
 				const std::string cstr(reinterpret_cast<const char*>(Buffer.GetData()), Datasize);
 				FString frameAsFString = cstr.c_str();
-				UE_LOG(LogTemp, Display, TEXT("Client Recv Data %s"), *frameAsFString);
+				UE_LOG(LogTemp, Display, TEXT("Server RunnableIndex %d Recv Data %s"), RunnableIndex, *frameAsFString);
 			}
 		}
 	}
@@ -231,17 +240,17 @@ uint32 FServeConnectRunnable::Run()
 	return uint32();
 }
 
-void FServeConnectRunnable::Stop()
+void FServerConnectRunnable::Stop()
 {
 	IsRuning = false;
 }
 
-void FServeConnectRunnable::Exit()
+void FServerConnectRunnable::Exit()
 {
 
 }
 
-FServeConnectRunnable::~FServeConnectRunnable()
+FServerConnectRunnable::~FServerConnectRunnable()
 {
 	if (Thread != nullptr)
 	{
@@ -251,18 +260,18 @@ FServeConnectRunnable::~FServeConnectRunnable()
 	}
 }
 
-FServeRunnable::FServeRunnable(TWeakObjectPtr<UServer> InOwner)
+FServerRunnable::FServerRunnable(TWeakObjectPtr<UServer> InOwner)
 {
 	Server = InOwner;
 	Thread = FRunnableThread::Create(this, TEXT("Server Thread"));
 }
 
-bool FServeRunnable::Init()
+bool FServerRunnable::Init()
 {
 	return Server.IsValid();
 }
 
-uint32 FServeRunnable::Run()
+uint32 FServerRunnable::Run()
 {
 	while (IsRuning && Server.IsValid())
 	{
@@ -278,16 +287,16 @@ uint32 FServeRunnable::Run()
 	return uint32();
 }
 
-void FServeRunnable::Stop()
+void FServerRunnable::Stop()
 {
 	IsRuning = false;
 }
 
-void FServeRunnable::Exit()
+void FServerRunnable::Exit()
 {
 }
 
-FServeRunnable::~FServeRunnable()
+FServerRunnable::~FServerRunnable()
 {
 	if (Thread != nullptr)
 	{

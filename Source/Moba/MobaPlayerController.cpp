@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 
+#include "DataAsset/InputActionAsset.h"
 
 AMobaPlayerController::AMobaPlayerController()
 {
@@ -37,24 +38,37 @@ void AMobaPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-#define ADDACTION(name, function)\
-{\
-	FInputActionBinding ActionBinding(name, EInputEvent::IE_Pressed); \
-	ActionBinding.ActionDelegate.BindDelegate(this, function); \
-	InputComponent->AddActionBinding(ActionBinding);\
-}\
+#define ADDACTION(name) InputComponent->BindAction(EInputAction::GetName(EInputAction::name), EInputEvent::IE_Pressed, this, &AMobaPlayerController::name)
+//{\
+//	FInputActionBinding ActionBinding(name, EInputEvent::IE_Pressed); \
+//	ActionBinding.ActionDelegate.BindDelegate(this, function); \
+//	InputComponent->AddActionBinding(ActionBinding);\
+//}\
 	
 
-#define ADDAXIS(name, function) InputComponent->BindAxis(name, this, &AMobaPlayerController::function);
+#define ADDAXIS(name) InputComponent->BindAxis(EInputAction::GetName(EInputAction::name), this, &AMobaPlayerController::name)
 	//InputComponent->BindAction();
-
 	//ADDACTION(TEXT("RightClick"), TEXT("ClickPosition"));
 	//ADDAXIS(TEXT("MoveForward"), MoveForward);
 	//ADDAXIS(TEXT("MoveRight"), MoveRight);
 
-	InputComponent->BindAxis(TEXT("MoveForward"), this, &AMobaPlayerController::MoveForward);
-	InputComponent->BindAxis(TEXT("MoveRight"), this, &AMobaPlayerController::MoveRight);
-	InputComponent->BindAction(TEXT("ClickPosition"), EInputEvent::IE_Pressed, this, &AMobaPlayerController::ClickPosition);
+	//for (int i = EInputAction::MoveForawrd; i <= EInputAction::MoveRight; i++)
+	//{
+	//	FString Name = EInputAction::GetName((EInputAction::Type)i).ToString();
+	//}
+	ADDACTION(ClickPosition);
+	ADDAXIS(MoveForward);
+	ADDAXIS(MoveRight);
+
+	//for (int i = EInputAction::ClickPosition; i < EInputAction::Max; i++)
+	//{
+	//	ADDAXIS(EInputAction::GetName(i));
+	//}
+	UE_LOG(LogTemp, Display, TEXT("EInputAction:: %s"), *EInputAction::GetName(EInputAction::ClickPosition).ToString());
+
+	//InputComponent->BindAxis(TEXT("MoveForward"), this, &AMobaPlayerController::MoveForward);
+	//InputComponent->BindAxis(TEXT("MoveRight"), this, &AMobaPlayerController::MoveRight);
+	//InputComponent->BindAction(TEXT("ClickPosition"), EInputEvent::IE_Pressed, this, &AMobaPlayerController::ClickPosition);
 }
 
 void AMobaPlayerController::InitInputSystem()
@@ -99,6 +113,22 @@ void AMobaPlayerController::ClickPosition()
 	}
 
 	MoveTo.Broadcast(hit.Location);
+}
+
+void AMobaPlayerController::Q()
+{
+}
+
+void AMobaPlayerController::W()
+{
+}
+
+void AMobaPlayerController::E()
+{
+}
+
+void AMobaPlayerController::R()
+{
 }
 
 FVector AMobaPlayerController::IsMoveCamera()

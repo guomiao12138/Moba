@@ -23,38 +23,39 @@ public:
 	UClient();
 	~UClient();
 
-    UFUNCTION(BlueprintCallable)
+	void Init();
     void CreateSocket();
-
+	void SendMsg(const TArray<uint8>& InBuffer);
 public:
 	FGuid Guid;
-	TSharedPtr<FSocket> Socket;
 	
 	TSharedPtr<FClientSocketRunnable> MobaSocketRunnable;
 };
 
-struct FLocalReceivedPacket;
-
-class FClientSocketRunnable : public FRunnable
+class FClientSocketRunnable : public FRunnable , public FSingleThreadRunnable
 {
 public:
 
+	TWeakObjectPtr<UClient> Client;
 	TSharedPtr<FSocket> Socket;
 	FRunnableThread* Thread = nullptr;
 	TAtomic<bool> IsRuning = true;
-
-	TSharedPtr<FSocket> ClientSocket;
+	TSharedPtr<FInternetAddr> ServerAddr;
+	FDateTime CurrentTime;
 
 public:
 
-	FClientSocketRunnable(TSharedPtr<FSocket>& InSocket);
+	FClientSocketRunnable(TWeakObjectPtr<UClient> InClient);
+	virtual ~FClientSocketRunnable();
 
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
 	virtual void Exit() override;
-	virtual ~FClientSocketRunnable();
 
-	bool DispatchPacket(FLocalReceivedPacket&& IncomingPacket, int32 NbBytesRead);
+	void SendMsg(TArray<uint8> InBuffer);
 
+	void WaitConnect(float time);
+
+	virtual void Tick() override;
 };

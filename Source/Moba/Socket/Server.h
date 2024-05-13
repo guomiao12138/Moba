@@ -8,15 +8,15 @@
 /**
  * 
  */
-class FServeRunnable;
-class FServeConnectRunnable;
+class FServerRunnable;
+class FServerConnectRunnable;
 UCLASS()
 class MOBA_API UServer : public UObject
 {
 	GENERATED_BODY()
 	friend class FServeRunnable;
 protected:
-	TMap<int32, TSharedRef<FServeConnectRunnable>> ClientMap;
+	TMap<int32, TSharedRef<FServerConnectRunnable>> ClientMap;
 
 	int32 RunnableNum;
 
@@ -24,7 +24,7 @@ protected:
 
 	FTimerHandle TimerHandle;
 
-public://重载的函数，可以做一些初始化和释放操作
+public:
 
 	UServer();
 	~UServer();
@@ -43,13 +43,13 @@ public://重载的函数，可以做一些初始化和释放操作
 	void Test();
 public:
 	
-	TSharedPtr<FServeRunnable> ServeRunnable;
+	TSharedPtr<FServerRunnable> ServeRunnable;
 
 	UFUNCTION()
 	void SendMessage(const TArray<FString>& Args);
 };
 
-class FServeConnectRunnable : public FRunnable
+class FServerConnectRunnable : public FRunnable
 {
 public:
 	int32 RunnableIndex = 0;
@@ -59,28 +59,28 @@ public:
 	//TSharedPtr<UServer> Server;
 public:
 
-	FServeConnectRunnable(int32 InRunnableIndex, TSharedPtr<FSocket> InClientSocket);
+	FServerConnectRunnable(int32 InRunnableIndex, TSharedPtr<FSocket> InClientSocket);
 	void SendMsg(TArray<uint8> InBuffer);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
 	virtual void Exit() override;
-	virtual ~FServeConnectRunnable();
+	virtual ~FServerConnectRunnable();
 };
 
 
 
-class FServeRunnable : public FRunnable
+class FServerRunnable : public FRunnable
 {
 public:
 	TWeakObjectPtr<UServer> Server;
 	FRunnableThread* Thread = nullptr;
 	TAtomic<bool> IsRuning = true;
 public:
-	FServeRunnable(TWeakObjectPtr<UServer> InOwner);
+	FServerRunnable(TWeakObjectPtr<UServer> InOwner);
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
 	virtual void Exit() override;
-	virtual ~FServeRunnable();
+	virtual ~FServerRunnable();
 };
