@@ -18,6 +18,10 @@
 		{
 			"Name": "Ability",
 			"Enabled": true
+		},
+		{
+			"Name": "MobaProtobuf",
+			"Enabled": true
 		}
 	]
 }

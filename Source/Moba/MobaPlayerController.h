@@ -41,11 +41,15 @@ public:
 	virtual void SetupInputComponent() override;
 	virtual void InitInputSystem() override;
 
-	void ClickPosition();
 
 	FVector IsMoveCamera();
 	void MoveForward(float value);
 	void MoveRight(float value);
+	void ClickPosition();
+	void Q();
+	void W();
+	void E();
+	void R();
 
 	void CreateDefaultHero();
 

@@ -63,8 +63,10 @@ namespace EInputAction
 
 	enum Type
 	{
-		MoveForawd,
+		//Axis
+		MoveForward,
 		MoveRight,
+		//Action
 		ClickPosition,
 		Q,
 		W,

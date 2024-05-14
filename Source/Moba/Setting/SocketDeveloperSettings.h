@@ -24,4 +24,7 @@ public:
 
 	UPROPERTY(Config, EditAnywhere)
 	int port = 0;
+
+	UPROPERTY(Config, EditAnywhere)
+	float CheckAccpetRate = 1.f;
 };
