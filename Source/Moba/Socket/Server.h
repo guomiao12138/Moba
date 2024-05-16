@@ -61,6 +61,9 @@ public:
 
 	FServerConnectRunnable(int32 InRunnableIndex, TSharedPtr<FSocket> InClientSocket);
 	void SendMsg(TArray<uint8> InBuffer);
+	void SendMsg(const uint8* Data, int32 Count, int32& BytesSent);
+	bool IsConnect();
+
 	virtual bool Init() override;
 	virtual uint32 Run() override;
 	virtual void Stop() override;
