@@ -5,15 +5,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 
-//void UChangeSpeed::AllocateDefaultPins()
-//{
-//}
-#if WITH_EDITOR
-FText UChangeSpeed::GetNodeTitle(ENodeTitleType::Type TitleType) const
-{
-	return FText::FromString("ChangeSpeed");
-}
-#endif	
 void UChangeSpeed::OnActiveNode()
 {
 	Super::OnActiveNode();

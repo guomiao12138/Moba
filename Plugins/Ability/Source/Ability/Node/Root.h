@@ -4,24 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "AbilityNode.h"
-#include "UAbilityNode_Root.generated.h"
+#include "Root.generated.h"
 
 /**
  * 
  */
 UCLASS(meta=(DisplayName = "Root"))
-class ABILITY_API UAbilityNode_Root : public UAbilityNode
+class ABILITY_API URoot : public UAbilityNode
 {
 	GENERATED_BODY()
 	
 public:
-	UAbilityNode_Root();
+	URoot();
 
 #if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
 	virtual FLinearColor GetNodeTitleColor() const override;
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual UEdGraphPin* GetThenPin() override;
-	virtual void CreateParamsPins() override;
+	virtual void CreateParamsPins() override {};
 #endif	
 };

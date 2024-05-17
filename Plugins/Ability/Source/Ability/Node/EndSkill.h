@@ -17,8 +17,7 @@ class UEndSkill : public UAbilityNode
 public:
 #if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-	virtual void CreateParamsPins() override;
+	virtual void CreateParamsPins() override {};
 #endif
 
 	virtual void OnActiveNode() override;

@@ -7,7 +7,7 @@
 #include "MobaAbilityComponent.generated.h"
 
 class UMobaAbility;
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(MobaAbility), meta=(BlueprintSpawnableComponent) )
 class ABILITY_API UMobaAbilityComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -37,5 +37,5 @@ public:
 		
 	void ActiveAbility();
 	void SetCurrentAbility(UMobaAbility* InAbility);
-	void ActiveNode(TArray<UEdGraphPin*> InPins);
+	void ActiveNode(TArray<class UEdGraphPin*> InPins);
 };

@@ -15,13 +15,13 @@ class UPlayeAnimation : public UAbilityNode
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = "AbilityNode")
-	UAnimationAsset* Asset;
+	UPROPERTY(EditAnywhere, Category = "AnimSequence")
+	TObjectPtr<class UAnimSequenceBase> Asset;
 
-
-#if WITH_EDITOR
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-#endif
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
+
+#if WITH_EDITOR
+	virtual void CreateParamsPins() override;
+#endif
 };

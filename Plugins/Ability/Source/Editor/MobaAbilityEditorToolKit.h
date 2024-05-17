@@ -34,11 +34,9 @@ public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;// Must implement in derived class!
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
 	virtual void UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
-	//virtual void SaveAsset_Execute() override;
 
 	void InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UMobaAbility* InAsset);
 	void CreateUICommandList();
-	//class UAbilityNode* CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const;
 
 	//GraphEditorEvents
 	void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);
@@ -59,6 +57,14 @@ public:
 
 	void SetupGraphEditorEvents(UEdGraph* InGraph, SGraphEditor::FGraphEditorEvents& InEvents);
 	//GraphEditorEvents
+
+	/**
+	 * Try to jump to a given class (if allowed)
+	 *
+	 * @param Class - The Class to jump to
+	 */
+	void JumpToDefinition(const UClass* Class) const;
+
 
 	//CommandList
 	FGraphPanelSelectionSet GetSelectedNodes() const;

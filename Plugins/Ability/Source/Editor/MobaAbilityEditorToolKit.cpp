@@ -16,6 +16,8 @@
 #include "PropertyEditorModule.h"
 #include "IDetailsView.h"
 
+#include "SourceCodeNavigation.h"
+
 void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
 {
 }
@@ -95,6 +97,8 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 	if (InAsset->Graph != nullptr)
 	{
 		EdGraph = InAsset->Graph;
+		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
+		EdGraph->GetSchema()->CreateDefaultNodesForGraph(*InAsset->Graph);
 	}
 	else
 	{
@@ -177,22 +181,6 @@ void FMobaAbilityEditorToolKit::CreateUICommandList()
 
 }
 
-//UAbilityNode* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
-//{
-//	check(ParentGraph != nullptr)
-//	UAbilityNode* ResultGraphNode = NewObject<UAbilityNode>(ParentGraph);
-//	ParentGraph->Modify();
-//	ResultGraphNode->SetFlags(RF_Transactional);
-//
-//	ResultGraphNode->Rename(nullptr, ParentGraph, REN_NonTransactional);
-//	ResultGraphNode->CreateNewGuid();
-//	ResultGraphNode->NodePosX = NodeLocation.X;
-//	ResultGraphNode->NodePosY = NodeLocation.Y;
-//
-//	ResultGraphNode->AllocateDefaultPins();
-//	return ResultGraphNode;
-//}
-
 void FMobaAbilityEditorToolKit::OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection)
 {
 	if (NewSelection.Num() > 0)
@@ -240,7 +228,7 @@ void FMobaAbilityEditorToolKit::OnNodeDoubleClicked(UEdGraphNode* Node)
 {
 	if (Node && Node->CanJumpToDefinition())
 	{
-		Node->JumpToDefinition();
+		JumpToDefinition(Node->GetClass());
 	}
 }
 
@@ -329,6 +317,11 @@ void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraph
 	//if (InGraph->Schema != nullptr && InGraph->Schema->IsChildOf(UEdGraphSchema_K2::StaticClass()))
 	//{
 	//}
+}
+
+void FMobaAbilityEditorToolKit::JumpToDefinition(const UClass* Class) const
+{
+	FSourceCodeNavigation::NavigateToClass(Class);
 }
 
 FGraphPanelSelectionSet FMobaAbilityEditorToolKit::GetSelectedNodes() const

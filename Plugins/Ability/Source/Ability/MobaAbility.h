@@ -10,6 +10,8 @@
  * 
  */
 class UAnimationAsset;
+class URoot;
+class ACharacter;
 
 UCLASS(BlueprintType)
 class ABILITY_API UMobaAbility : public UObject
@@ -31,7 +33,7 @@ public:
 #endif
 
 	UPROPERTY()
-	TObjectPtr<class UAbilityNode_Root> RootNode;
+	TObjectPtr<URoot> RootNode;
 
 	UPROPERTY()
 	TObjectPtr<ACharacter> Owner;

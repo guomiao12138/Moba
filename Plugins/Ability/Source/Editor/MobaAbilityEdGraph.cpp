@@ -11,10 +11,10 @@ UMobaAbilityEdGraph::UMobaAbilityEdGraph()
 
 void UMobaAbilityEdGraph::NotifyGraphChanged(const FEdGraphEditAction& Action)
 {
-	if (auto asset = GetOuter())
-	{
-		asset->GetPackage()->SetDirtyFlag(true);
-	}
+	//if (auto asset = GetOuter())
+	//{
+	//	asset->GetPackage()->SetDirtyFlag(true);
+	//}
 
 
 	Super::NotifyGraphChanged(Action);
