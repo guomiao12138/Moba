@@ -11,10 +11,11 @@
 //#include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
 //#include "Preferences/UnrealEdOptions.h"
 #include "Misc/DefaultValueHelper.h"
-
+#include "UObject/ConstructorHelpers.h"
 //#include "Framework/Notifications/NotificationManager.h"
 //#include "Widgets/Notifications/SNotificationList.h"
 #include "EdGraph/EdGraphPin.h"
+#include "EdGraph/EdGraph.h"
 
 void UAbilityNode::Tick(float DeltaTime)
 {
@@ -35,12 +36,11 @@ void UAbilityNode::Tick(float DeltaTime)
 void UAbilityNode::OnActiveNode()
 {
 	Succeed = true;
-	TArray<UEdGraphPin*> pins;
 	TArray<UAbilityNode*> Nodes;
 
 	for (UEdGraphPin* Pin : Pins)
 	{
-		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Input)
+		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Output)
 		{
 			for (UEdGraphPin* Connection : Pin->LinkedTo)
 			{
@@ -49,6 +49,7 @@ void UAbilityNode::OnActiveNode()
 				{
 					//PinDefaultValueChanged(Connection);
 					//NeighborsAcceptedForConsideration.Add(Connection->GetOwningNode());
+					Cast<UAbilityNode>(Connection->GetOwningNode())->OnActiveNode();
 				}
 			}
 		}
@@ -77,7 +78,7 @@ UAbilityNode::UAbilityNode()
 
 UEdGraphPin* UAbilityNode::GetExecutePin()
 {
-	return FindPinChecked(TEXT("execute"));
+	return FindPinChecked(TEXT("Execute"));
 }
 
 UEdGraphPin* UAbilityNode::GetThenPin()
@@ -94,15 +95,64 @@ UEdGraphPin* UAbilityNode::GetThenPin()
 
 void UAbilityNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	auto pin = FindPin(PropertyChangedEvent.GetPropertyName()); 
-	void* Data = nullptr;
-	PropertyChangedEvent.Property->GetValue_InContainer(this, Data);
-	PinDefaultValueChanged(pin);
+	if (auto pin = FindPin(PropertyChangedEvent.GetPropertyName()))
+	{
+		for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+		{
+			if (Property->Owner != GetClass() || Property->HasAnyPropertyFlags(EPropertyFlags::CPF_SimpleDisplay))
+			{
+				continue;
+			}
+			if (PropertyChangedEvent.GetPropertyName() == Property->GetName())
+			{
+				Property = PropertyChangedEvent.Property;
+			}
+
+			uint64 CastFlags = PropertyChangedEvent.Property->GetCastFlags();
+			if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
+			{
+				if (FObjectPtrProperty* ObjectProperty = CastField<FObjectPtrProperty>(Property))
+				{
+					void* ObjectContainer = ObjectProperty->ContainerPtrToValuePtr<void>(this);
+					UObject* TargetObject = ObjectProperty->GetObjectPropertyValue(ObjectContainer);
+
+					pin->DefaultObject = TargetObject;
+					if (pin->DefaultObject)
+					{
+						pin->DefaultValue = pin->DefaultObject->GetPathName();
+					}
+					else
+					{
+						pin->ResetDefaultValue();
+					}
+				}
+
+
+
+			}
+		}
+
+
+	}
+}
+
+void UAbilityNode::ReconstructNode()
+{
+	for (auto pin : Pins)
+	{
+		pin->BreakAllPinLinks(true);
+	}
+	Pins.Empty();
+	Modify();
+	AllocateDefaultPins();
+	CreateParamsPins();
+
+	GetGraph()->NotifyNodeChanged(this);
 }
 
 void UAbilityNode::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Input, TEXT("exec"), TEXT("execute"));
+	CreatePin(EGPD_Input, TEXT("exec"), TEXT("Execute"));
 	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Succeed"));
 	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Faild"));
 }
@@ -208,8 +258,6 @@ void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
 			continue;
 		}
 
-
-
 		if (Property->GetName() == Pin->PinName)
 		{
 			uint64 CastFlags = Property->GetCastFlags();
@@ -223,7 +271,39 @@ void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
 			}
 			else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
 			{
-				Property->SetValue_InContainer(this, &Pin->DefaultObject);
+				FString ObjectPathLocal;
+				if (Pin->DefaultObject && Pin->DefaultValue.IsEmpty())
+				{
+					ObjectPathLocal = Pin->DefaultObject->GetPathName();
+				}
+				else
+				{
+					ObjectPathLocal = Pin->DefaultValue;
+				}
+				
+				ConstructorHelpers::StripObjectClass(ObjectPathLocal);
+
+				if (FPackageName::IsValidObjectPath(ObjectPathLocal))
+				{
+					FSoftObjectPath AssetRef = ObjectPathLocal;
+					UObject* Object = AssetRef.TryLoad();
+					if (FObjectPtrProperty* ObjectProperty = CastField<FObjectPtrProperty>(Property))
+					{
+						void* ObjectContainer = ObjectProperty->ContainerPtrToValuePtr<void>(this);
+						UObject* TargetObject = ObjectProperty->GetObjectPropertyValue(ObjectContainer);
+						if (Object)
+						{
+							ObjectProperty->SetObjectPropertyValue(ObjectContainer, Object);
+						}
+						else
+						{
+							ObjectProperty->ClearValue(ObjectContainer);
+						}
+						Pin->ResetDefaultValue();
+						Pin->DefaultObject = Object;
+					}
+				}
+
 			}
 			else if ((CastFlags & CASTCLASS_FFloatProperty) != 0)
 			{
@@ -245,3 +325,4 @@ void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
 }
 
 #endif
+

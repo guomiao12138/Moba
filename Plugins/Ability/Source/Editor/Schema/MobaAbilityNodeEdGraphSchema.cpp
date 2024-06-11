@@ -38,17 +38,17 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 
 
 
-//bool UMobaAbilityNodeEdGraphSchema::CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const
-//{
-//	PinA->Modify();
-//	PinB->Modify();
-//
-//	PinA->MakeLinkTo(PinB);
-//
-//	//UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(PinA->GetOwningNode());
-//
-//	return true;
-//}
+bool UMobaAbilityNodeEdGraphSchema::CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const
+{
+	PinA->Modify();
+	PinB->Modify();
+
+	PinA->MakeLinkTo(PinB);
+
+	//UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(PinA->GetOwningNode());
+
+	return true;
+}
 
 void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {

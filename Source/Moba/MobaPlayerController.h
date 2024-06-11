@@ -30,6 +30,9 @@ public:
 	DECLARE_MULTICAST_DELEGATE_OneParam(MoveToDelegate, FVector);
 	MoveToDelegate MoveTo;
 
+	DECLARE_MULTICAST_DELEGATE(FActiveAbility);
+	FActiveAbility ActiveAbility;
+
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMobaCharacterBase> HeroClass;

@@ -18,8 +18,8 @@ public:
 	TObjectPtr<AMobaPlayerController> MobaPlayerController;
 
 
-	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
 
 public:
 	// Sets default values for this character's properties
@@ -38,5 +38,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void ActiveAbility();
 	void MoveTo(FVector InLocation);
 };

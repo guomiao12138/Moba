@@ -119,6 +119,7 @@ void UServer::Accept()
 		FSocket* ClientSocket = Socket->Accept(*addr, TEXT("Client Connect"));
 		if (ClientSocket)
 		{
+			//ProbufMessage
 			TSharedRef<FServerConnectRunnable> Runable = MakeShared<FServerConnectRunnable>(RunnableNum, TSharedPtr<FSocket>(ClientSocket));
 			test aa;
 			aa.set_id(333);
@@ -161,16 +162,21 @@ void UServer::CloseClientConnect(int InRunnableIndex)
 	{
 		ClientMap[InRunnableIndex]->ClientSocket->Close();
 		ClientMap[InRunnableIndex].Get().Stop();
-		ClientMap.Remove(InRunnableIndex);
 	}
 }
 
 void UServer::CloseAllConnect()
 {
-	for (auto ky : ClientMap)
+	if (ClientMap.Num() > 0)
 	{
-		CloseClientConnect(ky.Key);
+		for (auto ky : ClientMap)
+		{
+			CloseClientConnect(ky.Key);
+		}
+
+		ClientMap.Empty();
 	}
+
 }
 
 void UServer::Test()

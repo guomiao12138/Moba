@@ -86,6 +86,8 @@ public:
 	void DuplicateSelected();
 	//CommandList
 
+
+	void RegisterCommands();
 private:
 	// 生成细节面板
 	TSharedRef<SDockTab> SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs);

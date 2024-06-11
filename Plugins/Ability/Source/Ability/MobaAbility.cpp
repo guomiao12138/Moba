@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/StaticMesh.h"
+#include "Node/Root.h"
 UMobaAbility::UMobaAbility()
 {
 	//Mesh = 
@@ -17,5 +18,5 @@ UMobaAbility::UMobaAbility()
 void UMobaAbility::Activate()
 {
 	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
-
+	RootNode->OnActiveNode();
 }

@@ -9,6 +9,7 @@
 /**
  * 
  */
+class UEdGraph;
 UCLASS()
 class ABILITY_API UAbilityNode : public UEdGraphNode
 {
@@ -29,6 +30,7 @@ public:
 
 	//UEdGraphNode
 #if WITH_EDITOR
+	virtual void ReconstructNode() override;
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;

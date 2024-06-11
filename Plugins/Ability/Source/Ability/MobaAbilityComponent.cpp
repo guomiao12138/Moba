@@ -35,7 +35,7 @@ void UMobaAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	TickAbility(DeltaTime);
+	//TickAbility(DeltaTime);
 }
 
 void UMobaAbilityComponent::TickAbility(float DeltaTime)
@@ -48,15 +48,11 @@ void UMobaAbilityComponent::TickAbility(float DeltaTime)
 
 void UMobaAbilityComponent::ActiveAbility()
 {
-	//if (!CurrentAbility && Abilitys.Num() > 0)
-	//{
-	//	CurrentAbility = Abilitys[0];
-	//}
-	//else
-	//{
-	//	return;
-	//}
-
+	if (Abilitys.Num() > 0)
+	{
+		Abilitys[0]->Owner = Cast<ACharacter>(GetOwner());
+		Abilitys[0]->Activate();
+	}
 	//CurrentAbility->Owner = Cast<ACharacter>(GetOwner());
 	//CurrentAbility->RootNode->OnActiveNode();
 	//UAbilityNode* temp = CurrentAbility->RootNode;
