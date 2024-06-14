@@ -56,7 +56,7 @@ void AMobaCharacterBase::ActiveAbility()
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
 	FVector dir = InLocation - GetActorLocation();
-	SetActorRelativeRotation(FRotator(dir.Rotation().Pitch, 0, 0));
+	SetActorRelativeRotation(FRotator(0, dir.Rotation().Yaw, 0));
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);
 }
 

@@ -12,7 +12,7 @@
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationPlayDelegate, FName, NotifyName);
-
+class UAbilityAnimNotify;
 UCLASS()
 class UPlayeAnimation : public UAbilityNode
 {
@@ -22,27 +22,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AnimSequence")
 	TObjectPtr<class UAnimSequenceBase> Asset;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnAnimationPlayDelegate OnNotifyBegin;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAnimationPlayDelegate OnNotifyEnd;
-
-	UFUNCTION()
-	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
-
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
+
+	virtual void PostLoad() override;
+
 	bool IsNotifyValid(FName NotifyName);
 
 	UFUNCTION()
-	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
-
-	UFUNCTION()
-	void OnNotifyEndReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+	void Notify(FString NotifyName);
 
 	FOnMontageBlendingOutStarted BlendingOutDelegate;
 	FOnMontageEnded MontageEndedDelegate;

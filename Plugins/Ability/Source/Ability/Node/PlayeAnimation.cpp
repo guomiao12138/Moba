@@ -5,16 +5,10 @@
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Animation/AnimMontage.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraph/EdGraph.h"
-
-void UPlayeAnimation::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
-{
-}
-
-void UPlayeAnimation::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-}
+#include "Ability/Anim/Notify/AbilityAnimNotify.h"
 
 void UPlayeAnimation::OnActiveNode()
 {
@@ -27,22 +21,10 @@ void UPlayeAnimation::OnActiveNode()
 	{
 		if (UAnimInstance* AnimInstance = SkeletalMeshComponent->GetAnimInstance())
 		{
-			AnimInstance->OnPlayMontageNotifyBegin.AddUniqueDynamic(this, &UPlayeAnimation::OnNotifyBeginReceived);
-			AnimInstance->OnPlayMontageNotifyEnd.AddUniqueDynamic(this, &UPlayeAnimation::OnNotifyEndReceived);
-
-			auto mon = AnimInstance->PlaySlotAnimationAsDynamicMontage(Asset, TEXT("Ability.Active"));
-
-			BlendingOutDelegate.BindUObject(this, &UPlayeAnimation::OnMontageBlendingOut);
-			AnimInstance->Montage_SetBlendingOutDelegate(BlendingOutDelegate, mon);
-
-			MontageEndedDelegate.BindUObject(this, &UPlayeAnimation::OnMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, mon);
-
-
-
+			auto mon = AnimInstance->PlaySlotAnimationAsDynamicMontage(Asset, TEXT("Active"));
+			mon->SyncGroup = TEXT("Ability");
 		}
 
-		//SkeletalMeshComponent->PlayAnimation(Asset, false);
 	}
 	else
 	{
@@ -67,6 +49,18 @@ bool UPlayeAnimation::OnDeActiveNode()
 	return false;
 }
 
+void UPlayeAnimation::PostLoad()
+{
+	Super::PostLoad();
+	if (Asset)
+	{
+		for (auto Notify : Asset->Notifies)
+		{
+			Cast<UAbilityAnimNotify>(Notify.Notify)->NotifyDelegate.AddUObject(this, &UPlayeAnimation::Notify);
+		}
+	}
+}
+
 bool UPlayeAnimation::IsNotifyValid(FName NotifyName)
 {
 	if(FindPinChecked(NotifyName))
@@ -76,11 +70,10 @@ bool UPlayeAnimation::IsNotifyValid(FName NotifyName)
 	return false;
 }
 
-void UPlayeAnimation::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+void UPlayeAnimation::Notify(FString NotifyName)
 {
-	if (IsNotifyValid(NotifyName))
+	if (IsNotifyValid(*NotifyName))
 	{
-		OnNotifyBegin.Broadcast(NotifyName);
 		if (auto Pin = FindPinChecked(NotifyName))
 		{
 			if (Pin->LinkedTo.IsValidIndex(0))
@@ -88,14 +81,6 @@ void UPlayeAnimation::OnNotifyBeginReceived(FName NotifyName, const FBranchingPo
 				Cast<UAbilityNode>(Pin->LinkedTo[0]->GetOwningNode())->OnActiveNode();
 			}
 		}
-	}
-}
-
-void UPlayeAnimation::OnNotifyEndReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
-{
-	if (IsNotifyValid(NotifyName))
-	{
-		OnNotifyEnd.Broadcast(NotifyName);
 	}
 }
 
@@ -107,7 +92,8 @@ void UPlayeAnimation::AllocateDefaultPins()
 	{
 		for (auto Notify : Asset->Notifies)
 		{
-			CreatePin(EGPD_Output, TEXT("exec"), Notify.NotifyName);
+			Cast<UAbilityAnimNotify>(Notify.Notify)->NotifyDelegate.AddUObject(this, &UPlayeAnimation::Notify);
+			CreatePin(EGPD_Output, TEXT("exec"), *Notify.Notify->GetNotifyName());
 		}
 	}
 

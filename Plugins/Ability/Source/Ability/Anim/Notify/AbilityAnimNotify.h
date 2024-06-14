@@ -13,7 +13,14 @@ UCLASS()
 class ABILITY_API UAbilityAnimNotify : public UAnimNotify
 {
 	GENERATED_BODY()
-	
 
+public:
+	UPROPERTY(EditAnywhere)
+	FName Name;
+	virtual FString GetNotifyName_Implementation() const override;
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FNotify, FString);
+
+	FNotify NotifyDelegate;
 };
