@@ -35,11 +35,6 @@ public class AbilityEditor : ModuleRules
                 "AssetDefinition",
                 "BlueprintGraph",
                 "ToolMenus",
-/*				"UnrealEd",
-				"AssetTools",
-                "KismetCompiler",*/
-
-
                 "Ability",
 
             }

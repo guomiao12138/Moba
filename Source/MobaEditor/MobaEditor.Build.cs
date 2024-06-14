@@ -13,8 +13,8 @@ public class MobaEditor : ModuleRules
                 "Core",
                 "CoreUObject",
                 "Engine",
-                "Slate",
-                "AnimGraphRuntime",
+                "BlueprintGraph",
+                "Moba",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
