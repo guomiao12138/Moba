@@ -32,14 +32,9 @@ public class AbilityEditor : ModuleRules
                 "ApplicationCore",
                 "GraphEditor",
                 "UnrealEd",
-
-                "BlueprintGraph",		// For the graph pin colors
+                "AssetDefinition",
+                "BlueprintGraph",
                 "ToolMenus",
-/*				"UnrealEd",
-				"AssetTools",
-                "KismetCompiler",*/
-
-
                 "Ability",
 
             }

@@ -17,6 +17,4 @@ class ABILITYEDITOR_API UMobaAbilityFactory : public UFactory
 public:
 	UMobaAbilityFactory();
 	virtual UObject* FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn);
-	//virtual bool CanCreateNew() const override;
-	//virtual bool ShouldShowInNewMenu() const override;
 };

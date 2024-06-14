@@ -26,12 +26,7 @@ public:
 	TArray<struct FGameplayTag> GameplayTags;
 
 	float OldSpeed;
-#if WITH_EDITOR
 
-
-
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-#endif
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
 	virtual void Tick(float DeltaTime) override;

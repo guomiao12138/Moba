@@ -3,7 +3,7 @@
 
 #include "AbilityNode.h"
 #include "Ability/MobaAbility.h"
-
+#include "Misc/Variant.h"
 #include "Kismet/KismetSystemLibrary.h"
 //#include "Editor/BlueprintGraph/Public/BlueprintEditorSettings.h"
 //#include "Editor/UnrealEd/Public/SourceCodeNavigation.h"
@@ -11,14 +11,11 @@
 //#include "Editor/UnrealEd/Classes/Editor/UnrealEdEngine.h"
 //#include "Preferences/UnrealEdOptions.h"
 #include "Misc/DefaultValueHelper.h"
-
+#include "UObject/ConstructorHelpers.h"
 //#include "Framework/Notifications/NotificationManager.h"
 //#include "Widgets/Notifications/SNotificationList.h"
 #include "EdGraph/EdGraphPin.h"
-
-
-
-
+#include "EdGraph/EdGraph.h"
 
 void UAbilityNode::Tick(float DeltaTime)
 {
@@ -39,12 +36,11 @@ void UAbilityNode::Tick(float DeltaTime)
 void UAbilityNode::OnActiveNode()
 {
 	Succeed = true;
-	TArray<UEdGraphPin*> pins;
 	TArray<UAbilityNode*> Nodes;
 
 	for (UEdGraphPin* Pin : Pins)
 	{
-		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Input)
+		if (Pin->LinkedTo.Num() > 0 && Pin->Direction == EGPD_Output)
 		{
 			for (UEdGraphPin* Connection : Pin->LinkedTo)
 			{
@@ -53,6 +49,7 @@ void UAbilityNode::OnActiveNode()
 				{
 					//PinDefaultValueChanged(Connection);
 					//NeighborsAcceptedForConsideration.Add(Connection->GetOwningNode());
+					Cast<UAbilityNode>(Connection->GetOwningNode())->OnActiveNode();
 				}
 			}
 		}
@@ -81,7 +78,7 @@ UAbilityNode::UAbilityNode()
 
 UEdGraphPin* UAbilityNode::GetExecutePin()
 {
-	return FindPinChecked(TEXT("execute"));
+	return FindPinChecked(TEXT("Execute"));
 }
 
 UEdGraphPin* UAbilityNode::GetThenPin()
@@ -96,12 +93,68 @@ UEdGraphPin* UAbilityNode::GetThenPin()
 	}
 }
 
+void UAbilityNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	if (auto pin = FindPin(PropertyChangedEvent.GetPropertyName()))
+	{
+		for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
+		{
+			if (Property->Owner != GetClass() || Property->HasAnyPropertyFlags(EPropertyFlags::CPF_SimpleDisplay))
+			{
+				continue;
+			}
+			if (PropertyChangedEvent.GetPropertyName() == Property->GetName())
+			{
+				Property = PropertyChangedEvent.Property;
+			}
+
+			uint64 CastFlags = PropertyChangedEvent.Property->GetCastFlags();
+			if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
+			{
+				if (FObjectPtrProperty* ObjectProperty = CastField<FObjectPtrProperty>(Property))
+				{
+					void* ObjectContainer = ObjectProperty->ContainerPtrToValuePtr<void>(this);
+					UObject* TargetObject = ObjectProperty->GetObjectPropertyValue(ObjectContainer);
+
+					pin->DefaultObject = TargetObject;
+					if (pin->DefaultObject)
+					{
+						pin->DefaultValue = pin->DefaultObject->GetPathName();
+					}
+					else
+					{
+						pin->ResetDefaultValue();
+					}
+				}
+
+
+
+			}
+		}
+
+
+	}
+}
+
+void UAbilityNode::ReconstructNode()
+{
+	for (auto pin : Pins)
+	{
+		pin->BreakAllPinLinks(true);
+	}
+	Pins.Empty();
+	Modify();
+	AllocateDefaultPins();
+	CreateParamsPins();
+
+	GetGraph()->NotifyNodeChanged(this);
+}
+
 void UAbilityNode::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Input, TEXT("exec"), TEXT("execute"));
+	CreatePin(EGPD_Input, TEXT("exec"), TEXT("Execute"));
 	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Succeed"));
 	CreatePin(EGPD_Output, TEXT("exec"), TEXT("Faild"));
-
 }
 
 void UAbilityNode::CreateParamsPins()
@@ -120,7 +173,7 @@ void UAbilityNode::CreateParamsPins()
 
 		const EEdGraphPinDirection Direction = EGPD_Input;
 		UEdGraphNode::FCreatePinParams PinParams;
-		PinParams.bIsReference = true;
+		PinParams.bIsReference = false;
 
 		UEdGraphPin* OwnerPin = nullptr;
 		uint64 CastFlags = Property->GetCastFlags();
@@ -150,7 +203,7 @@ void UAbilityNode::CreateParamsPins()
 
 		if (OwnerPin)
 		{
-			OwnerPin->bAdvancedView = true;
+			OwnerPin->bAdvancedView = false;
 		}
 	}
 
@@ -158,7 +211,7 @@ void UAbilityNode::CreateParamsPins()
 
 FText UAbilityNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString("AbilityNode");
+	return FText::FromString(GetClass()->GetName());
 }
 
 FLinearColor UAbilityNode::GetNodeTitleColor() const
@@ -182,71 +235,6 @@ bool UAbilityNode::CanJumpToDefinition() const
 	return true;
 }
 
-void UAbilityNode::JumpToDefinition() const
-{
-	//if (ensure(GUnrealEd) && GUnrealEd->GetUnrealEdOptions()->IsCPPAllowed())
-	//{
-	//	// For native functions, try going to the function definition in C++ if available
-	//	if (UFunction* TargetFunction = UMobaAbility::StaticClass()->FindFunctionByName(FunctionReference.GetMemberName()))
-	//	{
-	//		if (TargetFunction->IsNative())
-	//		{
-	//			// First try the nice way that will get to the right line number
-	//			bool bSucceeded = false;
-	//			const bool bNavigateToNativeFunctions = GetDefault<UBlueprintEditorSettings>()->bNavigateToNativeFunctionsFromCallNodes;
-
-	//			if (bNavigateToNativeFunctions)
-	//			{
-	//				if (FSourceCodeNavigation::CanNavigateToFunction(TargetFunction))
-	//				{
-	//					bSucceeded = FSourceCodeNavigation::NavigateToFunction(TargetFunction);
-	//				}
-
-	//				// Failing that, fall back to the older method which will still get the file open assuming it exists
-	//				if (!bSucceeded)
-	//				{
-	//					FString NativeParentClassHeaderPath;
-	//					const bool bFileFound = FSourceCodeNavigation::FindClassHeaderPath(TargetFunction, NativeParentClassHeaderPath) && (IFileManager::Get().FileSize(*NativeParentClassHeaderPath) != INDEX_NONE);
-	//					if (bFileFound)
-	//					{
-	//						const FString AbsNativeParentClassHeaderPath = FPaths::ConvertRelativePathToFull(NativeParentClassHeaderPath);
-	//						bSucceeded = FSourceCodeNavigation::OpenSourceFile(AbsNativeParentClassHeaderPath);
-	//					}
-	//				}
-	//			}
-	//			else
-	//			{
-	//				// Inform user that the function is native, give them opportunity to enable navigation to native
-	//				// functions:
-	//				FNotificationInfo Info(FText::FromString("Navigation to Native (c++) Functions Disabled"));
-	//				Info.ExpireDuration = 10.0f;
-	//				Info.CheckBoxState = bNavigateToNativeFunctions ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-
-	//				Info.CheckBoxStateChanged = FOnCheckStateChanged::CreateStatic(
-	//					[](ECheckBoxState NewState)
-	//					{
-	//						const FScopedTransaction Transaction(FText::FromString("ChangeNavigateToNative FunctionsFromCallNodes Change Navigate to Native Functions from Call Nodes Setting"));
-
-	//						UBlueprintEditorSettings* MutableEditorSetings = GetMutableDefault<UBlueprintEditorSettings>();
-	//						MutableEditorSetings->Modify();
-	//						MutableEditorSetings->bNavigateToNativeFunctionsFromCallNodes = (NewState == ECheckBoxState::Checked) ? true : false;
-	//						MutableEditorSetings->SaveConfig();
-	//					}
-	//				);
-	//				Info.CheckBoxText = FText::FromString("EnableNavigationToNative Navigate to Native Functions from Blueprint Call Nodes?");
-
-	//				FSlateNotificationManager::Get().AddNotification(Info);
-	//			}
-
-	//			return;
-	//		}
-	//	}
-	//}
-
-	// Otherwise, fall back to the inherited behavior which should go to the function entry node
-	Super::JumpToDefinition();
-}
-
 void UAbilityNode::PinConnectionListChanged(UEdGraphPin* Pin)
 {
 	ForEachNodeDirectlyConnectedToOutputs([&](UEdGraphNode* ChildNode)
@@ -264,14 +252,77 @@ void UAbilityNode::PostPlacedNewNode()
 void UAbilityNode::PinDefaultValueChanged(UEdGraphPin* Pin)
 {
 	for (FProperty* Property = GetClass()->PropertyLink; Property != nullptr; Property = Property->PropertyLinkNext)
-	{
+	{		
+		if (Property->Owner != GetClass() || Property->HasAnyPropertyFlags(EPropertyFlags::CPF_SimpleDisplay))
+		{
+			continue;
+		}
+
 		if (Property->GetName() == Pin->PinName)
 		{
-			float value;
-			FDefaultValueHelper::ParseFloat(Pin->DefaultValue, value);
-			Property->SetValue_InContainer(this, &value);
+			uint64 CastFlags = Property->GetCastFlags();
+
+			if ((CastFlags & CASTCLASS_FBoolProperty) != 0)
+			{
+			}
+			else if ((CastFlags & CASTCLASS_FNameProperty) != 0)
+			{
+				Property->SetValue_InContainer(this, *Pin->DefaultValue);
+			}
+			else if ((CastFlags & CASTCLASS_FObjectPropertyBase) != 0)
+			{
+				FString ObjectPathLocal;
+				if (Pin->DefaultObject && Pin->DefaultValue.IsEmpty())
+				{
+					ObjectPathLocal = Pin->DefaultObject->GetPathName();
+				}
+				else
+				{
+					ObjectPathLocal = Pin->DefaultValue;
+				}
+				
+				ConstructorHelpers::StripObjectClass(ObjectPathLocal);
+
+				if (FPackageName::IsValidObjectPath(ObjectPathLocal))
+				{
+					FSoftObjectPath AssetRef = ObjectPathLocal;
+					UObject* Object = AssetRef.TryLoad();
+					if (FObjectPtrProperty* ObjectProperty = CastField<FObjectPtrProperty>(Property))
+					{
+						void* ObjectContainer = ObjectProperty->ContainerPtrToValuePtr<void>(this);
+						UObject* TargetObject = ObjectProperty->GetObjectPropertyValue(ObjectContainer);
+						if (Object)
+						{
+							ObjectProperty->SetObjectPropertyValue(ObjectContainer, Object);
+						}
+						else
+						{
+							ObjectProperty->ClearValue(ObjectContainer);
+						}
+						Pin->ResetDefaultValue();
+						Pin->DefaultObject = Object;
+					}
+				}
+
+			}
+			else if ((CastFlags & CASTCLASS_FFloatProperty) != 0)
+			{
+				float value;
+				FDefaultValueHelper::ParseFloat(Pin->DefaultValue, value);
+				Property->SetValue_InContainer(this, &value);
+			}
+			else if ((CastFlags & CASTCLASS_FIntProperty) != 0)
+			{
+				int value;
+				FDefaultValueHelper::ParseInt(Pin->DefaultValue, value);
+				Property->SetValue_InContainer(this, &value);
+			}
+
+
 		}
+
 	}
 }
 
 #endif
+

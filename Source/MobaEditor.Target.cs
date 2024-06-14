@@ -10,6 +10,6 @@ public class MobaEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V4;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-		ExtraModuleNames.Add("Moba");
+        ExtraModuleNames.AddRange(new List<string>() {"Moba", "MobaEditor"});
 	}
 }

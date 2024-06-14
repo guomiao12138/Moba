@@ -2,35 +2,31 @@
 
 #pragma once
 
-//#include "CoreMinimal.h"
-//#include "AssetDefinitionDefault.h"
-//#include "Ability/Runtime/MobaAbility.h"
-//#include "MobaAbilityAssetDefinition.generated.h"
+#include "CoreMinimal.h"
+#include "AssetDefinitionDefault.h"
+#include "Ability/MobaAbility.h"
+#include "MobaAbilityAssetDefinition.generated.h"
 
 /**
  * 
  */
-//class UMobaAbility;
-//UCLASS()
-//class ABILITY_API UMobaAbilityAssetDefinition : public UAssetDefinitionDefault
-//{
-//	GENERATED_BODY()
-//	
-//public:
-	//UMobaAbilityAssetDefinition();
+class UMobaAbility;
+UCLASS()
+class ABILITYEDITOR_API UMobaAbilityAssetDefinition : public UAssetDefinitionDefault
+{
+	GENERATED_BODY()
+	
+public:
+	// UAssetDefinition Begin
+	virtual FText GetAssetDisplayName() const override;
+	virtual FLinearColor GetAssetColor() const override;
+	virtual TSoftClassPtr<UObject> GetAssetClass() const override;
+	virtual TConstArrayView<FAssetCategoryPath> GetAssetCategories() const override;
 
-	//// UAssetDefinition Begin
-	//virtual FText GetAssetDisplayName() const override;
-	//virtual FLinearColor GetAssetColor() const override { return FLinearColor::Red; }
-	//virtual TSoftClassPtr<UObject> GetAssetClass() const override { return UMobaAbility::StaticClass(); }
-	//virtual TConstArrayView<FAssetCategoryPath> GetAssetCategories() const override;
+	virtual bool CanImport() const override { return true; }
+	virtual EAssetCommandResult OpenAssets(const FAssetOpenArgs& OpenArgs) const override;
 
-	//virtual bool CanImport() const override { return true; }
-	////virtual UThumbnailInfo* LoadThumbnailInfo(const FAssetData& InAssetData) const override;
-	////virtual TSharedPtr<class SWidget> GetThumbnailOverlay(const FAssetData& AssetData) const override;
-	//virtual EAssetCommandResult OpenAssets(const FAssetOpenArgs& OpenArgs) const override;
+private:
+	//EAssetTypeCategories::Type MyAssetCategory;
 
-//private:
-//	//EAssetTypeCategories::Type MyAssetCategory;
-//
-//};
+};

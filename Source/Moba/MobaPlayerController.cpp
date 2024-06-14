@@ -56,6 +56,10 @@ void AMobaPlayerController::SetupInputComponent()
 	//{
 	//	FString Name = EInputAction::GetName((EInputAction::Type)i).ToString();
 	//}
+	ADDACTION(Q);
+	ADDACTION(W);
+	ADDACTION(E);
+	ADDACTION(R);
 	ADDACTION(ClickPosition);
 	ADDAXIS(MoveForward);
 	ADDAXIS(MoveRight);
@@ -117,6 +121,7 @@ void AMobaPlayerController::ClickPosition()
 
 void AMobaPlayerController::Q()
 {
+	ActiveAbility.Broadcast();
 }
 
 void AMobaPlayerController::W()

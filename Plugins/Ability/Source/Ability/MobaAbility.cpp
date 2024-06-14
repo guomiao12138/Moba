@@ -3,18 +3,20 @@
 
 #include "MobaAbility.h"
 #include "Components/StaticMeshComponent.h"
-//#include "UObject/ConstructorHelpers.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Engine/StaticMesh.h"
+#include "Node/Root.h"
 UMobaAbility::UMobaAbility()
 {
 	//Mesh = 
-	//Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube.Cube"));
-	//Mesh->SetStaticMesh(Cube.Object);
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube"));
+	Mesh->SetStaticMesh(Cube.Object);
 
 }
 
 void UMobaAbility::Activate()
 {
 	//Super::ProcessEvent(FindFunctionChecked(FName(TEXT("Start"))), NULL);
-
+	RootNode->OnActiveNode();
 }

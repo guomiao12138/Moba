@@ -24,11 +24,10 @@ public:
 
 	void RegisterAssetsAction();
 
-	//virtual TSharedRef<FMobaAbilityEditorToolKit> CreateAbilityEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, class UMobaAbility* InAbility);
+	virtual TSharedRef<FMobaAbilityEditorToolKit> CreateAbilityEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, class UMobaAbility* InAbility);
 
 	//TSharedPtr<FGraphNodeClassHelper> GetClassCache() { return ClassCache; }
 
 private:
 	//TSharedPtr<FGraphNodeClassHelper> ClassCache;
-	TSharedPtr<FAbilityAssetTypeAction> AbilityAssetTypeAction;
 };

@@ -14,10 +14,3 @@ UObject* UMobaAbilityFactory::FactoryCreateNew(UClass* Class, UObject* InParent,
 {
     return NewObject<UMobaAbility>(InParent, Class, Name, Flags, Context);
 }
-
-
-
-//bool UMobaAbilityFactory::ShouldShowInNewMenu() const
-//{
-//    return false;
-//}

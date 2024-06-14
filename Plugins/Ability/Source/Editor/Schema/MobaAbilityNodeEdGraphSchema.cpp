@@ -3,7 +3,7 @@
 
 #include "MobaAbilityNodeEdGraphSchema.h"
 #include "Ability/Node/AbilityNode.h"
-#include "Ability/Node/UAbilityNode_Root.h"
+#include "Ability/Node/Root.h"
 #include "Ability/MobaAbility.h"
 #include "AbilityConnectionDrawingPolicy.h"
 
@@ -22,23 +22,10 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 {
 	TArray<UClass*> res;
 	GetDerivedClasses(UAbilityNode::StaticClass(), res, true);
-	
-
-	//TArray<FName> FunctionArray;
-	//AssetClass->GenerateFunctionList(FunctionArray);
-
-	//FGraphNodeClassHelper& ClassCache = GetClassCache();
-
-	//TArray<FGraphNodeClassData> NodeClasses;
-	//ClassCache.GatherClasses(UAbilityNode::StaticClass(), NodeClasses);
 
 	for (auto s : res)
 	{
-		//if (AssetClass->FindFunction(func))
-		//{
-
-		//}
-		if (s->GetName() ==  "Root")
+		if (s->GetMetaData(TEXT("DisplayName")) == "Root")
 		{
 			continue;
 		}
@@ -51,17 +38,17 @@ void UMobaAbilityNodeEdGraphSchema::GetGraphContextActions(FGraphContextMenuBuil
 
 
 
-//bool UMobaAbilityNodeEdGraphSchema::CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const
-//{
-//	PinA->Modify();
-//	PinB->Modify();
-//
-//	PinA->MakeLinkTo(PinB);
-//
-//	//UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(PinA->GetOwningNode());
-//
-//	return true;
-//}
+bool UMobaAbilityNodeEdGraphSchema::CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const
+{
+	PinA->Modify();
+	PinB->Modify();
+
+	PinA->MakeLinkTo(PinB);
+
+	//UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(PinA->GetOwningNode());
+
+	return true;
+}
 
 void UMobaAbilityNodeEdGraphSchema::GetContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {
@@ -100,7 +87,7 @@ FConnectionDrawingPolicy* UMobaAbilityNodeEdGraphSchema::CreateConnectionDrawing
 
 void UMobaAbilityNodeEdGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
-	UAbilityNode_Root* ResultGraphNode = NewObject<UAbilityNode_Root>(&Graph);
+	URoot* ResultGraphNode = NewObject<URoot>(&Graph);
 	Graph.Modify();
 	ResultGraphNode->SetFlags(RF_Transactional);
 	ResultGraphNode->Rename(nullptr, &Graph, REN_NonTransactional);

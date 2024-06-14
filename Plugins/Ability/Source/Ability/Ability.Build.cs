@@ -7,7 +7,8 @@ public class Ability : ModuleRules
 	public Ability(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		bUseUnity = true;
+        PrivatePCHHeaderFile = "AbilityDefine.h";
+        bUseUnity = true;
 
         PublicIncludePaths.AddRange(
 			new string[] {

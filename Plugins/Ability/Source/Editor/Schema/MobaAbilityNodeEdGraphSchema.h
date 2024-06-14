@@ -40,7 +40,7 @@ public:
 	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const override;
 
 	virtual class FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const override;
-	//virtual bool CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
+	virtual bool CreatePromotedConnection(UEdGraphPin* PinA, UEdGraphPin* PinB) const override;
 	//virtual FLinearColor GetSecondaryPinTypeColor(const FEdGraphPinType& PinType) const override { return FLinearColor::Red; };
 	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 	/** End UEdGraphSchema Interface */

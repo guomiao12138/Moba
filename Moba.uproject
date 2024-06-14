@@ -10,11 +10,21 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"DeveloperSettings"
+				"DeveloperSettings",
+				"UnrealEd",
+				"CoreUObject"
+			]
+		},
+		{
+			"Name": "MobaEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"AnimGraph"
 			]
 		}
 	],
-	"Plugins":[
+	"Plugins": [
 		{
 			"Name": "Ability",
 			"Enabled": true

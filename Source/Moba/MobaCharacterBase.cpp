@@ -23,6 +23,7 @@ void AMobaCharacterBase::InitController(AMobaPlayerController* InController)
 	MobaPlayerController = InController;
 	SpawnDefaultController();
 	MobaPlayerController->MoveTo.AddUObject(this, &AMobaCharacterBase::MoveTo);
+	MobaPlayerController->ActiveAbility.AddUObject(this, &AMobaCharacterBase::ActiveAbility);
 }
 
 // Called when the game starts or when spawned
@@ -37,12 +38,6 @@ void AMobaCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	//auto aa = GetMesh()->ge();
-	//float value = aa.Yaw + DeltaTime * 10;
-	////SetActorRelativeRotation(FRotator(0, value, 0));
-	//GetMesh()->SetWorldRotation(FRotator(0, value, 0));
-
-
 
 }
 
@@ -53,11 +48,15 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	//CharacterMovement->MoveUpdatedComponent();
 }
 
+void AMobaCharacterBase::ActiveAbility()
+{
+	AbilityComponent->ActiveAbility();
+}
+
 void AMobaCharacterBase::MoveTo(FVector InLocation)
 {
-	//AbilityComponent->ActiveAbility();
 	FVector dir = InLocation - GetActorLocation();
-	SetActorRelativeRotation(dir.Rotation());
+	SetActorRelativeRotation(FRotator(0, dir.Rotation().Yaw, 0));
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), InLocation);
 }
 

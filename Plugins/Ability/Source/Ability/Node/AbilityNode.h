@@ -9,6 +9,7 @@
 /**
  * 
  */
+class UEdGraph;
 UCLASS()
 class ABILITY_API UAbilityNode : public UEdGraphNode
 {
@@ -29,19 +30,21 @@ public:
 
 	//UEdGraphNode
 #if WITH_EDITOR
+	virtual void ReconstructNode() override;
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual FText GetTooltipText() const override;
 	virtual UObject* GetJumpTargetForDoubleClick() const override;
 	virtual bool CanJumpToDefinition() const override;
-	virtual void JumpToDefinition() const override;
+	//virtual void JumpToDefinition() const override;
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 	virtual void PostPlacedNewNode() override;
 	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;
 	virtual void CreateParamsPins();
 	UEdGraphPin* GetExecutePin();
 	virtual UEdGraphPin* GetThenPin();
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 	//UEdGraphNode
 

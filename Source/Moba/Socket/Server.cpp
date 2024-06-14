@@ -9,9 +9,8 @@
 #include "Moba/Setting/SocketDeveloperSettings.h"
 #include "Engine/NetDriver.h"
 #include "HAL/ConsoleManager.h"
-
 #include "Misc/DefaultValueHelper.h"
-
+#include "Moba/Protobuf/test.pb.h"
 #include "TimerManager.h"
 
 UServer::UServer()
@@ -120,7 +119,18 @@ void UServer::Accept()
 		FSocket* ClientSocket = Socket->Accept(*addr, TEXT("Client Connect"));
 		if (ClientSocket)
 		{
+			//ProbufMessage
 			TSharedRef<FServerConnectRunnable> Runable = MakeShared<FServerConnectRunnable>(RunnableNum, TSharedPtr<FSocket>(ClientSocket));
+			test aa;
+			aa.set_id(333);
+			aa.set_greeting("Proto Test Message");
+			std::string sss;
+			aa.SerializeToString(&sss);
+			//FString temp = FString(sss.c_str());
+			TCHAR* SerializeData = FString(sss.c_str()).GetCharArray().GetData();
+			int32 size = FCString::Strlen(SerializeData);
+			int sent;
+			Runable->SendMsg((uint8*)TCHAR_TO_UTF8(SerializeData), size, sent);
 			ClientMap.Add(RunnableNum, Runable);
 			RunnableNum++;
 			UE_LOG(LogTemp, Display, TEXT("Client is connected, RunnableIndex : %d"), RunnableNum);
@@ -152,16 +162,21 @@ void UServer::CloseClientConnect(int InRunnableIndex)
 	{
 		ClientMap[InRunnableIndex]->ClientSocket->Close();
 		ClientMap[InRunnableIndex].Get().Stop();
-		ClientMap.Remove(InRunnableIndex);
 	}
 }
 
 void UServer::CloseAllConnect()
 {
-	for (auto ky : ClientMap)
+	if (ClientMap.Num() > 0)
 	{
-		CloseClientConnect(ky.Key);
+		for (auto ky : ClientMap)
+		{
+			CloseClientConnect(ky.Key);
+		}
+
+		ClientMap.Empty();
 	}
+
 }
 
 void UServer::Test()
@@ -184,7 +199,7 @@ void UServer::SendMessage(const TArray<FString>& Args)
 		TArray<uint8> Buffer;
 		for (auto arg : Args)
 		{
-			//Buffer.Add(*(uint8*)TCHAR_TO_UTF8(arg.GetCharArray().GetData()));
+			Buffer.Add(*(uint8*)TCHAR_TO_UTF8(arg.GetCharArray().GetData()));
 
 			FString tryToString(reinterpret_cast<const char*>(Buffer.GetData()));
 			int32 sent = 0;
@@ -210,6 +225,20 @@ void FServerConnectRunnable::SendMsg(TArray<uint8> InBuffer)
 	ClientSocket->Send(InBuffer.GetData(), InBuffer.Num(), BytesSent);
 }
 
+void FServerConnectRunnable::SendMsg(const uint8* Data, int32 Count, int32& BytesSent)
+{
+	ClientSocket->Send(Data, Count, BytesSent);
+}
+
+bool FServerConnectRunnable::IsConnect()
+{
+	if (ClientSocket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool FServerConnectRunnable::Init()
 {
 	return IsRuning;
@@ -223,6 +252,11 @@ uint32 FServerConnectRunnable::Run()
 		uint32 Datasize = 0;
 		int32 BytesRead = 0;
 
+		if (!IsConnect())
+		{
+
+		}
+
 		if (ClientSocket->HasPendingData(Datasize))
 		{
 			TArray<uint8> Buffer;
@@ -232,7 +266,7 @@ uint32 FServerConnectRunnable::Run()
 			{
 				const std::string cstr(reinterpret_cast<const char*>(Buffer.GetData()), Datasize);
 				FString frameAsFString = cstr.c_str();
-				UE_LOG(LogTemp, Display, TEXT("Server RunnableIndex %d Recv Data %s"), RunnableIndex, *frameAsFString);
+				UE_LOG(LogTemp, Warning, TEXT("Server RunnableIndex %d Recv Data %s"), RunnableIndex, *frameAsFString);
 			}
 		}
 	}

@@ -57,5 +57,7 @@ public:
 
 	void WaitConnect(float time);
 
+	virtual class FSingleThreadRunnable* GetSingleThreadInterface() { return this; };
+
 	virtual void Tick() override;
 };

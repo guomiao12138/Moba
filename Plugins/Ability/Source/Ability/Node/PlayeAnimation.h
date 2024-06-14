@@ -4,24 +4,38 @@
 
 #include "CoreMinimal.h"
 #include "AbilityNode.h"
+#include "UObject/ObjectMacros.h"
+#include "Animation/AnimInstance.h"
 #include "PlayeAnimation.generated.h"
 
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationPlayDelegate, FName, NotifyName);
+class UAbilityAnimNotify;
 UCLASS()
 class UPlayeAnimation : public UAbilityNode
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = "AbilityNode")
-	UAnimationAsset* Asset;
+	UPROPERTY(EditAnywhere, Category = "AnimSequence")
+	TObjectPtr<class UAnimSequenceBase> Asset;
 
-
-#if WITH_EDITOR
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-#endif
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
+
+	virtual void PostLoad() override;
+
+	bool IsNotifyValid(FName NotifyName);
+
+	UFUNCTION()
+	void Notify(FString NotifyName);
+
+	FOnMontageBlendingOutStarted BlendingOutDelegate;
+	FOnMontageEnded MontageEndedDelegate;
+#if WITH_EDITOR
+	virtual void AllocateDefaultPins() override;
+	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;
+#endif
 };

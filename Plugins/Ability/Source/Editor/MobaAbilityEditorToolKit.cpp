@@ -15,6 +15,8 @@
 #include "PropertyEditorModule.h"
 #include "IDetailsView.h"
 
+#include "SourceCodeNavigation.h"
+
 void FMobaAbilityEditorToolKit::PostUndo(bool bSuccess)
 {
 }
@@ -75,25 +77,11 @@ void FMobaAbilityEditorToolKit::UnregisterTabSpawners(const TSharedRef<FTabManag
 
 void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UMobaAbility* InAsset)
 {
-
-	//DocumentManager = MakeShareable(new FDocumentTracker);
-	//bCheckDirtyOnAssetSave = true;
-
-	//if (!DocumentManager.IsValid())
-	//{
-	//	DocumentManager = MakeShareable(new FDocumentTracker);
-	//	DocumentManager->Initialize(SharedThis(this));
-
-	//	{
-
-	//		TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShared<FMobaAbilityGraphEditorSummoner>(SharedThis(this));
-
-	//		DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
-	//	}
-	//}
 	if (InAsset->Graph != nullptr)
 	{
 		EdGraph = InAsset->Graph;
+		EdGraph->Schema = UMobaAbilityNodeEdGraphSchema::StaticClass();
+		//EdGraph->GetSchema()->CreateDefaultNodesForGraph(*InAsset->Graph);
 	}
 	else
 	{
@@ -114,9 +102,6 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 		FMessageDialog::Open(EAppMsgCategory::Error, EAppMsgType::Ok, FText::FromString(FString::Printf(TEXT("FMobaAbilityEditorToolKit EdGraph is nullptr"))));
 	}
 
-
-	//UAbilityNode* EdGraphNode = CreateNode(EdGraph, { 0, 0 });
-	//EdGraph->AddNode(EdGraphNode);
 	const TSharedRef<FTabManager::FLayout> StandaloneRecoilAssetLayout = FTabManager::NewLayout("StandaloneMobaAbilityLayout_Layout")
 		->AddArea
 		(
@@ -139,8 +124,8 @@ void FMobaAbilityEditorToolKit::InitializeAssetEditor(const EToolkitMode::Type M
 				)
 			)
 		);
-	FAssetEditorToolkit::InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAsset);
-	//InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAssets);
+	//FAssetEditorToolkit::InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAsset);
+	InitAssetEditor(Mode, InitToolkitHost, FName("MobaAbilityEditor"), StandaloneRecoilAssetLayout, true, true, InAsset);
 	RegenerateMenusAndToolbars();
 
 }
@@ -175,22 +160,6 @@ void FMobaAbilityEditorToolKit::CreateUICommandList()
 	);
 
 }
-
-//UAbilityNode* FMobaAbilityEditorToolKit::CreateDefaultNode(UEdGraph* ParentGraph, const FVector2D NodeLocation) const
-//{
-//	check(ParentGraph != nullptr)
-//	UAbilityNode* ResultGraphNode = NewObject<UAbilityNode>(ParentGraph);
-//	ParentGraph->Modify();
-//	ResultGraphNode->SetFlags(RF_Transactional);
-//
-//	ResultGraphNode->Rename(nullptr, ParentGraph, REN_NonTransactional);
-//	ResultGraphNode->CreateNewGuid();
-//	ResultGraphNode->NodePosX = NodeLocation.X;
-//	ResultGraphNode->NodePosY = NodeLocation.Y;
-//
-//	ResultGraphNode->AllocateDefaultPins();
-//	return ResultGraphNode;
-//}
 
 void FMobaAbilityEditorToolKit::OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection)
 {
@@ -239,7 +208,7 @@ void FMobaAbilityEditorToolKit::OnNodeDoubleClicked(UEdGraphNode* Node)
 {
 	if (Node && Node->CanJumpToDefinition())
 	{
-		Node->JumpToDefinition();
+		JumpToDefinition(Node->GetClass());
 	}
 }
 
@@ -272,6 +241,10 @@ void FMobaAbilityEditorToolKit::NaviagetionDoubleClicked()
 FActionMenuContent FMobaAbilityEditorToolKit::OnCreateGraphActionMenu(UEdGraph* InGraph, const FVector2D& InNodePosition, const TArray<UEdGraphPin*>& InDraggedPins, bool bAutoExpand, SGraphEditor::FActionMenuClosed InOnMenuClosed)
 {
 	return FActionMenuContent();
+}
+
+void FMobaAbilityEditorToolKit::RegisterCommands()
+{
 }
 
 TSharedRef<SDockTab> FMobaAbilityEditorToolKit::SpawnDetailTab(const FSpawnTabArgs& SpawnTabArgs)
@@ -328,6 +301,11 @@ void FMobaAbilityEditorToolKit::SetupGraphEditorEvents(UEdGraph* InGraph, SGraph
 	//if (InGraph->Schema != nullptr && InGraph->Schema->IsChildOf(UEdGraphSchema_K2::StaticClass()))
 	//{
 	//}
+}
+
+void FMobaAbilityEditorToolKit::JumpToDefinition(const UClass* Class) const
+{
+	FSourceCodeNavigation::NavigateToClass(Class);
 }
 
 FGraphPanelSelectionSet FMobaAbilityEditorToolKit::GetSelectedNodes() const
@@ -408,12 +386,6 @@ void FMobaAbilityEditorToolKit::CopySelected()
 
 bool FMobaAbilityEditorToolKit::CanPaste()
 {
-	//TSharedPtr<SGraphEditor> CurrentGraphEditor = UpdateGraphEdPtr.Pin();
-	//if (!CurrentGraphEditor.IsValid())
-	//{
-	//	return false;
-	//}
-
 	FString ClipboardContent;
 	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
 
@@ -430,20 +402,10 @@ void FMobaAbilityEditorToolKit::Paste()
 
 void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
 {
-	// Find the graph editor with focus
-	//TSharedPtr<SGraphEditor> FocusedGraphEd = FocusedGraphEdPtr.Pin();
-	//if (!FocusedGraphEd.IsValid())
-	//{
-	//	return;
-	//}
-	// Select the newly pasted stuff
 	bool bNeedToModifyStructurally = false;
 	{
 		const FScopedTransaction Transaction(FGenericCommands::Get().Paste->GetDescription());
 		EdGraph->Modify();
-
-		// Clear the selection set (newly pasted stuff will be selected)
-		//SetUISelectionState(NAME_None);
 
 		// Grab the text to paste from the clipboard.
 		FString TextToImport;
@@ -451,7 +413,7 @@ void FMobaAbilityEditorToolKit::PasteNodesHere(const FVector2D& Location)
 
 		// Import the nodes
 		TSet<UEdGraphNode*> PastedNodes;
-		FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, /*out*/ PastedNodes);
+		FEdGraphUtilities::ImportNodesFromText(EdGraph, TextToImport, PastedNodes);
 
 		FVector2D AvgNodePosition(0.0f, 0.0f);
 
