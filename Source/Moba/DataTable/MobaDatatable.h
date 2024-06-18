@@ -18,7 +18,7 @@ struct FCharacterResource : public FTableRowBase
 	TSoftObjectPtr<UObject> Asset;
 
 	UPROPERTY(EditAnywhere)
-	int num;
+	int num = 0;
 };
 
 class MOBA_API MobaDatatable

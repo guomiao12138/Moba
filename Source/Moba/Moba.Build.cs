@@ -23,7 +23,7 @@ public class Moba : ModuleRules
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
-/*            "DeveloperSettings"*/
+         "DeveloperSettings"
         });
 
         // Uncomment if you are using Slate UI
@@ -35,5 +35,6 @@ public class Moba : ModuleRules
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
 
         RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Config", "DefaultMobaInputSetting.ini"));
+/*        RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../Plugins", "Ability"));*/
     }
 }
