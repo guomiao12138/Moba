@@ -4,16 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNode_AssetPlayerBase.h"
+#include "Animation/AnimNode_SequencePlayer.h"
 #include "MobaAnimNode_base.generated.h"
 
 /**
  * 
  */
-USTRUCT(BlueprintInternalUseOnly)
-struct FMobaAnimNode_base : public FAnimNode_Base
+USTRUCT()
+struct MOBA_API FMobaAnimNode_base : public FAnimNode_SequencePlayer
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+public:
+	FName SlotName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Links)
-	FPoseLink Base;
+	void UpdateAsset(UAnimSequenceBase* Asset);
+
+	//FAnimNode_Base
+	//virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
+	//virtual void CacheBones_AnyThread(const FAnimationCacheBonesContext& Context) override;
+	//virtual void UpdateAssetPlayer(const FAnimationUpdateContext& Context) override;
+	//virtual void Evaluate_AnyThread(FPoseContext& Output) override;
+	//virtual void GatherDebugData(FNodeDebugData& DebugData) override;
+	//FAnimNode_Base
 };

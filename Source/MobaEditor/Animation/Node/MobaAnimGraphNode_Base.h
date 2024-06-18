@@ -10,12 +10,27 @@
 /**
  * 
  */
-UCLASS()
-class MOBAEDITOR_API UMobaAnimGraphNode_Base : public UAnimGraphNode_Base
+struct FAnimationGroupReference;
+UCLASS(MinimalAPI, hideCategories=(Functions, Tag))
+class UMobaAnimGraphNode_Base : public UAnimGraphNode_Base
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = Settings)
+	UPROPERTY(EditAnywhere)
+	FName SlotName;
+
+	UPROPERTY(EditAnywhere, Category = Sync)
+	FAnimationGroupReference AnimationGroupReference;
+
+	UPROPERTY()
 	FMobaAnimNode_base Node;
+
+	//UAnimGraphNode_Base
+	virtual FText GetMenuCategory() const override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual FLinearColor GetNodeTitleColor() const override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo) override;
+	//UAnimGraphNode_Base
 };

@@ -17,7 +17,7 @@
 		},
 		{
 			"Name": "MobaEditor",
-			"Type": "Editor",
+			"Type": "UncookedOnly",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"AnimGraph"

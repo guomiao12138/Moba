@@ -3,3 +3,7 @@
 
 #include "MobaAnimNode_base.h"
 
+void FMobaAnimNode_base::UpdateAsset(UAnimSequenceBase* Asset)
+{
+	Sequence = Asset;
+}
