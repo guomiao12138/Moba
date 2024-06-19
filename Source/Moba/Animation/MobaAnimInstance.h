@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimExecutionContext.h"
+#include "Moba/Moba.h"
 #include "MobaAnimInstance.generated.h"
 
 /**
@@ -17,13 +18,16 @@ class MOBA_API UMobaAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
+	struct FStateMachine {
+		ECharacterType::Type StateType;
 
+		void EnterState();
+		void ExitState();
+	};
+
+	TMap<FName, FStateMachine> StateMachineMap;
 
 public:
-
-
-
-
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UCharacterAnimConfig> AnimConfig;
 	FName CurrentState;
@@ -63,14 +67,7 @@ public:
 
 	bool GetState(FAnimNodeReference& Node, FName& StateName);
 
-	struct FStateMachine {
-		EInputAction::Type State;
 
-		void EnterState();
-		void ExitState();
-	};
-
-	TMap<FName, FStateMachine> StateMachineMap;
 
 
 	bool InGame();

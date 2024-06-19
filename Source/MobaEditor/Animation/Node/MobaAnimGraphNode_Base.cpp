@@ -22,7 +22,6 @@ FLinearColor UMobaAnimGraphNode_Base::GetNodeTitleColor() const
 void UMobaAnimGraphNode_Base::PostPlacedNewNode()
 {
 	Super::PostPlacedNewNode();
-	InitialUpdateFunction.SetExternalMember(TEXT("OnSlotInitialUpdate"), UMobaAnimInstance::StaticClass());
 }
 
 void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -45,8 +44,26 @@ void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	{
 		Node.SetGroupName(AnimationGroupReference.GroupName);
 	}
+
+	if (UseCustom)
+	{
+		InitialUpdateFunction.SetExternalMember(TEXT("OnSlotInitialUpdate"), UMobaAnimInstance::StaticClass());
+		FPropertyChangedEvent OnSlotInitialUpdate(FindFProperty<FProperty>(GetClass()->GetOwnerStruct(), TEXT("InitialUpdateFunction")));
+		Super::PostEditChangeProperty(OnSlotInitialUpdate);
+
+		BecomeRelevantFunction.SetExternalMember(TEXT("OnSlotBecomeRelevant"), UMobaAnimInstance::StaticClass());
+		FPropertyChangedEvent OnSlotBecomeRelevant(FindFProperty<FProperty>(GetClass()->GetOwnerStruct(), TEXT("OnSlotBecomeRelevant")));
+		Super::PostEditChangeProperty(OnSlotBecomeRelevant);
+
+		UpdateFunction.SetExternalMember(TEXT("OnSlotUpdate"), UMobaAnimInstance::StaticClass());
+		FPropertyChangedEvent OnSlotUpdate(FindFProperty<FProperty>(GetClass()->GetOwnerStruct(), TEXT("OnSlotUpdate")));
+		Super::PostEditChangeProperty(OnSlotUpdate);
+	}
+	else
+	{
+		PropertyChangeEvent.Broadcast(PropertyChangedEvent);
+	}
 	
-	PropertyChangeEvent.Broadcast(PropertyChangedEvent);
 }
 
 void UMobaAnimGraphNode_Base::GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo)

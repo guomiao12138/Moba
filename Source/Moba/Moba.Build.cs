@@ -9,7 +9,7 @@ public class Moba : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = true;
-        PrivatePCHHeaderFile = "Moba.h";
+/*        PrivatePCHHeaderFile = "MobaEnum.h";*/
         PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject",

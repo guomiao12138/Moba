@@ -75,21 +75,31 @@ void UMobaAnimInstance::OnSlotInitialUpdate(UPARAM(ref)FAnimUpdateContext& Updat
 	//	}
 	//	GetCurrentStateName(MachineIndex);
 	//}
+	if (InGame())
+	{
+		FSequencePlayerReference SequencePlayerReference;
+		bool Result;
+		USequencePlayerLibrary::ConvertToSequencePlayerPure(Node, SequencePlayerReference, Result);
+		if (Result && AnimConfig)
+		{
+			auto AnimAsset = AnimConfig->AnimConfig[StateMachineMap[CurrentState].StateType].AnimAsset;
+			if (auto Asset = Cast<UAnimSequenceBase>(AnimAsset.TryLoad()))
+			{
+				Asset->bLoop = true;
+				USequencePlayerLibrary::SetSequence(SequencePlayerReference, Asset);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("CurrentState [%d] : AnimAsset Load Faild"), __LINE__);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OnSlotInitialUpdate [%d] : ConvertToSequencePlayerPure Faild"), __LINE__);
+		}
+	}
 
 
-	FSequencePlayerReference SequencePlayerReference;
-	bool Result;
-	USequencePlayerLibrary::ConvertToSequencePlayerPure(Node, SequencePlayerReference, Result);
-	if (Result)
-	{
-		//auto Asset = Cast<UAnimSequenceBase>(AnimConfig->AnimConfig[StateMachineMap[CurrentState].Type].AnimAsset.TryLoad());
-		//Asset->bLoop = true;
-		//USequencePlayerLibrary::SetSequence(SequencePlayerReference, Asset);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OnSlotInitialUpdate [%d] : ConvertToSequencePlayerPure Faild"), __LINE__);
-	}
 }
 
 void UMobaAnimInstance::OnSlotBecomeRelevant(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
@@ -99,17 +109,17 @@ void UMobaAnimInstance::OnSlotBecomeRelevant(UPARAM(ref)FAnimUpdateContext& Upda
 
 void UMobaAnimInstance::OnSlotUpdate(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
 {
-	//FSequencePlayerReference SequencePlayerReference;
-	//bool Result;
-	//USequencePlayerLibrary::ConvertToSequencePlayerPure(Node, SequencePlayerReference, Result);
-	//if (Result)
-	//{
-	//	USequencePlayerLibrary::SetSequence(SequencePlayerReference, nullptr);
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("OnSlotInitialUpdate [%d] : ConvertToSequencePlayerPure Faild"), __LINE__);
-	//}
+	FSequencePlayerReference SequencePlayerReference;
+	bool Result;
+	USequencePlayerLibrary::ConvertToSequencePlayerPure(Node, SequencePlayerReference, Result);
+	if (Result)
+	{
+		USequencePlayerLibrary::SetSequence(SequencePlayerReference, nullptr);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnSlotInitialUpdate [%d] : ConvertToSequencePlayerPure Faild"), __LINE__);
+	}
 }
 
 bool UMobaAnimInstance::GetState(FAnimNodeReference& Node, FName& StateName)
@@ -135,7 +145,7 @@ bool UMobaAnimInstance::GetState(FAnimNodeReference& Node, FName& StateName)
 bool UMobaAnimInstance::InGame()
 {
 	EWorldType::Type Type = GetWorld()->WorldType;
-	if (Type == EWorldType::Game || Type == EWorldType::GameRPC || EWorldType::PIE)
+	if (Type == EWorldType::Game || Type == EWorldType::GameRPC || Type == EWorldType::PIE)
 	{
 		return true;
 	}

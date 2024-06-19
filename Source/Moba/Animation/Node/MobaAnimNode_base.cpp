@@ -13,5 +13,4 @@ void FMobaAnimNode_base::Initialize_AnyThread(const FAnimationInitializeContext&
 {
 	Super::Initialize_AnyThread(Context);
 
-	//InitialUpdateFunction.SetFromFunction(UMobaAnimInstance::);
 }

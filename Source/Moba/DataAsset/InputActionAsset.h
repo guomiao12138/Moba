@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Moba/Moba.h"
 #include "InputActionAsset.generated.h"
 
 /**

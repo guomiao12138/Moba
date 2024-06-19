@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Sync)
 	FAnimationGroupReference AnimationGroupReference;
 
+	UPROPERTY(EditAnywhere, Category = Sync)
+	bool UseCustom;
+
 	UPROPERTY()
 	FMobaAnimNode_base Node;
 
@@ -34,4 +37,5 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo) override;
 	//UAnimGraphNode_Base
+
 };
