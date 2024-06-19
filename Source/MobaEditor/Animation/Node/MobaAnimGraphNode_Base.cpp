@@ -2,6 +2,7 @@
 
 
 #include "MobaAnimGraphNode_Base.h"
+#include "Moba/Animation/MobaAnimInstance.h"
 
 FText UMobaAnimGraphNode_Base::GetMenuCategory() const
 {
@@ -16,6 +17,12 @@ FText UMobaAnimGraphNode_Base::GetNodeTitle(ENodeTitleType::Type TitleType) cons
 FLinearColor UMobaAnimGraphNode_Base::GetNodeTitleColor() const
 {
 	return FLinearColor::Green;
+}
+
+void UMobaAnimGraphNode_Base::PostPlacedNewNode()
+{
+	Super::PostPlacedNewNode();
+	InitialUpdateFunction.SetExternalMember(TEXT("OnSlotInitialUpdate"), UMobaAnimInstance::StaticClass());
 }
 
 void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

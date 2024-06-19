@@ -20,7 +20,7 @@ public:
 	void UpdateAsset(UAnimSequenceBase* Asset);
 
 	//FAnimNode_Base
-	//virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
+	virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
 	//virtual void CacheBones_AnyThread(const FAnimationCacheBonesContext& Context) override;
 	//virtual void UpdateAssetPlayer(const FAnimationUpdateContext& Context) override;
 	//virtual void Evaluate_AnyThread(FPoseContext& Output) override;

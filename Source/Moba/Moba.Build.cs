@@ -9,7 +9,7 @@ public class Moba : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		bUseUnity = true;
-
+        PrivatePCHHeaderFile = "Moba.h";
         PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject",
@@ -19,11 +19,12 @@ public class Moba : ModuleRules
             "Ability",
             "Sockets",
             "Networking",
-            "MobaProtobufLibrary",
+            "AnimGraphRuntime",
+            "DeveloperSettings",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
-         "DeveloperSettings"
+            "MobaProtobufLibrary",
         });
 
         // Uncomment if you are using Slate UI

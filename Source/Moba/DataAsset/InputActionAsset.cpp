@@ -3,7 +3,6 @@
 
 #include "InputActionAsset.h"
 #include "UObject/ObjectSaveContext.h"
-
 #include "Misc/DefaultValueHelper.h"
 
 void UDeafultSettingAsset::PostInitProperties()

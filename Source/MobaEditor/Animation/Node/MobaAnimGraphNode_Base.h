@@ -11,7 +11,7 @@
  * 
  */
 struct FAnimationGroupReference;
-UCLASS(MinimalAPI, hideCategories=(Functions, Tag))
+UCLASS(MinimalAPI, hideCategories=(Tag))
 class UMobaAnimGraphNode_Base : public UAnimGraphNode_Base
 {
 	GENERATED_BODY()
@@ -30,6 +30,7 @@ public:
 	virtual FText GetMenuCategory() const override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
+	virtual void PostPlacedNewNode() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo) override;
 	//UAnimGraphNode_Base
