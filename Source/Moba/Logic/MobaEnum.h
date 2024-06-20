@@ -62,6 +62,7 @@ namespace ECharacterType
 		WalkRun,
 		Skil,
 		Max UMETA(Hidden),
+		None,
 	};
 }
 ENUM_EX(ECharacterType);

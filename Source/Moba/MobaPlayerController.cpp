@@ -68,7 +68,7 @@ void AMobaPlayerController::SetupInputComponent()
 	//{
 	//	ADDAXIS(EInputAction::GetName(i));
 	//}
-	UE_LOG(LogTemp, Display, TEXT("EInputAction:: %s"), *EInputAction::GetName(EInputAction::ClickPosition).ToString());
+	//UE_LOG(LogTemp, Display, TEXT("EInputAction:: %s"), *EInputAction::GetName(EInputAction::ClickPosition).ToString());
 
 	//InputComponent->BindAxis(TEXT("MoveForward"), this, &AMobaPlayerController::MoveForward);
 	//InputComponent->BindAxis(TEXT("MoveRight"), this, &AMobaPlayerController::MoveRight);

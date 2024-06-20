@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimExecutionContext.h"
-#include "Moba/Moba.h"
+#include "Moba/Logic/MobaEnum.h"
+#include "Moba/Animation/StateMachine.h"
+#include "Animation/AnimInstanceProxy.h"
 #include "MobaAnimInstance.generated.h"
 
 /**
@@ -13,24 +15,32 @@
  */
 
 struct FAnimUpdateContext;
+struct FStateMachine;
+USTRUCT()
+struct FMobaAnimInstanceProxy : public FAnimInstanceProxy
+{
+	GENERATED_USTRUCT_BODY()
+
+	FMobaAnimInstanceProxy() {};
+	FMobaAnimInstanceProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {};
+
+	virtual void UpdateAnimationNode(const FAnimationUpdateContext& InContext) override;
+	virtual void PreUpdate(UAnimInstance* InAnimInstance, float DeltaSeconds) override;
+	virtual void Update(float DeltaSeconds) override;
+	virtual void PostUpdate(UAnimInstance* InAnimInstance) const override;
+};
+
 UCLASS()
 class MOBA_API UMobaAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
-	struct FStateMachine {
-		ECharacterType::Type StateType;
-
-		void EnterState();
-		void ExitState();
-	};
-
-	TMap<FName, FStateMachine> StateMachineMap;
 
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UCharacterAnimConfig> AnimConfig;
 	FName CurrentState;
+	FName BlendedInState;
+	FName BlendedOutState;
 
 	//AnimBlueprint State Bind Function
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
@@ -47,13 +57,13 @@ public:
 
 	//Machine
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnInitialUpdate(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnInitialUpdateByMachine(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnBecomeRelevant(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnBecomeRelevantByMachine(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnUpdate(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);	
+	void OnUpdateByMachine(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 	
 	//Slot
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
@@ -65,10 +75,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
 	void OnSlotUpdate(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
-	bool GetState(FAnimNodeReference& Node, FName& StateName);
-
-
-
-
+	bool GetStateByMachine(FAnimNodeReference& Node, FName& StateName);
+	bool GetStateBySlot(FAnimNodeReference& Node, FName& StateName);
 	bool InGame();
+
+
+	//AnimInstance
+	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
+	//AnimInstance
+
+	float GetSpeed();
+	TMap<FName, struct FStateMachine> StateMachineMap;
+
 };
+

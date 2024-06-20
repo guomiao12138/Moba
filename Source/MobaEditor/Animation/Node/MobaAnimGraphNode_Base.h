@@ -18,7 +18,7 @@ class UMobaAnimGraphNode_Base : public UAnimGraphNode_Base
 	
 public:
 	UPROPERTY(EditAnywhere)
-	FName SlotName;
+	TEnumAsByte<ECharacterType::Type> SlotName = ECharacterType::None;
 
 	UPROPERTY(EditAnywhere, Category = Sync)
 	FAnimationGroupReference AnimationGroupReference;
@@ -33,9 +33,8 @@ public:
 	virtual FText GetMenuCategory() const override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
-	virtual void PostPlacedNewNode() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual void GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo) override;
+	virtual void PostPasteNode() override;
 	//UAnimGraphNode_Base
 
 };

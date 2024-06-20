@@ -9,8 +9,3 @@ void FMobaAnimNode_base::UpdateAsset(UAnimSequenceBase* Asset)
 	Sequence = Asset;
 }
 
-void FMobaAnimNode_base::Initialize_AnyThread(const FAnimationInitializeContext& Context)
-{
-	Super::Initialize_AnyThread(Context);
-
-}

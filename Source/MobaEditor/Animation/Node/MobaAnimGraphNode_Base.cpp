@@ -11,17 +11,12 @@ FText UMobaAnimGraphNode_Base::GetMenuCategory() const
 
 FText UMobaAnimGraphNode_Base::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString(FString::Printf(TEXT("State Slot : %s"), *SlotName.ToString()));
+	return FText::FromString(FString::Printf(TEXT("State Slot : %s"), *ECharacterType::GetName(SlotName).ToString()));
 }
 
 FLinearColor UMobaAnimGraphNode_Base::GetNodeTitleColor() const
 {
 	return FLinearColor::Green;
-}
-
-void UMobaAnimGraphNode_Base::PostPlacedNewNode()
-{
-	Super::PostPlacedNewNode();
 }
 
 void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -30,22 +25,22 @@ void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& Prop
 
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(UMobaAnimGraphNode_Base, SlotName))
 	{
-		Node.SlotName = PropertyName;
+		static_cast<FMobaAnimNode_base*>(GetFNode())->SlotName = SlotName;
 	}	
 	else if (PropertyName == GET_MEMBER_NAME_CHECKED(FAnimationGroupReference, Method))
 	{
-		Node.SetGroupMethod(AnimationGroupReference.Method);
+		static_cast<FMobaAnimNode_base*>(GetFNode())->SetGroupMethod(AnimationGroupReference.Method);
 	}
 	else if (PropertyName == GET_MEMBER_NAME_CHECKED(FAnimationGroupReference, GroupRole))
 	{
-		Node.SetGroupRole(AnimationGroupReference.GroupRole);
+		static_cast<FMobaAnimNode_base*>(GetFNode())->SetGroupRole(AnimationGroupReference.GroupRole);
 	}
 	else if (PropertyName == GET_MEMBER_NAME_CHECKED(FAnimationGroupReference, GroupName))
 	{
-		Node.SetGroupName(AnimationGroupReference.GroupName);
+		static_cast<FMobaAnimNode_base*>(GetFNode())->SetGroupName(AnimationGroupReference.GroupName);
 	}
 
-	if (UseCustom)
+	if (UseCustom && GetSchema())
 	{
 		InitialUpdateFunction.SetExternalMember(TEXT("OnSlotInitialUpdate"), UMobaAnimInstance::StaticClass());
 		FPropertyChangedEvent OnSlotInitialUpdate(FindFProperty<FProperty>(GetClass()->GetOwnerStruct(), TEXT("InitialUpdateFunction")));
@@ -66,6 +61,17 @@ void UMobaAnimGraphNode_Base::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	
 }
 
-void UMobaAnimGraphNode_Base::GetBoundFunctionsInfo(TArray<TPair<FName, FName>>& InOutBindingsInfo)
+void UMobaAnimGraphNode_Base::PostPasteNode()
 {
+	Super::PostPasteNode();
+	if (UseCustom)
+	{
+		FPropertyChangedEvent EmptyPropertyUpdateStruct(NULL);
+		PostEditChangeProperty(EmptyPropertyUpdateStruct);
+	}
+	if (SlotName != ECharacterType::None)
+	{
+		Node.SlotName = SlotName;
+	}
+
 }
