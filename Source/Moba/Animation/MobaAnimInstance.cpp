@@ -81,7 +81,7 @@ void UMobaAnimInstance::OnInitialUpdateByMachine(UPARAM(ref)FAnimUpdateContext& 
 					FStateMachine StateMachine;
 					StateMachine.StateType = ECharacterType::Type(i);
 					StateMachineMap.Emplace(state, StateMachine);
-					StateMachineMap[state].InitialUpdate(UpdateContext, Node);
+					//StateMachineMap[state].InitialUpdate(UpdateContext, Node);
 					break;
 				}
 
@@ -116,7 +116,7 @@ void UMobaAnimInstance::OnSlotInitialUpdate(UPARAM(ref)FAnimUpdateContext& Updat
 		{
 			if (StateMachineMap.Contains(state))
 			{
-				//StateMachineMap[state].InitialUpdate(UpdateContext, Node);
+				StateMachineMap[state].InitialUpdate(UpdateContext, Node);
 			}
 		}
 	}

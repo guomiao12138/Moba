@@ -25,7 +25,7 @@ void FStateMachine::InitialUpdate(FAnimUpdateContext& UpdateContext, FAnimNodeRe
 	}
 	Onwer = MobaAnimInstance->TryGetPawnOwner();
 
-	if (MobaAnimInstance && !MobaAnimInstance->AnimConfig)
+	if (!MobaAnimInstance || !MobaAnimInstance->AnimConfig)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AnimConfig [%d] : NULL"), __LINE__);
 		return;
@@ -33,6 +33,7 @@ void FStateMachine::InitialUpdate(FAnimUpdateContext& UpdateContext, FAnimNodeRe
 
 
 	FName state;
+	//MobaAnimInstance->GetStateByMachine(Node, state);
 	MobaAnimInstance->GetStateBySlot(Node, state);
 	if (!MobaAnimInstance->StateMachineMap.Contains(state))
 	{
