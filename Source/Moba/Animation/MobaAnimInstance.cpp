@@ -81,6 +81,7 @@ void UMobaAnimInstance::OnInitialUpdateByMachine(UPARAM(ref)FAnimUpdateContext& 
 					FStateMachine StateMachine;
 					StateMachine.StateType = ECharacterType::Type(i);
 					StateMachineMap.Emplace(state, StateMachine);
+					StateMachineMap[state].InitialUpdate(UpdateContext, Node);
 					break;
 				}
 
@@ -115,7 +116,7 @@ void UMobaAnimInstance::OnSlotInitialUpdate(UPARAM(ref)FAnimUpdateContext& Updat
 		{
 			if (StateMachineMap.Contains(state))
 			{
-				StateMachineMap[state].InitialUpdate(UpdateContext, Node);
+				//StateMachineMap[state].InitialUpdate(UpdateContext, Node);
 			}
 		}
 	}
@@ -175,15 +176,15 @@ bool UMobaAnimInstance::GetStateBySlot(FAnimNodeReference& Node, FName& StateNam
 {
 	if (InGame())
 	{
-		FMobaAnimNode_base* StateMachineNode = Node.GetAnimNodePtr<FMobaAnimNode_base>();
-		if (StateMachineNode)
+		FMobaAnimNode_base* AnimNode = Node.GetAnimNodePtr<FMobaAnimNode_base>();
+		if (AnimNode)
 		{
-			StateName = ECharacterType::GetName(StateMachineNode->SlotName);
+			StateName = ECharacterType::GetName(AnimNode->SlotName);
 			return true;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("GetStateByMachine [%d] : StateMachineNode Is Null"), __LINE__);
+			UE_LOG(LogTemp, Warning, TEXT("GetStateBySlot [%d] : AnimNode Is Null"), __LINE__);
 			return false;
 		}
 	}
