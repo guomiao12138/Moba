@@ -16,6 +16,7 @@
 
 struct FAnimUpdateContext;
 struct FStateMachine;
+
 USTRUCT()
 struct FMobaAnimInstanceProxy : public FAnimInstanceProxy
 {
@@ -34,13 +35,16 @@ UCLASS()
 class MOBA_API UMobaAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+private:
+	ECharacterType::Type CurrentState = ECharacterType::None;
+	ECharacterType::Type BlendedInState = ECharacterType::None;
+	ECharacterType::Type BlendedOutState = ECharacterType::None;
 
+	ECharacterType::Type ChangeState;
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UCharacterAnimConfig> AnimConfig;
-	FName CurrentState;
-	FName BlendedInState;
-	FName BlendedOutState;
+
 
 	//AnimBlueprint State Bind Function
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
@@ -75,17 +79,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
 	void OnSlotUpdate(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
-	bool GetStateByMachine(FAnimNodeReference& Node, FName& StateName);
-	bool GetStateBySlot(FAnimNodeReference& Node, FName& StateName);
+	bool GetStateByMachine(FAnimNodeReference& Node, ECharacterType::Type& StateName);
+	bool GetStateBySlot(FAnimNodeReference& Node, ECharacterType::Type& StateName);
 	bool InGame();
 
+	UFUNCTION(BlueprintPure, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
+	bool CheckChangeCharacterType(ECharacterType::Type Type);
 
 	//AnimInstance
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
 	//AnimInstance
 
 	float GetSpeed();
-	TMap<FName, struct FStateMachine> StateMachineMap;
+	void SetChangeState(ECharacterType::Type Type);
+	TMap<ECharacterType::Type, TSharedPtr<FStateMachine>> StateMachineMap;
 
 };
 

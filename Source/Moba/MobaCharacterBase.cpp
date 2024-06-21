@@ -4,9 +4,11 @@
 #include "MobaCharacterBase.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "MobaPlayerController.h"
+#include "Components/SkeletalMeshComponent.h"
 
+#include "MobaPlayerController.h"
 #include "Ability/MobaAbilityComponent.h"
+#include "Moba/Animation/MobaAnimInstance.h"
 
 // Sets default values
 AMobaCharacterBase::AMobaCharacterBase()
@@ -50,7 +52,14 @@ void AMobaCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AMobaCharacterBase::ActiveAbility()
 {
-	AbilityComponent->ActiveAbility();
+	if (GetMesh())
+	{
+		if (auto inst = Cast<UMobaAnimInstance>(GetMesh()->AnimScriptInstance))
+		{
+			inst->SetChangeState(ECharacterType::Skill);
+			AbilityComponent->ActiveAbility();
+		}
+	}
 }
 
 void AMobaCharacterBase::MoveTo(FVector InLocation)

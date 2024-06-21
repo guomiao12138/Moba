@@ -11,7 +11,7 @@
  * 
  */
 struct FAnimationGroupReference;
-UCLASS(MinimalAPI, hideCategories=(Tag))
+UCLASS(Hidden)
 class UMobaAnimGraphNode_Base : public UAnimGraphNode_Base
 {
 	GENERATED_BODY()
@@ -26,15 +26,40 @@ public:
 	UPROPERTY(EditAnywhere, Category = Sync)
 	bool UseCustom;
 
-	UPROPERTY()
-	FMobaAnimNode_base Node;
-
 	//UAnimGraphNode_Base
 	virtual FText GetMenuCategory() const override;
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	//virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PostPasteNode() override;
 	//UAnimGraphNode_Base
 
+};
+
+UCLASS(MinimalAPI, hideCategories = (Tag))
+class UMobaAnimSequenceNode_Base : public UMobaAnimGraphNode_Base
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	FMobaAnimNode_Sequence Node;
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+};
+
+
+UCLASS(MinimalAPI, hideCategories = (Tag, Coordinates))
+class UMobaAnimBlendSpaceNode_Base : public UMobaAnimGraphNode_Base
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	FMobaAnimNode_BlendSpace Node;
+
+	UMobaAnimBlendSpaceNode_Base();
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };

@@ -58,11 +58,11 @@ namespace ECharacterType
 {
 	enum Type : int
 	{
+		None UMETA(Hidden),
 		Idle,
 		WalkRun,
-		Skil,
+		Skill,
 		Max UMETA(Hidden),
-		None,
 	};
 }
 ENUM_EX(ECharacterType);
