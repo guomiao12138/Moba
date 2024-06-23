@@ -7,6 +7,7 @@
 struct FState_Idle : public TSharedFromThis<FState_Idle>, public FStateMachine
 {
 public:
+	FState_Idle() {};
 	FState_Idle(UMobaAnimInstance* InMobaAnimInstance, APawn* InOnwer) : FStateMachine(InMobaAnimInstance, InOnwer) {};
 	virtual ~FState_Idle() {};
 

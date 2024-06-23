@@ -11,10 +11,10 @@ UMobaPlayerInput::UMobaPlayerInput()
 
 void UMobaPlayerInput::InitInputSetting()
 {
-	UInputActionAsset* asset = FindObject<UInputActionAsset>(nullptr, TEXT("/Game/InputSetting.InputSetting"));
+	UInputActionAsset* asset = FindObject<UInputActionAsset>(this, TEXT("/Game/InputSetting.InputSetting"));
 	if(!asset)
 	{
-		asset = LoadObject<UInputActionAsset>(nullptr, TEXT("/Game/InputSetting.InputSetting"));
+		asset = LoadObject<UInputActionAsset>(this, TEXT("/Game/InputSetting.InputSetting"));
 	}
 	if (!asset)
 	{

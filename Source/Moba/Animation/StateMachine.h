@@ -38,8 +38,9 @@ struct FStateMachine : public TSharedFromThis<FStateMachine>
 	virtual void BecomeRelevant(FAnimUpdateContext& UpdateContext, FAnimNodeReference& Node);
 
 	//UpdateAnmationAsset
-	virtual void UpdateAsset();
+	virtual bool UpdateAsset();
 
+	FStateMachine() {};
 	FStateMachine(UMobaAnimInstance* InMobaAnimInstance, APawn* InOnwer) : MobaAnimInstance(InMobaAnimInstance), Onwer(InOnwer) {};
 	virtual ~FStateMachine()
 	{

@@ -40,24 +40,27 @@ private:
 	ECharacterType::Type BlendedInState = ECharacterType::None;
 	ECharacterType::Type BlendedOutState = ECharacterType::None;
 
-	ECharacterType::Type ChangeState;
+	ECharacterType::Type ChangeState = ECharacterType::None;
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UCharacterAnimConfig> AnimConfig;
 
 
-	//AnimBlueprint State Bind Function
+	//AnimBlueprint StateResult Bind Function
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnStateEntry(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnInitialUpdateByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnStateFullyBlendedIn(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnStateEntryByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnStateExit(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnStateFullyBlendedInByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
-	void OnStateFullyBlendedOut(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+	void OnStateExitByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
+
+	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
+	void OnStateFullyBlendedOutByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node);
 
 	//Machine
 	UFUNCTION(BlueprintCallable, Category = "MobaAnimInstance", meta = (BlueprintThreadSafe))
@@ -94,7 +97,9 @@ public:
 
 	float GetSpeed();
 	void SetChangeState(ECharacterType::Type Type);
+	void AddState(ECharacterType::Type Type, TSharedPtr<FStateMachine> State);
 	TMap<ECharacterType::Type, TSharedPtr<FStateMachine>> StateMachineMap;
 
+	friend FMobaAnimInstanceProxy;
 };
 

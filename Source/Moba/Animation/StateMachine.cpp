@@ -20,22 +20,23 @@ void FStateMachine::InitialUpdate(FAnimUpdateContext& UpdateContext, FAnimNodeRe
 
 void FStateMachine::BecomeRelevant(FAnimUpdateContext& UpdateContext, FAnimNodeReference& Node)
 {
-
 }
 
-void FStateMachine::UpdateAsset()
+bool FStateMachine::UpdateAsset()
 {
-	if (!MobaAnimInstance->StateMachineMap.Contains(StateType))
+
+	if (!MobaAnimInstance->StateMachineMap.Contains(StateType) || !MobaAnimInstance->AnimConfig)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StateMachineMap [%d] : have not %s"), __LINE__, *ECharacterType::GetName(StateType).ToString());
-		return;
+		return false;
 	}
+
+	bool Result = false;
 	auto AnimAsset = MobaAnimInstance->AnimConfig->AnimConfig[StateType].AnimAsset;
 
 	if (auto Asset = Cast<UAnimSequenceBase>(AnimAsset.TryLoad()))
 	{
 		FSequencePlayerReference SequencePlayerReference;
-		bool Result;
 		USequencePlayerLibrary::ConvertToSequencePlayerPure(AnimNodeReference, SequencePlayerReference, Result);
 
 		if (Result)
@@ -47,7 +48,6 @@ void FStateMachine::UpdateAsset()
 	else if (auto BlendSpace = Cast<UBlendSpace>(AnimAsset.TryLoad()))
 	{
 		FBlendSpacePlayerReference BlendSpacePlayerReference;
-		bool Result;
 		UBlendSpacePlayerLibrary::ConvertToBlendSpacePlayerPure(AnimNodeReference, BlendSpacePlayerReference, Result);
 
 		if (Result)
@@ -59,4 +59,6 @@ void FStateMachine::UpdateAsset()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StateMachine InitialUpdate [%d] : AnimAsset Cast Faild"), __LINE__);
 	}
+
+	return Result;
 }

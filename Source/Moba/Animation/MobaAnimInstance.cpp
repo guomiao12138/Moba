@@ -6,27 +6,39 @@
 #include "State_Idle.h"
 #include "State_Skill.h"
 #include "Moba/Animation/Node/MobaAnimNode_base.h"
+#include "Moba/DataAsset/CharacterAnimConfig.h"
+
 //Engine
 #include "Animation/AnimNodeReference.h"
 #include "Animation/AnimNode_StateResult.h"
 #include "Animation/AnimNode_StateMachine.h"
 //Engine
 
+void UMobaAnimInstance::OnInitialUpdateByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
+{
+	if (InGame())
+	{
+		//GetStateByMachine(Node, ChangeState);
+	}
+}
 
-void UMobaAnimInstance::OnStateEntry(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
+void UMobaAnimInstance::OnStateEntryByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
 {
 	if (InGame())
 	{
 		//NotGameThread
 		ECharacterType::Type state = ECharacterType::None;
-		if (StateMachineMap.Contains(state))
+		if (GetStateByMachine(Node, state))
 		{
-			StateMachineMap[state]->EnterState(UpdateContext, Node);
+			if (StateMachineMap.Contains(state))
+			{
+				StateMachineMap[state]->EnterState(UpdateContext, Node);
+			}
 		}
 	}
 }
 
-void UMobaAnimInstance::OnStateFullyBlendedIn(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
+void UMobaAnimInstance::OnStateFullyBlendedInByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
 {
 	if (InGame())
 	{
@@ -41,20 +53,23 @@ void UMobaAnimInstance::OnStateFullyBlendedIn(UPARAM(ref)FAnimUpdateContext& Upd
 	}
 }
 
-void UMobaAnimInstance::OnStateExit(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
+void UMobaAnimInstance::OnStateExitByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
 {
 	if (InGame())
 	{
 		//NotGameThread
 		ECharacterType::Type state = ECharacterType::None;
-		if (StateMachineMap.Contains(state))
+		if (GetStateByMachine(Node, state))
 		{
-			StateMachineMap[state]->ExitState(UpdateContext, Node);
+			if (StateMachineMap.Contains(state))
+			{
+				StateMachineMap[state]->ExitState(UpdateContext, Node);
+			}
 		}
 	}
 }
 
-void UMobaAnimInstance::OnStateFullyBlendedOut(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
+void UMobaAnimInstance::OnStateFullyBlendedOutByStateResult(UPARAM(ref)FAnimUpdateContext& UpdateContext, UPARAM(ref)FAnimNodeReference& Node)
 {
 	if (InGame())
 	{
@@ -73,7 +88,13 @@ void UMobaAnimInstance::OnInitialUpdateByMachine(UPARAM(ref)FAnimUpdateContext& 
 {
 	if (InGame())
 	{
-
+		//Enter After
+		if (const FAnimationUpdateContext* AnimationUpdateContext = UpdateContext.GetContext())
+		{
+			int InitialState = GetMachineDescription(IAnimClassInterface::GetFromClass(GetClass()), Node.GetAnimNodePtr<FAnimNode_StateMachine>())->InitialState;
+			FName StateName = Node.GetAnimNodePtr<FAnimNode_StateMachine>()->GetStateInfo(InitialState).StateName;
+			SetChangeState(ECharacterType::GetValueByName(StateName));
+		}
 	}
 }
 
@@ -114,11 +135,12 @@ void UMobaAnimInstance::OnSlotBecomeRelevant(UPARAM(ref)FAnimUpdateContext& Upda
 	if (InGame())
 	{
 		//NotGameThread
-		if (GetStateBySlot(Node, CurrentState))
+		ECharacterType::Type state = ECharacterType::None;
+		if (GetStateBySlot(Node, state))
 		{
-			if (StateMachineMap.Contains(CurrentState))
+			if (StateMachineMap.Contains(state))
 			{
-				StateMachineMap[CurrentState]->BecomeRelevant(UpdateContext, Node);
+				StateMachineMap[state]->BecomeRelevant(UpdateContext, Node);
 			}
 		}
 	}
@@ -207,6 +229,13 @@ void UMobaAnimInstance::NativeInitializeAnimation()
 {
 	if (InGame())
 	{
+		AnimConfig = FindObject<UCharacterAnimConfig>(this, TEXT("/Game/Anim.AnimDataAsset.AnimDataAsset"));
+
+		if (!AnimConfig)
+		{
+			AnimConfig = LoadObject<UCharacterAnimConfig>(this, TEXT("/Game/Anim/AnimDataAsset.AnimDataAsset"));
+		}
+
 		for (int i = 0; i < ECharacterType::Max; i++)
 		{
 			ECharacterType::Type state = ECharacterType::Type(i);
@@ -216,31 +245,21 @@ void UMobaAnimInstance::NativeInitializeAnimation()
 				switch (state)
 				{
 				case ECharacterType::WalkRun:
-				{
-					TSharedPtr<FState_WalkRun> State_WalkRun = MakeShareable(new FState_WalkRun(this, TryGetPawnOwner()));
-					State_WalkRun->StateType = state;
-					StateMachineMap.Emplace(state, State_WalkRun);
-				}
-				break;
+					AddState(state, MakeShareable(new FState_WalkRun()));
+					break;
+
 				case ECharacterType::Idle:
-				{
-					TSharedPtr<FState_Idle> State_Idle = MakeShareable(new FState_Idle(this, TryGetPawnOwner()));
-					State_Idle->StateType = state;
-					StateMachineMap.Emplace(state, State_Idle);
-				}
-				break;
+					AddState(state, MakeShareable(new FState_Idle()));
+					break;
+
 				case ECharacterType::Skill:
-				{
-					TSharedPtr<FState_Skill> State_Idle = MakeShareable(new FState_Skill(this, TryGetPawnOwner()));
-					State_Idle->StateType = state;
-					StateMachineMap.Emplace(state, State_Idle);
-				}
+					AddState(state, MakeShareable(new FState_Skill()));
+					break;
+
 				case ECharacterType::None:
 					break;
+
 				default:
-					TSharedPtr<FStateMachine> State_WalkRun = MakeShareable(new FStateMachine(this, TryGetPawnOwner()));
-					State_WalkRun->StateType = state;
-					StateMachineMap.Emplace(state, State_WalkRun);
 					break;
 				}
 			}
@@ -256,7 +275,10 @@ void UMobaAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			if (StateMachineMap.Contains(ChangeState))
 			{
-				StateMachineMap[ChangeState]->UpdateAsset();
+				if (StateMachineMap[ChangeState]->UpdateAsset())
+				{
+					CurrentState = ChangeState;
+				};
 			}
 		}
 	}
@@ -284,6 +306,14 @@ void UMobaAnimInstance::SetChangeState(ECharacterType::Type Type)
 	ChangeState = Type;
 }
 
+void UMobaAnimInstance::AddState(ECharacterType::Type Type, TSharedPtr<FStateMachine> State)
+{
+	State->StateType = Type;
+	State->MobaAnimInstance = this;
+	State->Onwer = TryGetPawnOwner();
+	StateMachineMap.Emplace(Type, State);
+}
+
 void FMobaAnimInstanceProxy::PreUpdate(UAnimInstance* InAnimInstance, float DeltaSeconds)
 {
 	//GameThread
@@ -291,9 +321,9 @@ void FMobaAnimInstanceProxy::PreUpdate(UAnimInstance* InAnimInstance, float Delt
 
 	if (auto inst = Cast<UMobaAnimInstance>(InAnimInstance))
 	{
-		for (auto kv : inst->StateMachineMap)
+		if (inst->StateMachineMap.Contains(inst->CurrentState))
 		{
-			kv.Value->PreUpdate(inst, DeltaSeconds);
+			inst->StateMachineMap[inst->CurrentState]->PreUpdate(inst, DeltaSeconds);
 		}
 	}
 }
@@ -314,9 +344,9 @@ void FMobaAnimInstanceProxy::PostUpdate(UAnimInstance* InAnimInstance) const
 
 	if (auto inst = Cast<UMobaAnimInstance>(InAnimInstance))
 	{
-		for (auto kv : inst->StateMachineMap)
+		if (inst->StateMachineMap.Contains(inst->CurrentState))
 		{
-			kv.Value->PostUpdate(inst);
+			inst->StateMachineMap[inst->CurrentState]->PostUpdate(inst);
 		}
 	}
 

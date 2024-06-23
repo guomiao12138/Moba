@@ -12,6 +12,7 @@ public:
 	virtual void PreUpdate(UMobaAnimInstance* InAnimInstance, float DeltaSeconds) override {};
 	virtual void Update(FAnimUpdateContext& UpdateContext, FAnimNodeReference& Node) override {};
 
+	FState_Skill() {};
 	FState_Skill(UMobaAnimInstance* InMobaAnimInstance, APawn* InOnwer) : FStateMachine(InMobaAnimInstance, InOnwer) {};
 	virtual ~FState_Skill() {};
 };
