@@ -13,6 +13,10 @@ class MOBA_API AMobaCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+	int LeftBone = -1;
+	int RightBone = -1;
+
 public:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMobaPlayerController> MobaPlayerController;
@@ -20,6 +24,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<class UMobaAbilityComponent> AbilityComponent;
+
 
 public:
 	// Sets default values for this character's properties
@@ -40,4 +45,6 @@ public:
 
 	void ActiveAbility();
 	void MoveTo(FVector InLocation);
+	void UpdateBoneIndex();
+	void UpdatePlayFootHit();
 };

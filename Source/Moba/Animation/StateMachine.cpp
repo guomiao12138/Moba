@@ -24,10 +24,15 @@ void FStateMachine::BecomeRelevant(FAnimUpdateContext& UpdateContext, FAnimNodeR
 
 bool FStateMachine::UpdateAsset()
 {
-
-	if (!MobaAnimInstance->StateMachineMap.Contains(StateType) || !MobaAnimInstance->AnimConfig)
+	if (!MobaAnimInstance->StateMachineMap.Contains(StateType))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StateMachineMap [%d] : have not %s"), __LINE__, *ECharacterType::GetName(StateType).ToString());
+		UE_LOG(LogTemp, Warning, TEXT("FStateMachine [%d] : have not %s"), __LINE__, *ECharacterType::GetName(StateType).ToString());
+		return false;
+	}
+
+	if (!MobaAnimInstance->AnimConfig)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FStateMachine AnimConfig [%d] : %s faild"), __LINE__, *ECharacterType::GetName(StateType).ToString());
 		return false;
 	}
 

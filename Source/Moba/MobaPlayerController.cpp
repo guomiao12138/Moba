@@ -94,7 +94,7 @@ void AMobaPlayerController::ClickPosition()
 	FVector2D screenlocation;
 	GetMousePosition(screenlocation.X, screenlocation.Y);
 	FHitResult hit;
-	GetHitResultAtScreenPosition(screenlocation, ECollisionChannel::ECC_Camera, true, hit);
+	GetHitResultAtScreenPosition(screenlocation, ECollisionChannel::ECC_EngineTraceChannel1, true, hit);
 
 	DrawDebugPoint(GetWorld(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10);
 
