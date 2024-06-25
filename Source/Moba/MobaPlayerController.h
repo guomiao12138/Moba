@@ -27,7 +27,7 @@ protected:
 	int interval = 5;
 
 public:
-	DECLARE_MULTICAST_DELEGATE_OneParam(MoveToDelegate, FVector);
+	DECLARE_MULTICAST_DELEGATE_OneParam(MoveToDelegate, FHitResult);
 	MoveToDelegate MoveTo;
 
 	DECLARE_MULTICAST_DELEGATE(FActiveAbility);

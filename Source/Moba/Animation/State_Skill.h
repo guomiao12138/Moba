@@ -9,7 +9,7 @@ public:
 
 	virtual void InitialUpdate(FAnimUpdateContext& UpdateContext, FAnimNodeReference& Node) override {};
 
-	virtual void PreUpdate(UMobaAnimInstance* InAnimInstance, float DeltaSeconds) override {};
+	virtual void PreUpdate(UMobaAnimInstance* InAnimInstance, float DeltaSeconds) override;
 	virtual void Update(FAnimUpdateContext& UpdateContext, FAnimNodeReference& Node) override {};
 
 	FState_Skill() {};

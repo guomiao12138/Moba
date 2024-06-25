@@ -89,34 +89,12 @@ void AMobaPlayerController::InitInputSystem()
 void AMobaPlayerController::ClickPosition()
 {
 
+	FVector2D Screenlocation;
+	GetMousePosition(Screenlocation.X, Screenlocation.Y);
+	FHitResult Hit;
+	GetHitResultAtScreenPosition(Screenlocation, ECollisionChannel::ECC_Visibility, true, Hit);
 
-
-	FVector2D screenlocation;
-	GetMousePosition(screenlocation.X, screenlocation.Y);
-	FHitResult hit;
-	GetHitResultAtScreenPosition(screenlocation, ECollisionChannel::ECC_EngineTraceChannel1, true, hit);
-
-	DrawDebugPoint(GetWorld(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10);
-
-	//FActorSpawnParameters Params;
-	//Params.Owner = this;
-	//Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//if (auto aa = GetWorld()->SpawnActor<UMobaAbility>(hit.ImpactPoint, FRotator::ZeroRotator, Params))
-	//{
-	//	UE_LOG(LogTemp, Display, TEXT("SpawnActor"));
-	//} 
-
-
-	if (auto player = Cast<AMobaCharacterBase>(GetPawn()))
-	{
-		FVector vec = hit.ImpactPoint - player->GetActorLocation();
-		DrawDebugDirectionalArrow(GetWorld(), player->GetActorLocation(), hit.ImpactPoint, 20.f, FColor::Blue, false, 10.f);
-		auto rot = vec.Rotation();
-		//player->SetActorRotation(FRotator(0, rot.Yaw, 0));
-		//player->GetMesh()->SetRelativeRotation(FRotator(0, rot.Yaw, 0));
-	}
-
-	MoveTo.Broadcast(hit.Location);
+	MoveTo.Broadcast(Hit);
 }
 
 void AMobaPlayerController::Q()
@@ -172,23 +150,23 @@ FVector AMobaPlayerController::IsMoveCamera()
 
 		if (mousePosition.X + interval >= sizeX && mousePosition.Y + interval >= sizeY)
 		{
-			dir.X = rightstep;
-			dir.Y = backstep;
+			dir.X = backstep;
+			dir.Y = rightstep;
 		}
 		else if (mousePosition.X + interval >= sizeX && mousePosition.Y - interval <= 0)
 		{
-			dir.X = rightstep;
-			dir.Y = forwardstep;
+			dir.X = forwardstep;
+			dir.Y = rightstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y + interval >= sizeY)
 		{
-			dir.X = leftstep;
-			dir.Y = backstep;
+			dir.X = backstep;
+			dir.Y = leftstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y - interval <= 0)
 		{
-			dir.X = leftstep;
-			dir.Y = forwardstep;
+			dir.X = forwardstep;
+			dir.Y = leftstep;
 		}
 		else if (mousePosition.X - interval <= 0 && mousePosition.Y == LastPosition.Y)
 		{

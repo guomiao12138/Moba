@@ -5,14 +5,14 @@
 #include "CoreMinimal.h"
 #include "AbilityNode.h"
 #include "UObject/ObjectMacros.h"
-#include "Animation/AnimInstance.h"
 #include "PlayeAnimation.generated.h"
 
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationPlayDelegate, FName, NotifyName);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimationPlayDelegate, FName, NotifyName);
 class UAbilityAnimNotify;
+struct FGameplayTag;
 UCLASS()
 class UPlayeAnimation : public UAbilityNode
 {
@@ -22,18 +22,21 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AnimSequence")
 	TObjectPtr<class UAnimSequenceBase> Asset;
 
+	UPROPERTY(EditAnywhere, SimpleDisplay, Category = "AbilityNode")
+	TArray<FGameplayTag> Tags;
+
 	virtual void OnActiveNode() override;
 	virtual bool OnDeActiveNode() override;
 
-	virtual void PostLoad() override;
+	//virtual void PostLoad() override;
 
-	bool IsNotifyValid(FName NotifyName);
+	//bool IsNotifyValid(FName NotifyName);
 
-	UFUNCTION()
-	void Notify(FString NotifyName);
+	//UFUNCTION()
+	//void Notify(FString NotifyName);
 
-	FOnMontageBlendingOutStarted BlendingOutDelegate;
-	FOnMontageEnded MontageEndedDelegate;
+	//FOnMontageBlendingOutStarted BlendingOutDelegate;
+	//FOnMontageEnded MontageEndedDelegate;
 #if WITH_EDITOR
 	virtual void AllocateDefaultPins() override;
 	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;

@@ -7,6 +7,9 @@
 #include "Node/Root.h"
 
 #include "GameFramework/Character.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values for this component's properties
 UMobaAbilityComponent::UMobaAbilityComponent()
@@ -16,6 +19,8 @@ UMobaAbilityComponent::UMobaAbilityComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+
 }
 
 
@@ -25,7 +30,17 @@ void UMobaAbilityComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	if (auto Pawn = Cast<APawn>(GetOwner()))
+	{
+		if (SkeletalMeshComponent = Pawn->FindComponentByClass<USkeletalMeshComponent>())
+		{
+			if (auto AnimInstance = SkeletalMeshComponent->GetAnimInstance())
+			{
+				AnimInstance->OnMontageStarted.AddDynamic(this, &UMobaAbilityComponent::OnStartMontage);
+				AnimInstance->OnMontageEnded.AddDynamic(this, &UMobaAbilityComponent::OnEndMontage);
+			}
+		}
+	}
 }
 
 
@@ -36,6 +51,8 @@ void UMobaAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	// ...
 	//TickAbility(DeltaTime);
+
+
 }
 
 void UMobaAbilityComponent::TickAbility(float DeltaTime)
@@ -46,6 +63,40 @@ void UMobaAbilityComponent::TickAbility(float DeltaTime)
 	//}
 }
 
+void UMobaAbilityComponent::OnStartMontage(UAnimMontage* Montage)
+{
+	if (AnimMontages.Contains(Montage))
+	{
+		OnMontageStarted.Broadcast(AnimMontages[Montage].Tags, CurrentAbility->EnableCollision);
+	}
+}
+
+void UMobaAbilityComponent::OnEndMontage(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (AnimMontages.Contains(Montage))
+	{
+		OnMontageFinish.Broadcast(AnimMontages[Montage].Tags);
+		AnimMontages.Remove(Montage);
+	}
+}
+
+void UMobaAbilityComponent::PlayAnimation(class UAnimSequenceBase* Asset, TArray<FGameplayTag> Tags)
+{
+	if (auto Pawn = Cast<APawn>(GetOwner()))
+	{
+		if (UAnimInstance* AnimInstance = SkeletalMeshComponent->GetAnimInstance())
+		{
+			auto Montage = AnimInstance->PlaySlotAnimationAsDynamicMontage(Asset, TEXT("Active"));
+			Montage->SyncGroup = TEXT("Ability");
+
+			if (!AnimMontages.Contains(Montage))
+			{
+				AnimMontages.Emplace(Montage, FAbilityTag(Tags));
+			}
+		}
+	}
+}
+
 void UMobaAbilityComponent::ActiveAbility()
 {
 	if (Abilitys.Num() > 0)
@@ -53,39 +104,10 @@ void UMobaAbilityComponent::ActiveAbility()
 		Abilitys[0]->Owner = Cast<ACharacter>(GetOwner());
 		Abilitys[0]->Activate();
 	}
-	//CurrentAbility->Owner = Cast<ACharacter>(GetOwner());
-	//CurrentAbility->RootNode->OnActiveNode();
-	//UAbilityNode* temp = CurrentAbility->RootNode;
-	//UAbilityNode* pre = nullptr;
+}
 
-	//while (temp)
-	//{
-	//	if (temp->OnDeActiveNode())
-	//	{
-	//		if (UEdGraphPin* pin = temp->GetThenPin())
-	//		{
-	//			if (pin->LinkedTo.Num() > 0)
-	//			{
-	//				if (temp = Cast<UAbilityNode>(pin->LinkedTo[0]->GetOwningNode()))
-	//				{
-	//					temp->OnActiveNode();
-	//				}
-	//			}
-	//			else
-	//			{
-	//				temp = nullptr;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			break;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		break;
-	//	}
-	//}
+void UMobaAbilityComponent::FinishAbility()
+{
 }
 
 void UMobaAbilityComponent::SetCurrentAbility(UMobaAbility* InAbility)
@@ -95,9 +117,6 @@ void UMobaAbilityComponent::SetCurrentAbility(UMobaAbility* InAbility)
 
 void UMobaAbilityComponent::ActiveNode(TArray<UEdGraphPin*> InPins)
 {
-	//for (auto pin : InPins)
-	//{
-	//	Cast<UAbilityNode>(pin->GetOwningNode())->OnActiveNode();
-	//}
+
 }
 

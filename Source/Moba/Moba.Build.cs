@@ -21,6 +21,8 @@ public class Moba : ModuleRules
             "Networking",
             "AnimGraphRuntime",
             "DeveloperSettings",
+
+            "GameplayTags",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

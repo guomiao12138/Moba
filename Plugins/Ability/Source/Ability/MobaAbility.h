@@ -36,7 +36,7 @@ public:
 	TObjectPtr<URoot> RootNode;
 
 	UPROPERTY()
-	TObjectPtr<ACharacter> Owner;
+	TObjectPtr<APawn> Owner;
 
 	UMobaAbility();
 
@@ -44,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FName AbilityName;
+
+	UPROPERTY(EditAnywhere)
+	bool EnableCollision = false;
 
 	
 	//void SetGraph(UMobaAbilityEdGraph* InGraph) { Graph = InGraph; }

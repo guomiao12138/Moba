@@ -167,6 +167,10 @@ void FMobaAbilityEditorToolKit::OnSelectedNodesChanged(const TSet<class UObject*
 	{
 		/*GraphEditor*/
 	}
+	else
+	{
+		DetailsView->SetObject(GetEditingObject());
+	}
 }
 
 void FMobaAbilityEditorToolKit::OnFocused(const TSharedRef<SGraphEditor>& InSGraphEditor)

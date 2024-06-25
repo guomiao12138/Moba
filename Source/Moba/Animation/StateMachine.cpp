@@ -60,6 +60,10 @@ bool FStateMachine::UpdateAsset()
 			UBlendSpacePlayerLibrary::SetBlendSpace(BlendSpacePlayerReference, BlendSpace);
 		}
 	}
+	else if (AnimAsset.IsNull())
+	{
+		return true;
+	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StateMachine InitialUpdate [%d] : AnimAsset Cast Faild"), __LINE__);

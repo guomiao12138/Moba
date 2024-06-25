@@ -56,7 +56,7 @@ void UAbilityNode::OnActiveNode()
 	}
 }
 
-class ACharacter* UAbilityNode::GetOwnerPawn()
+class APawn* UAbilityNode::GetOwnerPawn()
 {
 	if (auto graph = GetOuter())
 	{
