@@ -65,9 +65,9 @@ void UMobaAbilityComponent::TickAbility(float DeltaTime)
 
 void UMobaAbilityComponent::OnStartMontage(UAnimMontage* Montage)
 {
-	if (AnimMontages.Contains(Montage))
+	if (CurrentAbility)
 	{
-		OnMontageStarted.Broadcast(AnimMontages[Montage].Tags, CurrentAbility->EnableCollision);
+		OnMontageStarted.Broadcast(TArray<FGameplayTag>(), CurrentAbility->EnableCollision);
 	}
 }
 
@@ -78,6 +78,8 @@ void UMobaAbilityComponent::OnEndMontage(UAnimMontage* Montage, bool bInterrupte
 		OnMontageFinish.Broadcast(AnimMontages[Montage].Tags);
 		AnimMontages.Remove(Montage);
 	}
+
+	SetCurrentAbility(nullptr);
 }
 
 void UMobaAbilityComponent::PlayAnimation(class UAnimSequenceBase* Asset, TArray<FGameplayTag> Tags)
@@ -97,12 +99,13 @@ void UMobaAbilityComponent::PlayAnimation(class UAnimSequenceBase* Asset, TArray
 	}
 }
 
-void UMobaAbilityComponent::ActiveAbility()
+void UMobaAbilityComponent::ActiveAbility(int Index)
 {
-	if (Abilitys.Num() > 0)
+	if (Abilitys.IsValidIndex(Index))
 	{
-		Abilitys[0]->Owner = Cast<ACharacter>(GetOwner());
-		Abilitys[0]->Activate();
+		SetCurrentAbility(Abilitys[Index]);
+		Abilitys[Index]->Owner = Cast<ACharacter>(GetOwner());
+		Abilitys[Index]->Activate();
 	}
 }
 

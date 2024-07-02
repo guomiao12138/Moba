@@ -45,7 +45,7 @@ void AMobaCharacterBase::OnAbilityStart(TArray<FGameplayTag> InTags, bool Enable
 
 	if (EnableCollision)
 	{
-		ActiveActiveCollision();
+		ActiveCollision();
 	}
 }
 
@@ -111,6 +111,7 @@ float AMobaCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEve
 
 void AMobaCharacterBase::OnDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Display, TEXT("Damage : %f"), Damage);
 }
 
 void AMobaCharacterBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -134,11 +135,11 @@ void AMobaCharacterBase::ChangeState(ECharacterType::Type Type)
 	}
 }
 
-void AMobaCharacterBase::ActiveActiveCollision()
+void AMobaCharacterBase::ActiveCollision()
 {
 	for (auto Com : GetMesh()->GetAttachChildren())
 	{
-		if (Com->ComponentTags.Contains(TEXT("WeaponCollision")))
+		//if (Com->ComponentTags.Contains(TEXT("WeaponCollision")))
 		{
 			if (auto WeaponCollisionComponent = Cast<UWeaponCollisionComponent>(Com))
 			{
@@ -152,7 +153,7 @@ void AMobaCharacterBase::CloseActiveCollision()
 {
 	for (auto Com : GetMesh()->GetAttachChildren())
 	{
-		if (Com->ComponentTags.Contains(TEXT("WeaponCollision")))
+		//if (Com->ComponentTags.Contains(TEXT("WeaponCollision")))
 		{
 			if (auto WeaponCollisionComponent = Cast<UWeaponCollisionComponent>(Com))
 			{
@@ -168,7 +169,7 @@ void AMobaCharacterBase::ActiveAbility()
 	{
 		if (auto inst = Cast<UMobaAnimInstance>(GetMesh()->AnimScriptInstance))
 		{
-			ActiveActiveCollision();
+			ActiveCollision();
 			inst->SetChangeState(ECharacterType::Skill);
 			AbilityComponent->ActiveAbility();
 			//CloseActiveCollision();

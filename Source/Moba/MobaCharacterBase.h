@@ -89,7 +89,7 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	void ChangeState(ECharacterType::Type Type);
-	void ActiveActiveCollision();
+	void ActiveCollision();
 	void CloseActiveCollision();
 	void ActiveAbility();
 	void MoveTo(FHitResult Hit);

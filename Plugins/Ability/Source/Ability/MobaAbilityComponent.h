@@ -68,7 +68,7 @@ public:
 	TArray<UMobaAbility*> Abilitys;
 
 	void PlayAnimation(class UAnimSequenceBase* Asset, TArray<FGameplayTag> Tags);
-	void ActiveAbility();
+	void ActiveAbility(int Index = 0);
 	void FinishAbility();
 
 	void SetCurrentAbility(UMobaAbility* InAbility);

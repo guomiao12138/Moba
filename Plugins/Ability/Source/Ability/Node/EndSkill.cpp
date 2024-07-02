@@ -14,9 +14,9 @@ void UEndSkill::AllocateDefaultPins()
 #endif
 void UEndSkill::OnActiveNode()
 {
-	if (auto com = Cast<ACharacter>(GetOwnerPawn())->FindComponentByClass(UMobaAbilityComponent::StaticClass()))
-	{
-		Cast<UMobaAbilityComponent>(com)->SetCurrentAbility(nullptr);
-	}
+	//if (auto com = Cast<ACharacter>(GetOwnerPawn())->FindComponentByClass(UMobaAbilityComponent::StaticClass()))
+	//{
+	//	Cast<UMobaAbilityComponent>(com)->SetCurrentAbility(nullptr);
+	//}
 	
 }
